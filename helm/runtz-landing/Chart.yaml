@@ -1,0 +1,7 @@
+apiVersion: v2
+name: runtz-landing
+description: Helm chart for the runtz landing website
+type: application
+version: 0.1.0
+appVersion: "dev"
+icon: https://runtz.dev/home/brand/runtz-logo-light.svg

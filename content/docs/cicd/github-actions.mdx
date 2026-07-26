@@ -1,0 +1,132 @@
+---
+title: GitHub Actions
+description: Run runtz scans in GitHub Actions workflows.
+---
+
+# GitHub Actions
+
+Run runtz scans on every push and pull request with the official CLI image,
+`runtzdev/runtz-cli`.
+
+The scans run as `docker run` steps rather than a `container:` job. GitHub
+runs its own steps (like `actions/checkout`) inside the job container, and
+they require a glibc-based image with a root-writable workspace — the runtz
+CLI image is intentionally minimal (Alpine, non-root), so it is invoked
+directly instead of hosting the job.
+
+## Store the credentials
+
+1. In the repository, open `Settings → Secrets and variables → Actions`.
+2. Add a secret named `RUNTZ_TOKEN` with the token generated in the platform.
+
+The endpoint is not sensitive, so it can live directly in the workflow (or in
+a repository variable if you self-host).
+
+## Scan the repository
+
+Create `.github/workflows/runtz.yml`:
+
+```yaml
+name: runtz
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  security-scans:
+    runs-on: ubuntu-latest
+    env:
+      RUNTZ_ENDPOINT: https://engine.runtz.dev
+      RUNTZ_TOKEN: ${{ secrets.RUNTZ_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: SCA scan
+        run: |
+          docker run --rm \
+            -v "$PWD:/src" \
+            -e RUNTZ_ENDPOINT \
+            -e RUNTZ_TOKEN \
+            runtzdev/runtz-cli:latest sca /src \
+            --project "${{ github.event.repository.name }}" \
+            --source "${{ github.server_url }}/${{ github.repository }}"
+
+      - name: SAST scan
+        run: |
+          docker run --rm \
+            -v "$PWD:/src" \
+            -e RUNTZ_ENDPOINT \
+            -e RUNTZ_TOKEN \
+            runtzdev/runtz-cli:latest sast /src \
+            --project "${{ github.event.repository.name }}" \
+            --source "${{ github.server_url }}/${{ github.repository }}"
+```
+
+Both scans read the mounted checkout at `/src`. `--project` keeps the
+platform project named after the repository, and `--source` links the scan to
+the repository URL.
+
+## Scan the built image
+
+Scan the image right after `docker build`, before it is pushed. The `--local`
+flag reads the image from the runner's Docker daemon, so it also works for
+private images:
+
+```yaml
+  container-scan:
+    runs-on: ubuntu-latest
+    env:
+      RUNTZ_ENDPOINT: https://engine.runtz.dev
+      RUNTZ_TOKEN: ${{ secrets.RUNTZ_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t my-app:${{ github.sha }} .
+
+      - name: Container scan
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            --group-add "$(stat -c %g /var/run/docker.sock)" \
+            -e RUNTZ_ENDPOINT \
+            -e RUNTZ_TOKEN \
+            runtzdev/runtz-cli:latest container my-app:${{ github.sha }} --local
+```
+
+The CLI container runs as a non-root user, so `--group-add` grants it the
+Docker socket group needed to read the image from the daemon.
+
+For images already pushed to a public registry, no daemon access is needed:
+
+```yaml
+      - name: Container scan
+        run: |
+          docker run --rm \
+            -e RUNTZ_ENDPOINT \
+            -e RUNTZ_TOKEN \
+            runtzdev/runtz-cli:latest container ghcr.io/my-org/my-app:latest
+```
+
+## Scan Kubernetes manifests
+
+Posture-check the manifests in the repository — no cluster access required:
+
+```yaml
+      - name: Kubernetes manifests scan
+        run: |
+          docker run --rm \
+            -v "$PWD:/src" \
+            -e RUNTZ_ENDPOINT \
+            -e RUNTZ_TOKEN \
+            runtzdev/runtz-cli:latest k8s /src/deploy \
+            --target "${{ github.event.repository.name }}"
+```
+
+## Notes
+
+- Pin a release tag (`runtzdev/runtz-cli:v0.4.0`) for reproducible workflows.
+- Scans exit non-zero only on execution errors, so a scan with findings does
+  not fail the workflow — results are reviewed in the platform.

@@ -1,0 +1,9 @@
+# Default owners. Pull requests require review from the runtz core team before
+# merging into dev or main.
+*              @runtz-dev/core
+
+# Ingress/deploy plumbing gets extra scrutiny — a mistake here can break
+# routing for the whole runtz.dev domain, not just this app.
+/helm/         @runtz-dev/core
+/.github/      @runtz-dev/core
+/proxy.ts      @runtz-dev/core

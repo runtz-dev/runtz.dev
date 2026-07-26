@@ -1,0 +1,106 @@
+---
+title: SCA
+description: Software Composition Analysis in runtz.
+---
+
+# SCA
+
+SCA (Software Composition Analysis) finds known vulnerabilities in your
+project dependencies. Point `runtz sca` at a repository and it discovers every
+supported dependency manifest, extracts the declared packages and checks them
+against the GitHub Advisory Database.
+
+## Supported languages
+
+| Language | Ecosystem | Files scanned |
+| --- | --- | --- |
+| JavaScript / TypeScript | npm | `package.json` |
+| Python | pip | `requirements.txt` |
+| Go | Go modules | `go.mod` |
+| Java / Kotlin | Maven | `pom.xml` |
+| Ruby | RubyGems | `Gemfile.lock` |
+| PHP | Composer | `composer.json` |
+| Rust | crates.io | `Cargo.toml` |
+| C# / .NET | NuGet | `*.csproj` |
+
+Dependency directories and build output (`node_modules`, `vendor`, `target`,
+`dist`, `.git`, ...) are skipped automatically.
+
+For manifest entries with a version range, the CLI extracts a concrete version
+when possible. Entries without a resolvable version (for example Maven
+`${property}` versions or unpinned pip ranges) are inventoried but skipped in
+the advisory lookup.
+
+## Usage
+
+```txt
+runtz sca (REPO_PATH | FILE_PATH) [flags]
+```
+
+Scan a whole repository — every supported manifest is discovered:
+
+```bash
+runtz sca ./ \
+  --endpoint https://engine.runtz.dev \
+  --token rtz_live_...
+```
+
+Scan a single manifest file:
+
+```bash
+runtz sca ./package.json \
+  --endpoint https://engine.runtz.dev \
+  --token rtz_live_...
+```
+
+Expected output:
+
+```txt
+Parsed api/go.mod (go): 14 dependencies
+Parsed package.json (npm): 42 dependencies
+Parsed worker/requirements.txt (pip): 8 dependencies
+Checking 64 dependencies against the GitHub Advisory Database...
+Sending SCA scan to Runtz...
+SCA scan completed and sent to Runtz Platform.
+Project: my-repo
+Manifests: 3
+Dependencies: 64
+Vulnerabilities: 5
+```
+
+## Flags
+
+| Flag | Description | Default |
+| --- | --- | --- |
+| `--project` | Project name shown in the platform | repository directory name |
+| `--source` | Source path, repository or URL | scan path |
+| `--github-token` | GitHub token for higher advisory API limits | `GITHUB_TOKEN` |
+| `--endpoint` | Runtz backend endpoint | required |
+| `--token` | Token generated in the platform | required |
+
+## Advisory lookup
+
+For each ecosystem, dependencies with a resolvable version are queried against
+[GitHub Global Security Advisories](https://docs.github.com/en/rest/security-advisories/global-advisories)
+with:
+
+```txt
+ecosystem=<npm|pip|go|maven|rubygems|composer|rust|nuget>
+affects=package@version
+```
+
+The returned advisories are normalized into the scan result and sent to the
+backend.
+
+## Stored result
+
+The backend stores:
+
+- Project name and workspace
+- Source path and scanned manifest files
+- Dependencies (with ecosystem and origin manifest)
+- Vulnerabilities (CVE/GHSA, severity, CVSS, patched version)
+- Severity summary
+- Scan timestamp
+
+The frontend uses this data to render the SCA dashboard and CVE/GHSA table.

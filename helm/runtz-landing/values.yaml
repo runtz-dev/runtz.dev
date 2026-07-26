@@ -1,0 +1,80 @@
+# Default values for the runtz landing chart. This chart is deployed straight
+# from this repo (dev and prod pipelines) — it is not published anywhere,
+# since nobody self-hosts the marketing/docs site. See
+# helm/environments/{dev,prod} for the environment-specific overrides
+# actually used to deploy.
+
+nameOverride: ""
+fullnameOverride: ""
+
+imagePullSecrets: []
+
+serviceAccount:
+  create: true
+  automount: false
+  annotations: {}
+  name: ""
+
+replicaCount: 1
+
+image:
+  repository: runtz-landing
+  tag: dev
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 3000
+  targetPort: 3000
+
+env:
+  PORT: "3000"
+  HOSTNAME: "0.0.0.0"
+  NEXT_PUBLIC_BASE_PATH: "/home"
+  # What actually reaches the browser is baked into the client bundle at
+  # Docker build time (see Dockerfile) — this runtime value just has to match
+  # that build-time one so `kubectl exec ... env` isn't misleading. Set both
+  # (the build-arg in the pipeline and this value) per environment in
+  # helm/environments/{dev,prod}/values.yaml.
+  NEXT_PUBLIC_RUNTZ_API_URL: ""
+
+extraEnv: []
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /home
+    port: http
+
+readinessProbe:
+  httpGet:
+    path: /home
+    port: http
+
+startupProbe:
+  httpGet:
+    path: /home
+    port: http
+  periodSeconds: 2
+  failureThreshold: 30
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Disabled by default. runtz.dev / runtz-dev.runtz.dev (including /home and
+# /legal) are routed by the platform (runtz) chart's own ingress, which owns
+# every path on those hosts — enabling an ingress here too would make two
+# Ingress objects fight over the same hostname. The one exception is
+# get.runtz.dev (the install-script redirect host), which only exists in prod
+# — see helm/environments/prod/values.yaml.
+ingress:
+  enabled: false
+  className: "cloudflare-tunnel"
+  annotations: {}
+  hosts: []
+  tls: []

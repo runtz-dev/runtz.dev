@@ -1,0 +1,29 @@
+# runtz landing production environment.
+#
+# runtz.dev (including /home and /legal) is routed by the runtz chart's own
+# ingress (see runtz repo, helm/environments/prod/values.yaml), which points
+# those paths at the runtz-landing Service this chart creates. The one
+# ingress this chart DOES own is get.runtz.dev — the CLI installer redirect
+# host (curl -fsSL https://get.runtz.dev | bash) — since nothing else in the
+# platform needs that hostname.
+#
+#   helm upgrade --install runtz-landing ./helm/runtz-landing \
+#     -f helm/environments/prod/values.yaml \
+#     --set image.tag="<version>"
+
+image:
+  repository: registry.local:5000/runtz-landing
+  tag: ""
+  pullPolicy: Always
+
+env:
+  NEXT_PUBLIC_RUNTZ_API_URL: "https://engine.runtz.dev"
+
+ingress:
+  enabled: true
+  className: "cloudflare-tunnel"
+  hosts:
+    - host: get.runtz.dev
+      paths:
+        - path: /
+          pathType: Prefix

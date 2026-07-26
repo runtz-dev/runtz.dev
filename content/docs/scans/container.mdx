@@ -1,0 +1,104 @@
+---
+title: Container scanning
+description: Scan packages that compose a container image.
+---
+
+# Container scanning
+
+Container scanning inventories the OS packages inside a container image,
+checks them against the OSV vulnerability database and sends the normalized
+result to the runtz backend.
+
+The scanner is self-contained: it pulls the image from the registry, reads the
+OCI layers directly and reconstructs only the package database files — it does
+not call Trivy or Grype, and it does not need Docker installed for registry
+scans.
+
+## Supported operating systems
+
+| Family | Example base images | Package database | CVE matching |
+| --- | --- | --- | --- |
+| Debian based | `debian`, `ubuntu`, `node:*-slim`, `python:*-slim` | dpkg (`/var/lib/dpkg/status`) | OSV (`Debian`, `Ubuntu`) |
+| RPM based | `rockylinux`, `almalinux`, `ubi`, `opensuse` | rpm (`/var/lib/rpm`) | OSV (`Red Hat`, `Rocky Linux`, `AlmaLinux`, `openSUSE`, `SUSE`) |
+| Alpine based | `alpine`, `node:*-alpine`, `nginx:*-alpine` | apk (`/lib/apk/db/installed`) | OSV (`Alpine`) |
+| Arch based | `archlinux` | pacman (`/var/lib/pacman/local`) | Inventory only — OSV has no Arch feed yet |
+
+The image family is detected from the `os-release` inside the image (`ID` and
+`ID_LIKE`), so derivative images map to their parent family automatically. On
+images without an OSV advisory feed, the scan still sends the full package
+inventory, without CVE matching.
+
+Severity comes from the distro advisory when available and falls back to the
+CVSS 3.x base score published in OSV.
+
+## Usage
+
+```txt
+runtz container IMAGE [flags]
+```
+
+Scan an image from a registry (default — no Docker needed):
+
+```bash
+runtz container ubuntu:22.04 \
+  --endpoint https://engine.runtz.dev \
+  --token rtz_live_...
+```
+
+```bash
+runtz container alpine:3.19 \
+  --endpoint https://engine.runtz.dev \
+  --token rtz_live_...
+```
+
+Expected output:
+
+```txt
+Found 141 installed rpm packages in rockylinux:9.
+Querying OSV for 98 source packages in 1 batch(es).
+Found 164 package vulnerabilities.
+Sending container scan to Runtz...
+Container package scan completed and sent to Runtz Platform.
+Image: rockylinux:9
+OS: Rocky Linux 9.3 (Blue Onyx)
+Packages: 141
+Vulnerabilities: 164
+```
+
+For an image that exists only in the local Docker daemon, add `--local`:
+
+```bash
+runtz container my-app:latest \
+  --local \
+  --endpoint https://engine.runtz.dev \
+  --token rtz_live_...
+```
+
+The image name appears in the Container scanning dashboard. Click the image to
+see the CVEs from the latest scan.
+
+## Flags
+
+| Flag | Description | Default |
+| --- | --- | --- |
+| `--local` | Read the image from the local Docker daemon instead of a registry | `false` |
+| `--osv-url` | Optional OSV API base URL | `https://api.osv.dev` |
+| `--endpoint` | Runtz backend endpoint | required |
+| `--token` | Token generated in the platform | required |
+
+## How it works
+
+1. The image manifest and layers are pulled from the registry (or exported
+   from the Docker daemon with `--local`).
+2. Layers are applied in order — including whiteouts — reconstructing only
+   `os-release` and the package database files of the supported families.
+3. The distribution family is detected and the matching database is parsed
+   (dpkg status, apk installed, rpm database, pacman desc files).
+4. Source packages are queried against OSV for the image's ecosystem, and the
+   advisories are normalized with severity and fixed version.
+
+## Stored result
+
+The backend stores the image name, reference and digest, OS details, package
+manager, full package inventory, vulnerabilities with severity summary and the
+scan timestamp.

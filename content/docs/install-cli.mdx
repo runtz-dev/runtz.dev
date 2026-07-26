@@ -1,0 +1,154 @@
+---
+title: Install runtz CLI
+description: Install the runtz CLI and run your first scan.
+---
+
+# Install runtz CLI
+
+The runtz CLI is a single static Go binary. The install script detects your
+OS and architecture, downloads the binary and installs it to `/usr/local/bin`:
+
+```bash
+curl -fsSL https://get.runtz.dev | bash
+```
+
+Verify the installation:
+
+```bash
+runtz version
+```
+
+```txt
+runtz 1.0.0-rc1 (linux/amd64)
+```
+
+Linux and macOS are supported on `amd64` and `arm64`.
+
+### Script options
+
+The script accepts environment overrides:
+
+```bash
+# Install a specific release
+RUNTZ_VERSION=v1.0.0-rc1 curl -fsSL https://get.runtz.dev | bash
+
+# Install to a custom directory (no sudo needed if writable)
+RUNTZ_INSTALL_DIR=$HOME/.local/bin curl -fsSL https://get.runtz.dev | bash
+```
+
+### Manual install
+
+Download the binary for your platform from the
+[GitHub releases page](https://github.com/runtz-dev/runtz-cli/releases), then:
+
+```bash
+chmod +x runtz_linux_amd64
+sudo mv runtz_linux_amd64 /usr/local/bin/runtz
+runtz version
+```
+
+### Docker image
+
+The CLI is also published as a container image — the entrypoint is the
+`runtz` binary:
+
+```bash
+docker run --rm runtzdev/runtz-cli:latest version
+```
+
+This is the recommended way to run runtz in pipelines — see the
+[CI/CD guides](/docs/cicd/github-actions) for ready-to-use pipeline examples
+(GitHub Actions, GitLab, Jenkins, Azure DevOps, Bitbucket and CircleCI).
+
+## Commands
+
+| Command | Scan |
+| --- | --- |
+| `runtz sca (REPO_PATH \| FILE_PATH)` | Dependency vulnerabilities from package manifests |
+| `runtz sast (REPO_PATH \| FILE_PATH)` | Static source code findings |
+| `runtz host` | Packages installed on a Linux host/rootfs |
+| `runtz container IMAGE` | Packages inside a container image |
+| `runtz k8s` | Kubernetes cluster or manifest posture |
+| `runtz update` | Update the CLI to the latest release |
+| `runtz version` | Print the CLI version |
+
+## Updating
+
+The CLI updates itself in place, verifying the download's SHA-256 against the
+release checksums before replacing the binary:
+
+```bash
+runtz update          # prompts before replacing the binary
+runtz update --yes    # no prompt (automation)
+runtz update --check  # only report if a newer version exists (exit 3 if so)
+```
+
+## Authentication
+
+Every scan command requires `--endpoint` and `--token`. For the runtz SaaS
+engine, use:
+
+```txt
+https://engine.runtz.dev
+```
+
+The token is generated in the platform (`rtz_live_...`) and resolves your
+workspace automatically. Both values can also come from the environment:
+
+```bash
+export RUNTZ_ENDPOINT=https://engine.runtz.dev
+export RUNTZ_TOKEN=rtz_live_...
+
+runtz sca ./
+```
+
+## First scan
+
+From the root of any repository:
+
+```bash
+runtz sca ./ \
+  --endpoint https://engine.runtz.dev \
+  --token rtz_live_...
+```
+
+Expected output:
+
+```txt
+Parsed package.json (npm): 42 dependencies
+Checking 42 dependencies against the GitHub Advisory Database...
+Sending SCA scan to Runtz...
+SCA scan completed and sent to Runtz Platform.
+Project: frontend
+Manifests: 1
+Dependencies: 42
+Vulnerabilities: 3
+```
+
+## CI/CD severity gates
+
+Every scan command can fail the pipeline when it finds too many issues at a
+given severity. The thresholds are optional; `0` (the default) leaves the gate
+off.
+
+```bash
+# Fail the build on a single critical, or on 5+ highs:
+runtz sca ./ \
+  --endpoint https://engine.runtz.dev --token rtz_live_... \
+  --critical-threshold 1 \
+  --high-threshold 5
+```
+
+Available on every scan: `--critical-threshold N`, `--high-threshold N`,
+`--medium-threshold N`, `--low-threshold N` (or the env vars
+`RUNTZ_CRITICAL_THRESHOLD`, `RUNTZ_HIGH_THRESHOLD`, `RUNTZ_MEDIUM_THRESHOLD`,
+`RUNTZ_LOW_THRESHOLD`).
+
+The scan results are always sent to the platform before the gate is evaluated,
+so a failed gate still records the scan.
+
+**Exit codes:** `0` success · `1` execution error · `2` usage error ·
+`3` a severity gate tripped (or `runtz update --check` found an update).
+
+See the [Scans section](/docs/scans/sca) for what each scan type covers and
+every available flag.

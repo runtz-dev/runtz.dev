@@ -1,0 +1,101 @@
+---
+title: Azure DevOps
+description: Run runtz scans in Azure Pipelines.
+---
+
+# Azure DevOps
+
+Run runtz scans in Azure Pipelines with `docker run` steps on a Microsoft-hosted
+Linux agent.
+
+The scans run as `docker run` steps rather than a
+[container job](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/container-phases):
+Azure requires container-job images to be glibc-based, ship Bash and define no
+`ENTRYPOINT` — the runtz CLI image is intentionally minimal (Alpine, entrypoint
+`runtz`), so it is invoked directly instead of hosting the job.
+
+## Store the credentials
+
+1. In the project, open `Pipelines → Library` (or the pipeline's
+   `Edit → Variables`).
+2. Add `RUNTZ_TOKEN` with the token generated in the platform and mark it as
+   **secret**.
+
+Secret variables are not exposed to scripts automatically — they must be
+mapped explicitly with `env:` in each step, as shown below.
+
+## Scan the repository
+
+Add to `azure-pipelines.yml`:
+
+```yaml
+trigger:
+  branches:
+    include: [main]
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  RUNTZ_ENDPOINT: https://engine.runtz.dev
+
+steps:
+  - checkout: self
+
+  - script: |
+      docker run --rm \
+        -v "$(Build.SourcesDirectory):/src" \
+        -e RUNTZ_ENDPOINT \
+        -e RUNTZ_TOKEN \
+        runtzdev/runtz-cli:latest sca /src \
+        --project "$(Build.Repository.Name)" \
+        --source "$(Build.Repository.Uri)"
+    displayName: SCA scan
+    env:
+      RUNTZ_TOKEN: $(RUNTZ_TOKEN)
+
+  - script: |
+      docker run --rm \
+        -v "$(Build.SourcesDirectory):/src" \
+        -e RUNTZ_ENDPOINT \
+        -e RUNTZ_TOKEN \
+        runtzdev/runtz-cli:latest sast /src \
+        --project "$(Build.Repository.Name)" \
+        --source "$(Build.Repository.Uri)"
+    displayName: SAST scan
+    env:
+      RUNTZ_TOKEN: $(RUNTZ_TOKEN)
+```
+
+## Scan the built image
+
+Scan the image right after `docker build`, before it is pushed. The `--local`
+flag reads the image from the agent's Docker daemon, so it also works for
+private images:
+
+```yaml
+  - script: docker build -t my-app:$(Build.SourceVersion) .
+    displayName: Build image
+
+  - script: |
+      docker run --rm \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        --group-add "$(stat -c %g /var/run/docker.sock)" \
+        -e RUNTZ_ENDPOINT \
+        -e RUNTZ_TOKEN \
+        runtzdev/runtz-cli:latest container my-app:$(Build.SourceVersion) --local
+    displayName: Container scan
+    env:
+      RUNTZ_TOKEN: $(RUNTZ_TOKEN)
+```
+
+The CLI container runs as a non-root user, so `--group-add` grants it the
+Docker socket group needed to read the image from the daemon. For images in a
+public registry, drop the socket mount and `--local` and pass the full image
+reference instead.
+
+## Notes
+
+- Pin a release tag (`runtzdev/runtz-cli:v0.4.0`) for reproducible pipelines.
+- Scans exit non-zero only on execution errors, so a scan with findings does
+  not fail the pipeline — results are reviewed in the platform.

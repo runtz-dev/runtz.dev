@@ -1,0 +1,56 @@
+---
+title: Skills
+description: Drop-in skills that teach Claude, Codex, and Gemini how to run runtz scans.
+---
+
+# Skills
+
+runtz skills teach AI coding assistants how to run runtz security scans (SCA,
+SAST, host, container, Kubernetes) and read the docs — correctly, and without
+handling your token in a prompt.
+
+Each skill follows the native convention of its assistant:
+
+| Assistant | Convention | Where it goes |
+| --- | --- | --- |
+| **Claude** (Claude Code / Desktop) | `SKILL.md` + `reference/` | `~/.claude/skills/runtz-security-scans/` or a project `.claude/skills/` |
+| **Codex** (OpenAI) | `AGENTS.md` | project root, or merged into an existing `AGENTS.md` |
+| **Gemini** (Gemini CLI) | `GEMINI.md` | project root or `~/.gemini/` |
+
+## How they work
+
+All three skills follow the same playbook:
+
+1. **Prefer the [runtz MCP server](/docs/mcp)** when it is connected — the
+   assistant calls `runtz_sca`, `runtz_sast`, `runtz_host`, `runtz_container`,
+   `runtz_k8s`, and the `runtz_docs_*` tools.
+2. **Fall back to the runtz CLI** when no MCP server is available.
+3. **Keep the token in config**, never in prompts or printed commands.
+4. **Summarize findings** with severities and concrete remediation.
+
+## Choosing the right scan
+
+The skills route each request to the right scan:
+
+| The user wants to… | Scan |
+| --- | --- |
+| Check dependencies / `package.json` for CVEs | SCA |
+| Find secrets / insecure patterns in source | SAST |
+| Audit a Linux host or mounted rootfs | host |
+| Audit a container/Docker image | container |
+| Review a cluster or k8s manifests | k8s |
+
+## Install
+
+Clone the repository and copy the skill for your assistant:
+
+```bash
+git clone https://github.com/runtz-dev/runtz-skills
+```
+
+- **Claude Code:** copy `claude/` to `~/.claude/skills/runtz-security-scans/`. The
+  skill activates by description when you ask for a security scan.
+- **Codex:** copy `codex/AGENTS.md` into your project root.
+- **Gemini:** copy `gemini/GEMINI.md` into your project root or `~/.gemini/`.
+
+Pair any skill with the [runtz MCP server](/docs/mcp) for the best experience.

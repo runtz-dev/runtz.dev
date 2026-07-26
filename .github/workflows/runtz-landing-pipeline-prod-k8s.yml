@@ -1,0 +1,52 @@
+---
+name: runtz-landing CI/CD Prod
+on:
+  release:
+    types:
+      - published
+
+env:
+  REGISTRY: registry-docker-registry.registry.svc.cluster.local:5000
+
+jobs:
+  build-prod:
+    name: Build prod image
+    runs-on:
+      - runtz-runners
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          buildkitd-config-inline: |
+            [registry."registry-docker-registry.registry.svc.cluster.local:5000"]
+              http = true
+              insecure = true
+      - name: Build and push image
+        run: |
+          docker buildx build \
+            --push \
+            --tag ${REGISTRY}/runtz-landing:${GITHUB_REF_NAME} \
+            --build-arg NEXT_PUBLIC_RUNTZ_API_URL="https://engine.runtz.dev" \
+            .
+
+  deploy-prod:
+    name: Deploy prod
+    runs-on:
+      - runtz-runners
+    needs: build-prod
+    container:
+      image: runtzdev/deploy-k8s:v1
+      credentials:
+        username: ${{ vars.DOCKER_LOGIN }}
+        password: ${{ secrets.DOCKER_PASS }}
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+      - name: Deploy on prod environment
+        run: |
+          helm upgrade --install runtz-landing ./helm/runtz-landing \
+            -n prod \
+            -f helm/environments/prod/values.yaml \
+            --set "image.tag=${GITHUB_REF_NAME}"

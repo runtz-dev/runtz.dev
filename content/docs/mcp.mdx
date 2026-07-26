@@ -1,0 +1,132 @@
+---
+title: MCP server
+description: Run runtz scans and read the docs from any AI agent with the offline runtz MCP server.
+---
+
+# MCP server
+
+`runtz-mcp` is an offline [Model Context Protocol](https://modelcontextprotocol.io)
+server for runtz. Connect it to an MCP-capable AI client — Claude, Codex, Gemini,
+and others — and the assistant gains the runtz scanners and an embedded copy of
+this documentation as first-class tools.
+
+It is written in Go (the same stack as the runtz backend and CLI) with no
+third-party dependencies, and it speaks JSON-RPC 2.0 over stdio.
+
+- **Offline first.** The docs are embedded in the binary; no network is needed to
+  answer documentation questions.
+- **Secrets stay in config.** The workspace token is read from the environment
+  the client injects, so it never appears in prompts, logs, or tool arguments.
+
+## Tools
+
+### Scans
+
+| Tool | runtz command | Purpose |
+| --- | --- | --- |
+| `runtz_sca` | `runtz sca` | Vulnerable dependencies in a `package.json` |
+| `runtz_sast` | `runtz sast` | Secrets, weak crypto, disabled TLS in source |
+| `runtz_host` | `runtz host` | Package CVEs on Debian, RPM, Alpine and Arch family hosts |
+| `runtz_container` | `runtz container` | Package CVEs inside a container image |
+| `runtz_k8s` | `runtz k8s` | Kubernetes cluster / manifest posture |
+
+### Documentation (always available, fully offline)
+
+| Tool | Purpose |
+| --- | --- |
+| `runtz_docs_list` | List the documentation pages with summaries |
+| `runtz_docs_read` | Read a full page by slug |
+| `runtz_docs_search` | Search the docs and return snippets |
+
+Each documentation page is also exposed as an MCP resource (`runtz-docs://<slug>`).
+
+## Install
+
+```bash
+# Build the server
+git clone https://github.com/runtz-dev/runtz-mcp
+cd runtz-mcp
+make install        # installs `runtz-mcp` into your GOBIN
+
+# Install the runtz CLI the scan tools shell out to
+curl -fsSL https://get.runtz.dev | bash
+```
+
+## Configuration
+
+All configuration is environment-based and set in your MCP client's `env` block.
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `RUNTZ_ENDPOINT` | hosted SaaS engine | Runtz backend endpoint |
+| `RUNTZ_TOKEN` | — | Workspace token generated in the platform |
+| `RUNTZ_MCP_BIN` | `runtz` | runtz CLI binary or launcher |
+| `RUNTZ_MCP_WORKDIR` | process cwd | Working directory scans run from |
+| `RUNTZ_MCP_ALLOW_SCANS` | `true` | Set `false` for a docs-only server |
+| `RUNTZ_MCP_HTTP` | — | Listen address (e.g. `:8080`) to serve over HTTP instead of stdio; always docs-only |
+
+The hosted engine endpoint is `https://engine.runtz.dev`. Generate a
+workspace token in the runtz platform.
+
+## Hosted docs server
+
+We also run this server for you over HTTP, so you can read the docs from an MCP
+client without installing anything — point it at `https://mcp.runtz.dev/mcp`.
+The hosted server is **docs-only**: it never runs scans, because scans need your
+code on the machine running the CLI. Run the server locally (below) for the scan
+tools.
+
+## Client setup
+
+### Claude Code / Desktop
+
+Save as `.mcp.json` in your project (or merge into `~/.claude.json` /
+`claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "runtz": {
+      "command": "/usr/local/bin/runtz-mcp",
+      "env": {
+        "RUNTZ_ENDPOINT": "https://engine.runtz.dev",
+        "RUNTZ_TOKEN": "rtz_live_..."
+      }
+    }
+  }
+}
+```
+
+### Codex
+
+Merge into `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.runtz]
+command = "/usr/local/bin/runtz-mcp"
+
+[mcp_servers.runtz.env]
+RUNTZ_ENDPOINT = "https://engine.runtz.dev"
+RUNTZ_TOKEN = "rtz_live_..."
+```
+
+### Gemini CLI
+
+Merge into `~/.gemini/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "runtz": {
+      "command": "/usr/local/bin/runtz-mcp",
+      "env": {
+        "RUNTZ_ENDPOINT": "https://engine.runtz.dev",
+        "RUNTZ_TOKEN": "rtz_live_..."
+      }
+    }
+  }
+}
+```
+
+Pair the MCP server with the matching [skill](/docs/skills) so your assistant
+knows *when* and *how* to use these tools.
