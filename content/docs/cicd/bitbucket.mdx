@@ -1,0 +1,69 @@
+---
+title: Bitbucket Pipelines
+description: Run runtz scans in Bitbucket Pipelines.
+---
+
+# Bitbucket Pipelines
+
+In Bitbucket Pipelines, the step runs inside the CLI image itself: the clone
+is already the working directory and `runtz` is on the `PATH`.
+
+## Store the credentials
+
+1. In the repository, open `Repository settings → Repository variables`.
+2. Add `RUNTZ_ENDPOINT` with the engine URL
+   (`https://engine.runtz.dev` for SaaS).
+3. Add `RUNTZ_TOKEN` with the token generated in the platform and mark it as
+   **Secured** so it never appears in logs.
+
+Repository variables are injected as environment variables, and the CLI reads
+`RUNTZ_ENDPOINT` and `RUNTZ_TOKEN` from the environment — no flags needed.
+
+## Scan the repository
+
+Add to `bitbucket-pipelines.yml`:
+
+```yaml
+pipelines:
+  default:
+    - parallel:
+        - step:
+            name: runtz SCA scan
+            image: runtzdev/runtz-cli:latest
+            script:
+              - runtz sca . --project "$BITBUCKET_REPO_SLUG" --source "https://bitbucket.org/$BITBUCKET_REPO_FULL_NAME"
+        - step:
+            name: runtz SAST scan
+            image: runtzdev/runtz-cli:latest
+            script:
+              - runtz sast . --project "$BITBUCKET_REPO_SLUG" --source "https://bitbucket.org/$BITBUCKET_REPO_FULL_NAME"
+```
+
+Pipelines runs the `script` with its own shell, so the image's `runtz`
+entrypoint does not get in the way.
+
+## Scan the built image
+
+Scan a published image straight from the registry — the scanner reads the
+layers directly, no Docker daemon needed:
+
+```yaml
+        - step:
+            name: runtz container scan
+            image: runtzdev/runtz-cli:latest
+            script:
+              - runtz container my-org/my-app:latest
+```
+
+The registry pull is anonymous, so this works for public images. For images
+in a private registry, scan with `--local` on a runner whose Docker daemon
+holds the freshly built image — see the socket pattern in the
+[GitHub Actions guide](/docs/cicd/github-actions#scan-the-built-image).
+
+## Notes
+
+- Pin a release tag (`runtzdev/runtz-cli:v0.4.0`) for reproducible pipelines.
+- Scans exit non-zero only on execution errors, so a scan with findings does
+  not fail the pipeline — results are reviewed in the platform.
+- To scan only on specific branches, move the steps under
+  `pipelines: branches: main:` instead of `default:`.

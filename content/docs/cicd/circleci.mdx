@@ -1,0 +1,95 @@
+---
+title: CircleCI
+description: Run runtz scans in CircleCI pipelines.
+---
+
+# CircleCI
+
+Run runtz scans in CircleCI with `docker run` steps on a `machine` executor.
+The machine executor ships with a Docker daemon, which also enables container
+scans of freshly built images.
+
+## Store the credentials
+
+1. In the project, open `Project Settings → Environment Variables`.
+2. Add `RUNTZ_ENDPOINT` with the engine URL
+   (`https://engine.runtz.dev` for SaaS).
+3. Add `RUNTZ_TOKEN` with the token generated in the platform.
+
+For sharing across projects, put both in a
+[context](https://circleci.com/docs/contexts/) instead.
+
+## Scan the repository
+
+Add to `.circleci/config.yml`:
+
+```yaml
+version: 2.1
+
+jobs:
+  runtz-scans:
+    machine:
+      image: ubuntu-2404:current
+    steps:
+      - checkout
+      - run:
+          name: SCA scan
+          command: |
+            docker run --rm \
+              -v "$PWD:/src" \
+              -e RUNTZ_ENDPOINT \
+              -e RUNTZ_TOKEN \
+              runtzdev/runtz-cli:latest sca /src \
+              --project "$CIRCLE_PROJECT_REPONAME" \
+              --source "$CIRCLE_REPOSITORY_URL"
+      - run:
+          name: SAST scan
+          command: |
+            docker run --rm \
+              -v "$PWD:/src" \
+              -e RUNTZ_ENDPOINT \
+              -e RUNTZ_TOKEN \
+              runtzdev/runtz-cli:latest sast /src \
+              --project "$CIRCLE_PROJECT_REPONAME" \
+              --source "$CIRCLE_REPOSITORY_URL"
+
+workflows:
+  security:
+    jobs:
+      - runtz-scans
+```
+
+## Scan the built image
+
+Scan the image right after `docker build`, before it is pushed. The `--local`
+flag reads the image from the executor's Docker daemon, so it also works for
+private images:
+
+```yaml
+      - run:
+          name: Build image
+          command: docker build -t my-app:$CIRCLE_SHA1 .
+      - run:
+          name: Container scan
+          command: |
+            docker run --rm \
+              -v /var/run/docker.sock:/var/run/docker.sock \
+              --group-add "$(stat -c %g /var/run/docker.sock)" \
+              -e RUNTZ_ENDPOINT \
+              -e RUNTZ_TOKEN \
+              runtzdev/runtz-cli:latest container my-app:$CIRCLE_SHA1 --local
+```
+
+The CLI container runs as a non-root user, so `--group-add` grants it the
+Docker socket group needed to read the image from the daemon. For images in a
+public registry, drop the socket mount and `--local` and pass the full image
+reference instead.
+
+## Notes
+
+- Pin a release tag (`runtzdev/runtz-cli:v0.4.0`) for reproducible pipelines.
+- Scans exit non-zero only on execution errors, so a scan with findings does
+  not fail the pipeline — results are reviewed in the platform.
+- The `docker` executor with `runtzdev/runtz-cli` as the primary image is not
+  recommended: CircleCI's `checkout` step needs `git` and `ssh`, which the
+  minimal CLI image intentionally does not ship.

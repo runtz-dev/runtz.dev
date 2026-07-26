@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "runtz-landing.fullname" . }}-test-connection"
+  labels:
+    {{- include "runtz-landing.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ["wget"]
+      args: ["http://{{ include "runtz-landing.fullname" . }}:{{ .Values.service.port }}/home"]
+  restartPolicy: Never

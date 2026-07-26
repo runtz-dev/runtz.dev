@@ -1,0 +1,96 @@
+---
+title: Jenkins
+description: Run runtz scans in Jenkins pipelines.
+---
+
+# Jenkins
+
+Run runtz scans in a declarative pipeline using the CLI image as the stage
+agent. Requires the Docker Pipeline plugin and Docker available on the agent.
+
+## Store the credentials
+
+1. Open `Manage Jenkins → Credentials`.
+2. Add a **Secret text** credential with ID `runtz-token` containing the
+   token generated in the platform.
+
+## Scan the repository
+
+Add to the `Jenkinsfile`:
+
+```groovy
+pipeline {
+  agent {
+    docker {
+      image 'runtzdev/runtz-cli:latest'
+      args '--entrypoint='
+    }
+  }
+
+  environment {
+    RUNTZ_ENDPOINT = 'https://engine.runtz.dev'
+    RUNTZ_TOKEN    = credentials('runtz-token')
+  }
+
+  stages {
+    stage('SCA scan') {
+      steps {
+        sh 'runtz sca . --project "$JOB_BASE_NAME" --source "$GIT_URL"'
+      }
+    }
+    stage('SAST scan') {
+      steps {
+        sh 'runtz sast . --project "$JOB_BASE_NAME" --source "$GIT_URL"'
+      }
+    }
+  }
+}
+```
+
+The image entrypoint is the `runtz` binary; `args '--entrypoint='` resets it
+so Jenkins can start the container with its own shell. Jenkins mounts the
+workspace automatically, so the scans read the checkout at `.`.
+
+`credentials('runtz-token')` masks the token in the build log.
+
+## Scan the built image
+
+Scan a published image straight from the registry — the scanner reads the
+layers directly, no Docker daemon needed inside the stage:
+
+```groovy
+    stage('Container scan') {
+      steps {
+        sh 'runtz container my-org/my-app:latest'
+      }
+    }
+```
+
+The registry pull is anonymous, so this works for public images. To scan a
+private image right after `docker build`, run the CLI container on the agent
+with the Docker socket mounted:
+
+```groovy
+    stage('Container scan') {
+      agent any
+      steps {
+        sh '''
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            --group-add "$(stat -c %g /var/run/docker.sock)" \
+            -e RUNTZ_ENDPOINT \
+            -e RUNTZ_TOKEN \
+            runtzdev/runtz-cli:latest container my-app:${GIT_COMMIT} --local
+        '''
+      }
+    }
+```
+
+`--group-add` grants the CLI's non-root user the Docker socket group needed
+to read the image from the daemon.
+
+## Notes
+
+- Pin a release tag (`runtzdev/runtz-cli:v0.4.0`) for reproducible builds.
+- Scans exit non-zero only on execution errors, so a scan with findings does
+  not fail the build — results are reviewed in the platform.

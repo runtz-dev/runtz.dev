@@ -1,0 +1,149 @@
+---
+title: Host scanning
+description: Scan installed packages on a host.
+---
+
+# Host scanning
+
+Host scanning inventories every package installed on the machine running the
+CLI, checks them against the OSV vulnerability database and sends the
+normalized result to the runtz backend. The scan always analyzes the current
+host — there is no path argument.
+
+## Supported operating systems
+
+| Family | Example distros | Package database | CVE matching |
+| --- | --- | --- | --- |
+| Debian based | Debian, Ubuntu, Linux Mint | dpkg (`/var/lib/dpkg/status`) | OSV (`Debian`, `Ubuntu`) |
+| RPM based | RHEL, CentOS, Rocky, AlmaLinux, openSUSE, SLES | rpm (`rpm -qa`) | OSV (`Red Hat`, `Rocky Linux`, `AlmaLinux`, `openSUSE`, `SUSE`) |
+| Alpine based | Alpine | apk (`/lib/apk/db/installed`) | OSV (`Alpine`) |
+| Arch based | Arch, Manjaro | pacman (`/var/lib/pacman/local`) | Inventory only — OSV has no Arch feed yet |
+
+The distribution family is detected from `/etc/os-release` (`ID` and
+`ID_LIKE`), so derivatives map to their parent family automatically. On
+distributions without an OSV advisory feed (for example Arch), the scan still
+sends the full package inventory to the platform, without CVE matching.
+
+Severity comes from the distro advisory when available and falls back to the
+CVSS 3.x base score published in OSV.
+
+## Run a scan
+
+```bash
+runtz host \
+  --endpoint https://engine.runtz.dev \
+  --token rtz_live_...
+```
+
+Expected output:
+
+```txt
+Found 2758 installed dpkg packages on Ubuntu 24.04 LTS.
+Querying OSV for 1466 source packages in 3 batch(es).
+Found 1184 package vulnerabilities.
+Sending host scan to Runtz...
+Host package scan completed and sent to Runtz Platform.
+Hostname: web-01
+OS: Ubuntu 24.04 LTS
+Packages: 2758
+Vulnerabilities: 1184
+```
+
+Use `--hostname` to choose the name shown in the Hosts dashboard:
+
+```bash
+runtz host \
+  --hostname web-01 \
+  --endpoint https://engine.runtz.dev \
+  --token rtz_live_...
+```
+
+## Flags
+
+| Flag | Description | Default |
+| --- | --- | --- |
+| `--hostname` | Name shown in the Hosts dashboard | local hostname |
+| `--rootfs` | Root filesystem to scan when not `/` (advanced) | `/` |
+| `--osv-url` | Optional OSV API base URL | `https://api.osv.dev` |
+| `--endpoint` | Runtz backend endpoint | required |
+| `--token` | Token generated in the platform | required |
+
+## Schedule a daily scan
+
+A host scan is most useful as a routine: run it once a day and the Hosts
+dashboard always reflects the current patch state of your fleet. Two common
+ways to automate it:
+
+### cron
+
+Store the credentials in a root-only environment file:
+
+```bash
+sudo mkdir -p /etc/runtz
+sudo tee /etc/runtz/env > /dev/null <<'EOF'
+RUNTZ_ENDPOINT=https://engine.runtz.dev
+RUNTZ_TOKEN=rtz_live_...
+EOF
+sudo chmod 600 /etc/runtz/env
+```
+
+Then add the schedule:
+
+```bash
+# /etc/cron.d/runtz-host-scan — every day at 03:00
+0 3 * * * root . /etc/runtz/env && /usr/local/bin/runtz host >> /var/log/runtz-host-scan.log 2>&1
+```
+
+### systemd timer
+
+Create the service unit:
+
+```ini
+# /etc/systemd/system/runtz-host-scan.service
+[Unit]
+Description=runtz host package scan
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/runtz/env
+ExecStart=/usr/local/bin/runtz host
+```
+
+And the timer that runs it daily:
+
+```ini
+# /etc/systemd/system/runtz-host-scan.timer
+[Unit]
+Description=Daily runtz host package scan
+
+[Timer]
+OnCalendar=*-*-* 03:00:00
+RandomizedDelaySec=30m
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+```
+
+Enable it and check the schedule:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now runtz-host-scan.timer
+systemctl list-timers runtz-host-scan.timer
+```
+
+Run once manually and inspect the logs:
+
+```bash
+sudo systemctl start runtz-host-scan.service
+journalctl -u runtz-host-scan.service -n 20
+```
+
+## Stored result
+
+The backend stores the hostname, OS details, package manager, full package
+inventory, vulnerabilities with severity summary and the scan timestamp. Each
+scan updates the state of the same hostname in the Hosts dashboard.

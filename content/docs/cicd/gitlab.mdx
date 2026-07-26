@@ -1,0 +1,86 @@
+---
+title: GitLab CI/CD
+description: Run runtz scans in GitLab CI/CD pipelines.
+---
+
+# GitLab CI/CD
+
+In GitLab, the cleanest setup runs the job inside the CLI image itself: the
+checkout is already the working directory and `runtz` is on the `PATH`.
+
+## Store the credentials
+
+1. In the project, open `Settings → CI/CD → Variables`.
+2. Add `RUNTZ_ENDPOINT` with the engine URL
+   (`https://engine.runtz.dev` for SaaS).
+3. Add `RUNTZ_TOKEN` with the token generated in the platform. Mark it as
+   **Masked** so it never appears in job logs.
+
+GitLab injects CI/CD variables as environment variables, and the CLI reads
+`RUNTZ_ENDPOINT` and `RUNTZ_TOKEN` from the environment — no flags needed.
+
+## Scan the repository
+
+Add to `.gitlab-ci.yml`:
+
+```yaml
+stages:
+  - security
+
+.runtz:
+  stage: security
+  image:
+    name: runtzdev/runtz-cli:latest
+    entrypoint: [""]
+
+runtz-sca:
+  extends: .runtz
+  script:
+    - runtz sca . --project "$CI_PROJECT_NAME" --source "$CI_PROJECT_URL"
+
+runtz-sast:
+  extends: .runtz
+  script:
+    - runtz sast . --project "$CI_PROJECT_NAME" --source "$CI_PROJECT_URL"
+```
+
+The image entrypoint is the `runtz` binary, so `entrypoint: [""]` resets it —
+GitLab needs a shell to run the `script` block.
+
+## Scan the built image
+
+Scan a published image straight from the registry — the scanner reads the
+layers directly, no Docker daemon needed:
+
+```yaml
+runtz-container:
+  extends: .runtz
+  script:
+    - runtz container my-org/my-app:latest
+```
+
+The registry pull is anonymous, so this works for public images. For images
+in a private registry (including the GitLab Container Registry), scan with
+`--local` on a runner whose Docker daemon holds the freshly built image — see
+the socket pattern in the
+[GitHub Actions guide](/docs/cicd/github-actions#scan-the-built-image).
+
+## Scan Kubernetes manifests
+
+Posture-check the manifests kept in the repository — no cluster access
+required:
+
+```yaml
+runtz-k8s-manifests:
+  extends: .runtz
+  script:
+    - runtz k8s ./deploy --target "$CI_PROJECT_NAME" --source "$CI_PROJECT_URL"
+```
+
+## Notes
+
+- Pin a release tag (`runtzdev/runtz-cli:v0.4.0`) for reproducible pipelines.
+- Scans exit non-zero only on execution errors, so a scan with findings does
+  not fail the pipeline — results are reviewed in the platform.
+- To scan only on the default branch, add `rules` with
+  `if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH` to the jobs.

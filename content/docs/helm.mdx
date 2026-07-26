@@ -1,0 +1,74 @@
+---
+title: Helm
+description: Deploy the runtz platform on Kubernetes with Helm.
+---
+
+# Helm
+
+Deploy runtz on a Kubernetes cluster with the official chart.
+
+## Requirements
+
+- A Kubernetes cluster.
+- Helm 3.
+
+## Install
+
+Add the runtz chart repository and update it:
+
+```bash
+helm repo add runtz https://helm.runtz.dev
+helm repo update
+```
+
+Create a `values.secrets.yaml` with the two required secrets — the engine
+refuses to start with empty or placeholder values:
+
+```yaml
+backend:
+  secrets:
+    jwtSecret: ""    # openssl rand -base64 32
+    ingestToken: ""  # openssl rand -base64 24
+```
+
+Install the platform:
+
+```bash
+helm upgrade --install runtz runtz/runtz \
+  --namespace runtz \
+  --create-namespace \
+  -f values.secrets.yaml
+```
+
+Keep `values.secrets.yaml` out of git. Alternatively, point
+`backend.secrets.existingSecret` at a pre-created Kubernetes Secret.
+
+Without an ingress (`ingress.enabled=false`, the default), reach the platform
+with a port-forward:
+
+```bash
+kubectl port-forward svc/runtz-frontend 3000:3000 -n runtz
+```
+
+## First access
+
+On the first access, runtz asks for:
+
+- `Admin username`
+- `Password`
+- `Workspace Name`
+
+After this setup, the admin user can create workspaces and manage users in
+`Settings`.
+
+## Configuration
+
+The chart deploys the engine, the frontend and an optional in-cluster MongoDB
+(`mongodb.enabled=true` by default; set `backend.env.MONGODB_URI` to use an
+external database). Image tags default to the chart `appVersion`.
+
+The chart exposes the same environment variables as the Docker Compose
+install. See [Environment variables](/docs/docker-compose#environment-variables)
+for the full list, and
+[Pro and Enterprise activation](/docs/docker-compose#self-hosted-pro-and-enterprise-activation)
+for licensing.

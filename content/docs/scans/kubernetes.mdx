@@ -1,0 +1,109 @@
+---
+title: Kubernetes scanning
+description: Kubernetes cluster scanning in runtz.
+---
+
+# Kubernetes scanning
+
+Kubernetes scanning reads the connected cluster through `kubectl`, checks
+workloads, network exposure and RBAC against a set of posture rules and sends
+the findings to the runtz backend. It can also scan YAML/JSON manifests from a
+repository or rendered chart instead of a live cluster.
+
+## Checks
+
+| ID | Check | Category | Severity |
+| --- | --- | --- | --- |
+| K8S001 | `hostNetwork` enabled | pod-security | high |
+| K8S002 | `hostPID` enabled | pod-security | high |
+| K8S003 | `hostIPC` enabled | pod-security | high |
+| K8S004 | `hostPath` volume mounted | pod-security | high/medium |
+| K8S005 | Privileged container | container-security | critical |
+| K8S006 | Privilege escalation not disabled | container-security | medium |
+| K8S007 | Container may run as root | container-security | medium |
+| K8S008 | Writable root filesystem | container-security | low |
+| K8S014 | Dangerous Linux capability added | container-security | high |
+| K8S009 | Mutable image tag (`latest` or none) | supply-chain | medium |
+| K8S012 | `cluster-admin` binding | rbac | critical |
+| K8S013 | Wildcard RBAC rule | rbac | high |
+| K8S018 | Default service account in use | rbac | low |
+| K8S019 | Service account token automounted | rbac | medium |
+| K8S010 | Public service exposure (`LoadBalancer`/`NodePort`) | network | medium |
+| K8S011 | Ingress without TLS | network | medium |
+| K8S015 | Missing resource requests or limits | resilience | medium |
+| K8S016 | Missing readiness probe | resilience | low |
+| K8S017 | Missing liveness probe | resilience | low |
+
+Every finding carries a description and a concrete remediation. In the
+platform, the scan detail screen lets you filter findings by these categories.
+
+## Scan a live cluster
+
+By default the scanner uses the **current kubectl context** — whatever
+`kubectl config current-context` points to:
+
+```bash
+runtz k8s \
+  --endpoint https://engine.runtz.dev \
+  --token rtz_live_...
+```
+
+The machine running the CLI must have `kubectl` installed and authenticated to
+the target cluster. All namespaces are scanned by default, plus cluster-scoped
+RBAC resources.
+
+You can also specify a kubeconfig using the `--kubeconfig` flag:
+
+```bash
+runtz k8s \
+  --kubeconfig ~/.kube/config2 \
+  --endpoint https://engine.runtz.dev \
+  --token rtz_live_...
+```
+
+Scope the scan to a specific context and namespace:
+
+```bash
+runtz k8s \
+  --context production \
+  --namespace payments \
+  --endpoint https://engine.runtz.dev \
+  --token rtz_live_...
+```
+
+## Scan manifests instead
+
+Pass a manifest file or directory as the positional argument to scan rendered
+charts or repository manifests without touching a cluster:
+
+```txt
+runtz k8s (MANIFEST_PATH) [flags]
+```
+
+```bash
+runtz k8s ./deploy \
+  --target production-manifests \
+  --endpoint https://engine.runtz.dev \
+  --token rtz_live_...
+```
+
+## Flags
+
+| Flag | Description | Default |
+| --- | --- | --- |
+| `--kubeconfig` | Kubeconfig path | active kubeconfig (`KUBECONFIG` or `~/.kube/config`) |
+| `--context` | Kubernetes context override | current context |
+| `--namespace` | Namespace to scan instead of all namespaces | all namespaces |
+| `--all-namespaces` | Scan all namespaces when `--namespace` is not set | `true` |
+| `--kubectl` | kubectl binary path | `kubectl` |
+| `--target` | Target name shown in the platform | current context or directory name |
+| `--source` | Scan source label, repository or URL | scan target |
+| `--endpoint` | Runtz backend endpoint | required |
+| `--token` | Token generated in the platform | required |
+
+## Stored result
+
+The backend stores the target, source, Kubernetes resources scanned, optional
+manifest files scanned, findings with category and severity summary, and the
+scan timestamp. The token generated in the platform identifies the workspace
+automatically.

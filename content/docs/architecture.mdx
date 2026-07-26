@@ -1,0 +1,57 @@
+---
+title: Architecture
+description: How the runtz services communicate.
+---
+
+# Architecture
+
+runtz is split into three main parts.
+
+## Frontend
+
+The frontend is a Next.js application using shadcn/ui. It handles:
+
+- First-run setup.
+- Login.
+- Workspace selection.
+- Scan dashboards.
+- User, workspace and profile settings.
+
+The browser calls the backend API through `NEXT_PUBLIC_API_URL`.
+
+## Backend engine
+
+The backend engine is the `runtz/` Go service. It handles:
+
+- Setup and auth.
+- Workspace persistence.
+- User management.
+- Scan result ingestion.
+- Scan query APIs for the frontend.
+
+MongoDB stores users, workspaces and scans.
+
+## CLI
+
+The CLI runs scans locally and sends normalized results to:
+
+```txt
+POST /api/v1/ingest/sca
+POST /api/v1/ingest/sast
+POST /api/v1/ingest/host
+POST /api/v1/ingest/container
+POST /api/v1/ingest/k8s
+```
+
+The request uses `Authorization: Bearer <token>`. Tokens generated in the platform resolve the workspace automatically.
+
+## Data flow
+
+```txt
+dependency manifests (package.json, requirements.txt, go.mod, ...)
+  -> runtz sca
+  -> GitHub Global Security Advisories
+  -> runtz backend ingest API
+  -> MongoDB
+  -> frontend dashboard
+```

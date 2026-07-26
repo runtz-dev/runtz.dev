@@ -1,0 +1,22 @@
+# runtz landing development environment.
+#
+# No ingress of its own: runtz-dev.runtz.dev (including /home and /legal) is
+# routed by the runtz chart's own ingress (see runtz repo,
+# helm/environments/dev/values.yaml), which points those paths at the
+# runtz-landing Service this chart creates. There is no dev variant of
+# get.runtz.dev, so this environment needs no ingress at all.
+#
+#   helm upgrade --install runtz-landing ./helm/runtz-landing \
+#     -f helm/environments/dev/values.yaml \
+#     --set image.tag="dev<sha>"
+
+image:
+  repository: registry-docker-registry.registry.svc.cluster.local:5000/runtz-landing
+  tag: ""
+  pullPolicy: Always
+
+env:
+  NEXT_PUBLIC_RUNTZ_API_URL: "https://engine-dev.runtz.dev"
+
+ingress:
+  enabled: false

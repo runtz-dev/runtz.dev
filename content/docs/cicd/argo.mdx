@@ -1,0 +1,224 @@
+---
+title: Argo
+description: Run runtz scans with Argo Workflows and Argo CD.
+---
+
+# Argo
+
+runtz fits Argo naturally: the CLI image entrypoint is the `runtz` binary, so
+a workflow step is just the image plus `args` — and the container scan pulls
+image layers straight from the registry, so no Docker daemon or privileged
+sidecar is needed inside the cluster.
+
+## Store the credentials
+
+Create a Secret in the namespace where the workflows run (for example
+`argo`):
+
+```bash
+kubectl create secret generic runtz-credentials -n argo \
+  --from-literal=RUNTZ_ENDPOINT=https://engine.runtz.dev \
+  --from-literal=RUNTZ_TOKEN=rtz_live_...
+```
+
+Every example below injects it with `envFrom`, and the CLI reads
+`RUNTZ_ENDPOINT` and `RUNTZ_TOKEN` from the environment.
+
+## Scan the repository (Argo Workflows)
+
+A single parametrized template runs both scans; the checkout comes in as an
+Argo [git artifact](https://argo-workflows.readthedocs.io/en/latest/walk-through/artifacts/):
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: runtz-scans-
+spec:
+  entrypoint: security-scans
+  templates:
+    - name: security-scans
+      dag:
+        tasks:
+          - name: sca
+            template: runtz-scan
+            arguments:
+              parameters: [{ name: command, value: sca }]
+          - name: sast
+            template: runtz-scan
+            arguments:
+              parameters: [{ name: command, value: sast }]
+
+    - name: runtz-scan
+      inputs:
+        parameters:
+          - name: command
+        artifacts:
+          - name: source
+            path: /src
+            git:
+              repo: https://github.com/my-org/my-app.git
+              revision: main
+      container:
+        image: runtzdev/runtz-cli:latest
+        args:
+          - "{{inputs.parameters.command}}"
+          - /src
+          - --project
+          - my-app
+          - --source
+          - https://github.com/my-org/my-app
+        envFrom:
+          - secretRef:
+              name: runtz-credentials
+```
+
+For private repositories, add `usernameSecret`/`passwordSecret` (or
+`sshPrivateKeySecret`) to the git artifact.
+
+## Scan the built image
+
+Add a task after the image is pushed — the scanner reads the layers from the
+registry directly:
+
+```yaml
+    - name: runtz-container
+      container:
+        image: runtzdev/runtz-cli:latest
+        args: ["container", "my-org/my-app:latest"]
+        envFrom:
+          - secretRef:
+              name: runtz-credentials
+```
+
+The registry pull is anonymous, so this works for public images.
+
+## Scheduled scans
+
+A `CronWorkflow` keeps the platform dashboards fresh even without new
+commits — new CVEs are published against existing versions every day:
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: runtz-nightly
+spec:
+  schedule: "0 3 * * *"
+  workflowSpec:
+    entrypoint: container-scan
+    templates:
+      - name: container-scan
+        container:
+          image: runtzdev/runtz-cli:latest
+          args: ["container", "my-org/my-app:latest"]
+          envFrom:
+            - secretRef:
+                name: runtz-credentials
+```
+
+## Post-deploy cluster scan (Argo CD)
+
+An Argo CD `PostSync` hook runs `runtz k8s` against the live cluster after
+every successful sync, so each deploy is followed by a posture scan.
+
+The live-cluster scanner shells out to `kubectl`, which the minimal CLI image
+does not ship — an init container copies the binary in. Add these manifests to
+the Argo CD application:
+
+```yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: runtz-scan
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: runtz-scan
+rules:
+  - apiGroups: [""]
+    resources: [pods, services]
+    verbs: [get, list]
+  - apiGroups: [apps]
+    resources: [deployments, daemonsets, statefulsets]
+    verbs: [get, list]
+  - apiGroups: [batch]
+    resources: [jobs, cronjobs]
+    verbs: [get, list]
+  - apiGroups: [networking.k8s.io]
+    resources: [ingresses]
+    verbs: [get, list]
+  - apiGroups: [rbac.authorization.k8s.io]
+    resources: [roles, rolebindings, clusterroles, clusterrolebindings]
+    verbs: [get, list]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: runtz-scan
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: runtz-scan
+subjects:
+  - kind: ServiceAccount
+    name: runtz-scan
+    namespace: my-app
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: runtz-k8s-scan
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  template:
+    spec:
+      serviceAccountName: runtz-scan
+      restartPolicy: Never
+      initContainers:
+        - name: kubectl
+          image: bitnami/kubectl:1.31
+          command: ["cp", "/opt/bitnami/kubectl/bin/kubectl", "/tools/kubectl"]
+          volumeMounts:
+            - name: tools
+              mountPath: /tools
+      containers:
+        - name: runtz
+          image: runtzdev/runtz-cli:latest
+          args:
+            - k8s
+            - --kubectl
+            - /tools/kubectl
+            - --target
+            - production
+          envFrom:
+            - secretRef:
+                name: runtz-credentials
+          volumeMounts:
+            - name: tools
+              mountPath: /tools
+      volumes:
+        - name: tools
+          emptyDir: {}
+```
+
+Inside the cluster, `kubectl` authenticates automatically with the pod's
+ServiceAccount — the ClusterRole grants read access to exactly the resources
+the scanner inspects. `hook-delete-policy: HookSucceeded` removes the Job
+after a successful scan.
+
+To scan only the application's namespace instead of the whole cluster, add
+`--namespace my-app` (and a `Role`/`RoleBinding` is then enough, except for
+the `clusterroles`/`clusterrolebindings` checks).
+
+## Notes
+
+- Pin a release tag (`runtzdev/runtz-cli:v0.4.0`) for reproducible workflows.
+- Scans exit non-zero only on execution errors, so a scan with findings does
+  not fail the workflow or the Argo CD sync — results are reviewed in the
+  platform.
+- Kubernetes manifests in the repository can also be posture-checked without
+  any cluster access: `runtz k8s /src/deploy` in a workflow step.

@@ -1,0 +1,66 @@
+---
+title: Introduction
+description: What runtz is and what it scans.
+---
+
+# runtz
+
+runtz is an open source DevSecOps scans platform. You run scans with a single
+CLI, and the results land in dashboards your team can act on.
+
+The platform is composed of three services:
+
+- `frontend`: web platform built with Next.js and shadcn/ui.
+- `runtz`: Go backend engine used by the frontend and CLI.
+- `cli`: Go command line scanner that runs scans and sends results to the backend.
+
+## Scan types
+
+| Scan | Command | What it covers |
+| --- | --- | --- |
+| [SCA](/docs/scans/sca) | `runtz sca` | Vulnerable dependencies across 10 languages (npm, pip, Go, Maven, RubyGems, Composer, crates.io, NuGet) |
+| [SAST](/docs/scans/sast) | `runtz sast` | Static source checks: committed secrets, weak crypto, disabled TLS, dynamic execution |
+| [Host scanning](/docs/scans/host) | `runtz host` | Package CVEs on Debian, RPM, Alpine and Arch family hosts |
+| [Container scanning](/docs/scans/container) | `runtz container` | Package CVEs inside container images |
+| [Kubernetes scanning](/docs/scans/kubernetes) | `runtz k8s` | Cluster and manifest posture findings |
+
+DAST is coming soon.
+
+## Quick start
+
+Install the CLI:
+
+```bash
+curl -fsSL https://get.runtz.dev | bash
+```
+
+Scan your repository:
+
+```bash
+runtz sca ./ \
+  --endpoint https://engine.runtz.dev \
+  --token rtz_live_...
+```
+
+The token is generated in the platform and identifies your workspace
+automatically. See [Install runtz CLI](/docs/install-cli) for details, or
+[Docker Compose](/docs/docker-compose) to self-host the platform.
+
+## Current capabilities
+
+- First-run admin setup, workspaces and user administration.
+- SCA scans for JavaScript/TypeScript, Python, Go, Java/Kotlin, Ruby, PHP, Rust and C#/.NET manifests.
+- SCA dashboard with CVEs/GHSAs found in dependencies.
+- SAST finding ingestion and dashboard.
+- Host and container package scan ingestion and dashboards.
+- Kubernetes cluster finding ingestion and dashboard.
+- Self-hosted installation with Docker Compose or Helm.
+
+## Repository layout
+
+```txt
+runtz/
+  frontend/  # Next.js web platform
+  cli/       # Go scanner CLI
+  runtz/     # Go backend engine
+```

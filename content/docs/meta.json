@@ -1,0 +1,29 @@
+{
+  "title": "runtz",
+  "pages": [
+    "---Getting started---",
+    "index",
+    "install-cli",
+    "---Scans---",
+    "scans/sca",
+    "scans/sast",
+    "scans/host",
+    "scans/container",
+    "scans/kubernetes",
+    "---AI---",
+    "mcp",
+    "skills",
+    "---Self-hosted---",
+    "docker-compose",
+    "helm",
+    "architecture",
+    "---CI/CD---",
+    "cicd/github-actions",
+    "cicd/gitlab",
+    "cicd/jenkins",
+    "cicd/azure-devops",
+    "cicd/bitbucket",
+    "cicd/circleci",
+    "cicd/argo"
+  ]
+}

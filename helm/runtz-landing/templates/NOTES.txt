@@ -1,0 +1,11 @@
+runtz landing foi instalado.
+
+Landing:
+  https://runtz.dev
+  https://runtz.dev/home
+
+Servico interno:
+  {{ include "runtz-landing.fullname" . }}:{{ .Values.service.port }}
+
+Imagem:
+  {{ .Values.image.repository }}:{{ .Values.image.tag }}
