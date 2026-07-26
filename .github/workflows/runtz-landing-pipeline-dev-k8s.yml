@@ -6,7 +6,7 @@ on:
       - dev
 
 env:
-  REGISTRY: registry-docker-registry.registry.svc.cluster.local:5000
+  REGISTRY: registry.local:5000
 
 jobs:
   build-dev:
@@ -20,7 +20,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
         with:
           buildkitd-config-inline: |
-            [registry."registry-docker-registry.registry.svc.cluster.local:5000"]
+            [registry."registry.local:5000"]
               http = true
               insecure = true
       - name: Build and push image
