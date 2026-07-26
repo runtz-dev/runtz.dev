@@ -12,7 +12,7 @@
 #     --set image.tag="<version>"
 
 image:
-  repository: registry-docker-registry.registry.svc.cluster.local:5000/runtz-landing
+  repository: registry.local:5000/runtz-landing
   tag: ""
   pullPolicy: Always
 
