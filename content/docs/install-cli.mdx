@@ -9,7 +9,7 @@ The runtz CLI is a single static Go binary. The install script detects your
 OS and architecture, downloads the binary and installs it to `/usr/local/bin`:
 
 ```bash
-curl -fsSL https://get.runtz.dev | bash
+curl -fsSL https://runtz.dev/install.sh | bash
 ```
 
 Verify the installation:
@@ -30,10 +30,10 @@ The script accepts environment overrides:
 
 ```bash
 # Install a specific release
-RUNTZ_VERSION=v1.0.0-rc1 curl -fsSL https://get.runtz.dev | bash
+RUNTZ_VERSION=v1.0.0-rc1 curl -fsSL https://runtz.dev/install.sh | bash
 
 # Install to a custom directory (no sudo needed if writable)
-RUNTZ_INSTALL_DIR=$HOME/.local/bin curl -fsSL https://get.runtz.dev | bash
+RUNTZ_INSTALL_DIR=$HOME/.local/bin curl -fsSL https://runtz.dev/install.sh | bash
 ```
 
 ### Manual install

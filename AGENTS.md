@@ -23,19 +23,20 @@ npm run types:check
 npm run build
 ```
 
-## Hard architectural rule: this app owns no ingress on runtz.dev
+## Hard architectural rule: this app owns no ingress at all
 
-`runtz.dev` / `runtz-dev.runtz.dev` (including `/home` and `/legal`) are
-routed by the **platform chart's** ingress (the `runtz` repo,
+`runtz.dev` / `runtz-dev.runtz.dev` (including `/home`, `/legal` and
+`/install.sh` — the CLI installer redirect, see `proxy.ts`) are routed by the
+**platform chart's** ingress (the `runtz` repo,
 `helm/environments/{dev,prod}/values.yaml`), which points those paths at the
-`runtz-landing` Service this chart creates. This chart's own ingress
-(`helm/runtz-landing`) only ever handles `get.runtz.dev` (prod only, the CLI
-installer redirect — see `proxy.ts`).
+`runtz-landing` Service this chart creates. This chart (`helm/runtz-landing`)
+does not define an Ingress resource at all.
 
-**Never enable `ingress.hosts` for `runtz.dev` or `runtz-dev.runtz.dev` in
-this chart** — two Ingress objects claiming the same hostname will fight each
-other. If you change the site's path structure (adding a route outside
-`/home`), update the platform chart's ingress path list, not this chart.
+**Never add an `ingress.yaml` template or `ingress.hosts` values back to this
+chart** — a second Ingress object claiming `runtz.dev` would fight the
+platform chart's. If you change the site's path structure (adding a route
+outside `/home`), update the platform chart's ingress path list, not this
+chart.
 
 The app is built with `NEXT_PUBLIC_BASE_PATH=/home` — every route lives under
 that basePath. Don't remove it without also updating the platform ingress's

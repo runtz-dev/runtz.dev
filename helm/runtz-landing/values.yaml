@@ -65,16 +65,3 @@ startupProbe:
 nodeSelector: {}
 tolerations: []
 affinity: {}
-
-# Disabled by default. runtz.dev / runtz-dev.runtz.dev (including /home and
-# /legal) are routed by the platform (runtz) chart's own ingress, which owns
-# every path on those hosts — enabling an ingress here too would make two
-# Ingress objects fight over the same hostname. The one exception is
-# get.runtz.dev (the install-script redirect host), which only exists in prod
-# — see helm/environments/prod/values.yaml.
-ingress:
-  enabled: false
-  className: "cloudflare-tunnel"
-  annotations: {}
-  hosts: []
-  tls: []

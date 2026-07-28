@@ -21,10 +21,11 @@ Each skill follows the native convention of its assistant:
 
 All three skills follow the same playbook:
 
-1. **Prefer the [runtz MCP server](/docs/mcp)** when it is connected — the
-   assistant calls `runtz_sca`, `runtz_sast`, `runtz_host`, `runtz_container`,
-   `runtz_k8s`, and the `runtz_docs_*` tools.
-2. **Fall back to the runtz CLI** when no MCP server is available.
+1. **Run scans with the runtz CLI.** Every scan needs the CLI installed and
+   `--endpoint`/`--token` (or `RUNTZ_ENDPOINT`/`RUNTZ_TOKEN`).
+2. **Use the [runtz MCP server](/docs/mcp)** (`mcp.runtz.dev`, nothing to
+   install) for documentation lookups via `runtz_docs_*` — it's docs-only, it
+   does not run scans.
 3. **Keep the token in config**, never in prompts or printed commands.
 4. **Summarize findings** with severities and concrete remediation.
 
@@ -53,4 +54,5 @@ git clone https://github.com/runtz-dev/runtz-skills
 - **Codex:** copy `codex/AGENTS.md` into your project root.
 - **Gemini:** copy `gemini/GEMINI.md` into your project root or `~/.gemini/`.
 
-Pair any skill with the [runtz MCP server](/docs/mcp) for the best experience.
+Pair any skill with the [runtz MCP server](/docs/mcp) (docs-only, hosted at
+`mcp.runtz.dev`) so the assistant can look up docs without guessing.
