@@ -12,6 +12,10 @@ ARG NEXT_PUBLIC_BASE_PATH=/home
 ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH
 ARG NEXT_PUBLIC_RUNTZ_API_URL=""
 ENV NEXT_PUBLIC_RUNTZ_API_URL=$NEXT_PUBLIC_RUNTZ_API_URL
+# Platform host this build links to ("Login", "Playground", checkout). Must be
+# the host that serves this site, per environment.
+ARG NEXT_PUBLIC_PLATFORM_BASE_URL="https://runtz.dev"
+ENV NEXT_PUBLIC_PLATFORM_BASE_URL=$NEXT_PUBLIC_PLATFORM_BASE_URL
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN mkdir -p public && npm run build

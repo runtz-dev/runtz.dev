@@ -16,3 +16,4 @@ image:
 
 env:
   NEXT_PUBLIC_RUNTZ_API_URL: "https://engine.runtz.dev"
+  NEXT_PUBLIC_PLATFORM_BASE_URL: "https://runtz.dev"

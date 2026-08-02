@@ -26,21 +26,23 @@ npm run build
 ## Hard architectural rule: this app owns no ingress at all
 
 `runtz.dev` / `runtz-dev.runtz.dev` (including `/home`, `/legal` and
-`/install.sh` — the CLI installer redirect, see `proxy.ts`) are routed by the
-**platform chart's** ingress (the `runtz` repo,
-`helm/environments/{dev,prod}/values.yaml`), which points those paths at the
-`runtz-landing` Service this chart creates. This chart (`helm/runtz-landing`)
-does not define an Ingress resource at all.
+`/install.sh` — the CLI installer redirect, see `proxy.ts`) are routed by a
+single Ingress per environment that is **not** in any repository: it lives in
+the private `secrets-helm` folder (`ingress-dev.yaml` / `ingress-prod.yaml`)
+and is applied with kubectl, because the hostnames and the `cloudflare-tunnel`
+ingress class are specific to our cluster. It points `/home`, `/legal` and
+`/install.sh` at the `runtz-landing` Service this chart creates, and everything
+else at the platform frontend. This chart (`helm/runtz-landing`) does not
+define an Ingress resource at all.
 
 **Never add an `ingress.yaml` template or `ingress.hosts` values back to this
-chart** — a second Ingress object claiming `runtz.dev` would fight the
-platform chart's. If you change the site's path structure (adding a route
-outside `/home`), update the platform chart's ingress path list, not this
-chart.
+chart** — a second Ingress object claiming `runtz.dev` would fight that one. If
+you change the site's path structure (adding a route outside `/home`), update
+the path list in `secrets-helm/ingress-*.yaml`, not this chart.
 
 The app is built with `NEXT_PUBLIC_BASE_PATH=/home` — every route lives under
-that basePath. Don't remove it without also updating the platform ingress's
-`/home*` path rules.
+that basePath. Don't remove it without also updating those `/home*` path
+rules.
 
 ## Hard rules
 
