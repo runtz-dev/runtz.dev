@@ -7,6 +7,7 @@ import {
   PrimaryLink,
   SecondaryLink,
 } from '../../_components/marketing';
+import { platformUrl } from '@/lib/shared';
 
 type CheckoutStatus = {
   plan: 'free' | 'pro' | 'enterprise';
@@ -134,7 +135,7 @@ export default function PricingSuccessPage() {
               ) : null}
 
               <div className="flex flex-col gap-3 sm:flex-row">
-                <PrimaryLink href="https://runtz.dev/login">
+                <PrimaryLink href={platformUrl}>
                   Open runtz app
                   <ExternalLink className="ml-2 size-4" />
                 </PrimaryLink>

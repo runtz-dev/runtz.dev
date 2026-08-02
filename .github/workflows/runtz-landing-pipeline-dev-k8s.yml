@@ -29,6 +29,7 @@ jobs:
             --push \
             --tag ${REGISTRY}/runtz-landing:dev$GITHUB_SHA \
             --build-arg NEXT_PUBLIC_RUNTZ_API_URL="https://engine-dev.runtz.dev" \
+            --build-arg NEXT_PUBLIC_PLATFORM_BASE_URL="https://runtz-dev.runtz.dev" \
             .
 
   deploy-dev:

@@ -37,6 +37,9 @@ env:
   # (the build-arg in the pipeline and this value) per environment in
   # helm/environments/{dev,prod}/values.yaml.
   NEXT_PUBLIC_RUNTZ_API_URL: ""
+  # Same deal for the platform host behind the Login / Playground / checkout
+  # links: baked at build time, mirrored here so the pod env matches.
+  NEXT_PUBLIC_PLATFORM_BASE_URL: ""
 
 extraEnv: []
 podAnnotations: {}
