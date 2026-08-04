@@ -198,7 +198,6 @@ export const platformPages: PlatformPage[] = [
       'runtz is built from straightforward parts: Go scanner CLI, Go backend, Next.js frontend, and MongoDB persistence.',
     status: 'Open source',
     command: `curl -fsSL https://runtz.dev/home/docker-compose.yml -o docker-compose.yml
-printf 'JWT_SECRET=%s\\nRUNTZ_INGEST_TOKEN=%s\\n' "$(openssl rand -base64 32)" "$(openssl rand -base64 24)" > .env
 docker compose up -d`,
     icon: HeartHandshake,
     highlights: ['local Docker Compose', 'documented API routes', 'clear extension points'],
@@ -236,7 +235,6 @@ export const installOptions: InstallOption[] = [
     id: 'docker',
     label: 'Docker',
     command: `curl -fsSL https://runtz.dev/home/docker-compose.yml -o docker-compose.yml
-printf 'JWT_SECRET=%s\\nRUNTZ_INGEST_TOKEN=%s\\n' "$(openssl rand -base64 32)" "$(openssl rand -base64 24)" > .env
 docker compose up -d`,
   },
   {
@@ -246,9 +244,7 @@ docker compose up -d`,
 helm repo update
 helm upgrade --install runtz runtz/runtz \\
   --namespace runtz \\
-  --create-namespace \\
-  --set backend.secrets.jwtSecret="$(openssl rand -base64 32)" \\
-  --set backend.secrets.ingestToken="$(openssl rand -base64 24)"`,
+  --create-namespace`,
   },
 ];
 

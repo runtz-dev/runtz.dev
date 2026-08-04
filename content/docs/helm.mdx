@@ -21,26 +21,17 @@ helm repo add runtz https://helm.runtz.dev
 helm repo update
 ```
 
-Create a `values.secrets.yaml` with the two required secrets — the engine
-refuses to start with empty or placeholder values:
-
-```yaml
-backend:
-  secrets:
-    jwtSecret: ""    # openssl rand -base64 32
-    ingestToken: ""  # openssl rand -base64 24
-```
-
-Install the platform:
+Install the platform — no secrets are required, since the engine issues and
+stores its own sessions, API keys and login codes:
 
 ```bash
 helm upgrade --install runtz runtz/runtz \
   --namespace runtz \
-  --create-namespace \
-  -f values.secrets.yaml
+  --create-namespace
 ```
 
-Keep `values.secrets.yaml` out of git. Alternatively, point
+Optional integrations (OAuth, email login, Stripe) do take secrets. Put them in
+a `values.secrets.yaml`, keep it out of git, and pass it with `-f` — or point
 `backend.secrets.existingSecret` at a pre-created Kubernetes Secret.
 
 Without an ingress (`ingress.enabled=false`, the default), reach the platform
