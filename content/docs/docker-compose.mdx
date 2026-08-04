@@ -21,17 +21,8 @@ Download the compose file:
 curl -fsSL https://runtz.dev/home/docker-compose.yml -o docker-compose.yml
 ```
 
-Create a `.env` file with the two required secrets — the engine refuses to
-start with empty or placeholder values:
-
-```bash
-cat > .env <<EOF
-JWT_SECRET=$(openssl rand -base64 32)
-RUNTZ_INGEST_TOKEN=$(openssl rand -base64 24)
-EOF
-```
-
-Start the platform in detached mode:
+Start the platform in detached mode — there are no secrets to set, since the
+engine issues and stores its own sessions, API keys and login codes:
 
 ```bash
 docker compose up -d
@@ -75,8 +66,6 @@ After this setup, the admin user can create workspaces and manage users in
 PORT=8080
 MONGODB_URI=mongodb://mongodb:27017
 MONGODB_DATABASE=runtz
-JWT_SECRET=          # required — openssl rand -base64 32
-RUNTZ_INGEST_TOKEN=  # required — openssl rand -base64 24
 RUNTZ_DEPLOYMENT_MODE=self-hosted
 RUNTZ_PUBLIC_URL=http://localhost:3000
 CORS_ALLOWED_ORIGINS=http://localhost:3000
@@ -126,6 +115,6 @@ repository and use the dev override:
 ```bash
 git clone https://github.com/runtz-dev/runtz
 cd runtz
-cp .env.example .env   # fill JWT_SECRET and RUNTZ_INGEST_TOKEN
+cp .env.example .env   # optional: ports, OAuth, email login
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
 ```
