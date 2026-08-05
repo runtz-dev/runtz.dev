@@ -1,11 +1,11 @@
-runtz landing foi instalado.
+runtz landing has been installed.
 
-Landing:
+Landing pages:
   https://runtz.dev
   https://runtz.dev/home
 
-Servico interno:
+Internal service:
   {{ include "runtz-landing.fullname" . }}:{{ .Values.service.port }}
 
-Imagem:
+Image:
   {{ .Values.image.repository }}:{{ .Values.image.tag }}

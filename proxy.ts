@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isMarkdownPreferred, rewritePath } from 'fumadocs-core/negotiation';
-import { docsContentRoute, docsRoute } from '@/lib/shared';
+import { basePath, docsContentRoute, docsRoute } from '@/lib/shared';
 
 const { rewrite: rewriteDocs } = rewritePath(
   `${docsRoute}{/*path}`,
@@ -18,6 +18,18 @@ const { rewrite: rewriteSuffix } = rewritePath(
 const installScriptUrl =
   'https://raw.githubusercontent.com/runtz-dev/runtz-cli/main/install.sh';
 
+// Files that llmstxt.org (and every crawler implementing it) expects at the
+// domain root, not under the /home basePath. The ingress routes these two exact
+// paths to this app; here they are rewritten onto the real routes.
+const rootLlmsFiles = new Set(['/llms.txt', '/llms-full.txt']);
+
+// `request.nextUrl.pathname` has the basePath stripped, and NextResponse.rewrite
+// does not add it back — so every internal rewrite target must be prefixed by
+// hand or it lands on the platform frontend's 404.
+function rewriteToApp(request: NextRequest, pathname: string) {
+  return NextResponse.rewrite(new URL(`${basePath}${pathname}`, request.url));
+}
+
 export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -29,19 +41,23 @@ export default function proxy(request: NextRequest) {
   // the ingress routes /legal to this app and the request is rewritten to the
   // basePath-prefixed route.
   if (pathname === '/legal' || pathname.startsWith('/legal/')) {
-    return NextResponse.rewrite(new URL(`/home${pathname}`, request.url));
+    return rewriteToApp(request, pathname);
   }
 
-  const result = rewriteSuffix(request.nextUrl.pathname);
+  if (rootLlmsFiles.has(pathname)) {
+    return rewriteToApp(request, pathname);
+  }
+
+  const result = rewriteSuffix(pathname);
   if (result) {
-    return NextResponse.rewrite(new URL(result, request.nextUrl));
+    return rewriteToApp(request, result);
   }
 
   if (isMarkdownPreferred(request)) {
-    const result = rewriteDocs(request.nextUrl.pathname);
+    const result = rewriteDocs(pathname);
 
     if (result) {
-      return NextResponse.rewrite(new URL(result, request.nextUrl));
+      return rewriteToApp(request, result);
     }
   }
 

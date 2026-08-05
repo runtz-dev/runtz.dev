@@ -19,7 +19,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { createElement } from 'react';
-import { docsContentRoute, docsImageRoute, docsRoute } from './shared';
+import { docsContentRoute, docsImageRoute, docsRoute, sitePath, siteUrl } from './shared';
 
 const sidebarIconByUrl: Record<string, LucideIcon> = {
   '/docs': BookOpen,
@@ -69,12 +69,14 @@ export const source = loader({
   plugins: [lucideIconsPlugin()],
 });
 
+// `segments` feed generateStaticParams (route params, no basePath); `url` is
+// handed to the browser as a plain string, so it must carry the basePath.
 export function getPageImage(page: (typeof source)['$inferPage']) {
   const segments = [...page.slugs, 'image.png'];
 
   return {
     segments,
-    url: `${docsImageRoute}/${segments.join('/')}`,
+    url: sitePath(`${docsImageRoute}/${segments.join('/')}`),
   };
 }
 
@@ -83,14 +85,14 @@ export function getPageMarkdownUrl(page: (typeof source)['$inferPage']) {
 
   return {
     segments,
-    url: `${docsContentRoute}/${segments.join('/')}`,
+    url: sitePath(`${docsContentRoute}/${segments.join('/')}`),
   };
 }
 
 export async function getLLMText(page: (typeof source)['$inferPage']) {
   const processed = await page.data.getText('processed');
 
-  return `# ${page.data.title} (${page.url})
+  return `# ${page.data.title} (${siteUrl(page.url)})
 
 ${processed}`;
 }
