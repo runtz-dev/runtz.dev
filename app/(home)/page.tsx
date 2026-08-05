@@ -231,85 +231,97 @@ export default function HomePage() {
 
       <footer className="mx-auto w-full max-w-[1400px] px-6 pb-12 pt-4 md:px-12">
         <div className="rounded-[28px] border border-[#071222]/10 bg-[#f7fbff]/70 px-5 py-6 text-[#071222] rz-soft-shadow dark:border-[#213047] dark:bg-[#0d1420] dark:text-[#eaf4ff] md:px-7 md:py-7">
-          <div className="flex flex-col items-start gap-5">
-            <div className="flex w-full flex-col gap-3 sm:w-72">
-              <a
-                href={platformUrl}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="group block"
-              >
-                <div className="flex items-center gap-2">
-                  <LogIn className="h-4 w-4 text-[#071222] dark:text-white" />
-                  <p className={footerLinkTitle}>Login</p>
-                </div>
-                <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
-                  Sign in to your cloud workspace.
-                </p>
-              </a>
-              <Link href={docsRoute} className="group block">
-                <div className="flex items-center gap-2">
-                  <BookOpen className="h-4 w-4 text-[#071222] dark:text-white" />
-                  <p className={footerLinkTitle}>Read Docs</p>
-                </div>
-                <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
-                  Guides to deploy, scan, and triage.
-                </p>
-              </Link>
-              <a
-                href={playgroundUrl}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="group block"
-              >
-                <div className="flex items-center gap-2">
-                  <Play className="h-4 w-4 text-[#071222] dark:text-white" />
-                  <p className={footerLinkTitle}>Playground</p>
-                </div>
-                <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
-                  Try runtz in a live sandbox.
-                </p>
-              </a>
-              <Link href="/pricing" className="group block">
-                <div className="flex items-center gap-2">
-                  <CreditCard className="h-4 w-4 text-[#071222] dark:text-white" />
-                  <p className={footerLinkTitle}>Compare Plans</p>
-                </div>
-                <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
-                  Free, self-hosted, and team tiers.
-                </p>
-              </Link>
-            </div>
+          <div className="flex flex-col gap-7">
+            <div className="grid w-full gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
+              <div className="flex w-full flex-col gap-3 sm:w-72">
+                <a
+                  href={platformUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="group block"
+                >
+                  <div className="flex items-center gap-2">
+                    <LogIn className="h-4 w-4 text-[#071222] dark:text-white" />
+                    <p className={footerLinkTitle}>Login</p>
+                  </div>
+                  <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
+                    Sign in to your cloud workspace.
+                  </p>
+                </a>
+                <Link href={docsRoute} className="group block">
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-[#071222] dark:text-white" />
+                    <p className={footerLinkTitle}>Read Docs</p>
+                  </div>
+                  <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
+                    Guides to deploy, scan, and triage.
+                  </p>
+                </Link>
+                <a
+                  href={playgroundUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="group block"
+                >
+                  <div className="flex items-center gap-2">
+                    <Play className="h-4 w-4 text-[#071222] dark:text-white" />
+                    <p className={footerLinkTitle}>Playground</p>
+                  </div>
+                  <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
+                    Try runtz in a live sandbox.
+                  </p>
+                </a>
+                <Link href="/pricing" className="group block">
+                  <div className="flex items-center gap-2">
+                    <CreditCard className="h-4 w-4 text-[#071222] dark:text-white" />
+                    <p className={footerLinkTitle}>Compare Plans</p>
+                  </div>
+                  <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
+                    Free, self-hosted, and team tiers.
+                  </p>
+                </Link>
+              </div>
 
-            <div className="flex flex-col items-start gap-4">
-              <a
-                href="https://status.runtz.dev"
-                target="_blank"
-                rel="noreferrer noopener"
-                className="inline-flex items-center gap-2 text-xs font-medium text-[#53657d] transition hover:text-[#0f7a52] dark:text-[#7f96b3] dark:hover:text-[#6ee7b7]"
-              >
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#34d399] opacity-70" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-[#34d399]" />
-                </span>
-                All systems operational
-              </a>
+              <div className="flex flex-col items-start gap-4 md:items-end md:text-right">
+                <address className="not-italic text-sm leading-5 text-[#53657d] dark:text-[#9fb8d7]">
+                  <span className="block">Avenida Portugal, 1148</span>
+                  <span className="block">
+                    Goiânia, GO{' '}
+                    <span className="font-semibold text-[#30445f] dark:text-[#c9dbf2]">
+                      74150-030
+                    </span>
+                  </span>
+                </address>
 
-              <div className="flex items-center gap-2">
-                {socialLinks.map((social) => (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    aria-label={social.label}
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-[#071222]/10 text-[#53657d] transition hover:-translate-y-0.5 hover:border-[#2f7eff]/40 hover:text-[#2f7eff] dark:border-[#6db5ff]/15 dark:text-[#9fb8d7] dark:hover:border-[#6db5ff]/50 dark:hover:text-[#6db5ff]"
-                  >
-                    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
-                      <path d={social.path} />
-                    </svg>
-                  </a>
-                ))}
+                <div className="flex items-center gap-2">
+                  {socialLinks.map((social) => (
+                    <a
+                      key={social.label}
+                      href={social.href}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      aria-label={social.label}
+                      className="flex h-9 w-9 items-center justify-center rounded-full border border-[#071222]/10 text-[#53657d] transition hover:-translate-y-0.5 hover:border-[#2f7eff]/40 hover:bg-[#2f7eff]/5 hover:text-[#2f7eff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2f7eff] dark:border-[#6db5ff]/15 dark:text-[#9fb8d7] dark:hover:border-[#6db5ff]/50 dark:hover:bg-[#6db5ff]/5 dark:hover:text-[#6db5ff] dark:focus-visible:outline-[#6db5ff]"
+                    >
+                      <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
+                        <path d={social.path} />
+                      </svg>
+                    </a>
+                  ))}
+                </div>
+
+                <a
+                  href="https://status.runtz.dev"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="inline-flex items-center gap-2 rounded-full border border-[#071222]/10 bg-[#071222]/[0.025] px-3 py-2 text-xs font-medium text-[#53657d] transition hover:border-[#34d399]/35 hover:text-[#0f7a52] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2f7eff] dark:border-[#6db5ff]/10 dark:bg-white/[0.025] dark:text-[#9fb8d7] dark:hover:border-[#34d399]/35 dark:hover:text-[#6ee7b7] dark:focus-visible:outline-[#6db5ff]"
+                >
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#34d399] opacity-70" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-[#34d399]" />
+                  </span>
+                  All systems operational
+                </a>
               </div>
             </div>
 
