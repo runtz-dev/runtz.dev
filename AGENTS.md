@@ -25,14 +25,15 @@ npm run build
 
 ## Hard architectural rule: this app owns no ingress at all
 
-`runtz.dev` / `runtz-dev.runtz.dev` (including `/home`, `/legal` and
-`/install.sh` — the CLI installer redirect, see `proxy.ts`) are routed by a
+`runtz.dev` / `runtz-dev.runtz.dev` (including `/home`, `/legal`,
+`/llms.txt`, `/llms-full.txt` and `/install.sh` — the CLI installer redirect,
+see `proxy.ts`) are routed by a
 single Ingress per environment that is **not** in any repository: it lives in
 the private `secrets-helm` folder (`ingress-dev.yaml` / `ingress-prod.yaml`)
 and is applied with kubectl, because the hostnames and the `cloudflare-tunnel`
-ingress class are specific to our cluster. It points `/home`, `/legal` and
-`/install.sh` at the `runtz-landing` Service this chart creates, and everything
-else at the platform frontend. This chart (`helm/runtz-landing`) does not
+ingress class are specific to our cluster. It points `/home`, `/legal`, `/llms.txt`,
+`/llms-full.txt` and `/install.sh` at the `runtz-landing` Service this chart
+creates, and everything else at the platform frontend. This chart (`helm/runtz-landing`) does not
 define an Ingress resource at all.
 
 **Never add an `ingress.yaml` template or `ingress.hosts` values back to this
@@ -43,6 +44,14 @@ the path list in `secrets-helm/ingress-*.yaml`, not this chart.
 The app is built with `NEXT_PUBLIC_BASE_PATH=/home` — every route lives under
 that basePath. Don't remove it without also updating those `/home*` path
 rules.
+
+Next only adds the basePath to URLs it controls (`<Link>`, `<Image>`, its own
+asset requests). Any path we hand out as a plain string — the "View as
+Markdown" link, the copy-markdown fetch, `openGraph.images`, the links inside
+`llms.txt` — must go through `sitePath()` / `siteUrl()` in `lib/shared.ts`, or
+it resolves at the domain root, which the platform frontend owns, and 404s.
+Same for `NextResponse.rewrite` targets in `proxy.ts`: `nextUrl.pathname` has
+the basePath stripped and the rewrite does not put it back.
 
 ## Hard rules
 
