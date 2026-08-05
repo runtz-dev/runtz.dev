@@ -9,8 +9,10 @@ import {
   FileText,
   HeartHandshake,
   LogIn,
+  Milestone,
   Play,
   ScanLine,
+  Scale,
   Server,
   ShipWheel,
 } from 'lucide-react';
@@ -232,65 +234,11 @@ export default function HomePage() {
       <footer className="mx-auto w-full max-w-[1400px] px-6 pb-12 pt-4 md:px-12">
         <div className="rounded-[28px] border border-[#071222]/10 bg-[#f7fbff]/70 px-5 py-6 text-[#071222] rz-soft-shadow dark:border-[#213047] dark:bg-[#0d1420] dark:text-[#eaf4ff] md:px-7 md:py-7">
           <div className="flex flex-col gap-7">
-            <div className="grid w-full gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
-              <div className="flex w-full flex-col gap-3 sm:w-72">
-                <a
-                  href={platformUrl}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="group block"
-                >
-                  <div className="flex items-center gap-2">
-                    <LogIn className="h-4 w-4 text-[#071222] dark:text-white" />
-                    <p className={footerLinkTitle}>Login</p>
-                  </div>
-                  <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
-                    Sign in to your cloud workspace.
-                  </p>
-                </a>
-                <Link href={docsRoute} className="group block">
-                  <div className="flex items-center gap-2">
-                    <BookOpen className="h-4 w-4 text-[#071222] dark:text-white" />
-                    <p className={footerLinkTitle}>Read Docs</p>
-                  </div>
-                  <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
-                    Guides to deploy, scan, and triage.
-                  </p>
-                </Link>
-                <a
-                  href={playgroundUrl}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="group block"
-                >
-                  <div className="flex items-center gap-2">
-                    <Play className="h-4 w-4 text-[#071222] dark:text-white" />
-                    <p className={footerLinkTitle}>Playground</p>
-                  </div>
-                  <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
-                    Try runtz in a live sandbox.
-                  </p>
-                </a>
-                <Link href="/pricing" className="group block">
-                  <div className="flex items-center gap-2">
-                    <CreditCard className="h-4 w-4 text-[#071222] dark:text-white" />
-                    <p className={footerLinkTitle}>Compare Plans</p>
-                  </div>
-                  <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
-                    Free, self-hosted, and team tiers.
-                  </p>
-                </Link>
-              </div>
-
-              <div className="flex flex-col items-start gap-4 md:items-end md:text-right">
+            <div className="grid w-full gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
+              <div className="flex flex-col items-start gap-4">
                 <address className="not-italic text-sm leading-5 text-[#53657d] dark:text-[#9fb8d7]">
                   <span className="block">Avenida Portugal, 1148</span>
-                  <span className="block">
-                    Goiânia, GO{' '}
-                    <span className="font-semibold text-[#30445f] dark:text-[#c9dbf2]">
-                      74150-030
-                    </span>
-                  </span>
+                  <span className="block">Goiânia, GO 74150-030</span>
                 </address>
 
                 <div className="flex items-center gap-2">
@@ -323,21 +271,82 @@ export default function HomePage() {
                   All systems operational
                 </a>
               </div>
+
+              <div className="grid gap-7 sm:grid-cols-2 sm:gap-10 lg:grid-cols-[18rem_13rem]">
+                <nav aria-label="Runtz links" className="flex w-full flex-col gap-3">
+                  <a
+                    href={platformUrl}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="group block"
+                  >
+                    <div className="flex items-center gap-2">
+                      <LogIn className="h-4 w-4 text-[#071222] dark:text-white" />
+                      <p className={footerLinkTitle}>Login</p>
+                    </div>
+                    <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
+                      Sign in to your cloud workspace.
+                    </p>
+                  </a>
+                  <Link href={docsRoute} className="group block">
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="h-4 w-4 text-[#071222] dark:text-white" />
+                      <p className={footerLinkTitle}>Read Docs</p>
+                    </div>
+                    <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
+                      Guides to deploy, scan, and triage.
+                    </p>
+                  </Link>
+                  <a
+                    href={playgroundUrl}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="group block"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Play className="h-4 w-4 text-[#071222] dark:text-white" />
+                      <p className={footerLinkTitle}>Playground</p>
+                    </div>
+                    <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
+                      Try runtz in a live sandbox.
+                    </p>
+                  </a>
+                  <Link href="/pricing" className="group block">
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="h-4 w-4 text-[#071222] dark:text-white" />
+                      <p className={footerLinkTitle}>Compare Plans</p>
+                    </div>
+                    <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
+                      Free, self-hosted, and team tiers.
+                    </p>
+                  </Link>
+                </nav>
+
+                <nav aria-label="Company links" className="flex w-full flex-col gap-3">
+                  <Link href="/legal" className="group block">
+                    <div className="flex items-center gap-2">
+                      <Scale className="h-4 w-4 text-[#071222] dark:text-white" />
+                      <p className={footerLinkTitle}>Terms and Legal</p>
+                    </div>
+                    <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
+                      Policies and legal documents.
+                    </p>
+                  </Link>
+                  <Link href="/roadmap" className="group block">
+                    <div className="flex items-center gap-2">
+                      <Milestone className="h-4 w-4 text-[#071222] dark:text-white" />
+                      <p className={footerLinkTitle}>Roadmap</p>
+                    </div>
+                    <p className="mt-0.5 text-xs leading-5 text-[#53657d] dark:text-[#7f96b3]">
+                      See what we are building next.
+                    </p>
+                  </Link>
+                </nav>
+              </div>
             </div>
 
-            <div className="flex w-full flex-col gap-2 border-t border-[#071222]/10 pt-4 text-xs text-[#53657d] sm:flex-row sm:items-center sm:justify-between dark:border-[#213047] dark:text-[#7f96b3]">
+            <div className="w-full border-t border-[#071222]/10 pt-4 text-xs text-[#53657d] dark:border-[#213047] dark:text-[#7f96b3]">
               <p>© 2026 Runtz · RAW DEVOPS LTDA</p>
-              <div className="flex items-center gap-4">
-                <Link href="/legal/terms" className="transition hover:text-[#2f7eff] dark:hover:text-[#6db5ff]">
-                  Terms of Service
-                </Link>
-                <Link href="/legal/privacypolicy" className="transition hover:text-[#2f7eff] dark:hover:text-[#6db5ff]">
-                  Privacy Policy
-                </Link>
-                <Link href="/legal" className="transition hover:text-[#2f7eff] dark:hover:text-[#6db5ff]">
-                  Legal
-                </Link>
-              </div>
             </div>
           </div>
         </div>
