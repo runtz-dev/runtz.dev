@@ -234,7 +234,7 @@ export default function HomePage() {
       <footer className="mx-auto w-full max-w-[1400px] px-6 pb-12 pt-4 md:px-12">
         <div className="rounded-[28px] border border-[#071222]/10 bg-[#f7fbff]/70 px-5 py-6 text-[#071222] rz-soft-shadow dark:border-[#213047] dark:bg-[#0d1420] dark:text-[#eaf4ff] md:px-7 md:py-7">
           <div className="flex flex-col gap-7">
-            <div className="grid w-full gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
+            <div className="grid w-full gap-8 lg:grid-cols-[13rem_auto] lg:items-start lg:justify-start lg:gap-10">
               <div className="flex flex-col items-start gap-4">
                 <address className="not-italic text-sm leading-5 text-[#53657d] dark:text-[#9fb8d7]">
                   <span className="block">Avenida Portugal, 1148</span>
