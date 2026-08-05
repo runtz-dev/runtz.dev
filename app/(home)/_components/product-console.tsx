@@ -230,7 +230,7 @@ function OverviewScreen() {
   const stats = [
     ['33', 'Assets'],
     ['150', 'Scans'],
-    ['158', 'Vulnerabilidades'],
+    ['158', 'Vulnerabilities'],
     ['39', 'Critical/High'],
   ];
 
@@ -239,7 +239,7 @@ function OverviewScreen() {
       <ScreenTitle
         eyebrow="Platform / Overview"
         title="Overview"
-        description="Scans e vulnerabilidades em todos os assets."
+        description="Scans and vulnerabilities across all assets."
       />
       <div className="mt-3 grid grid-cols-2 gap-2 lg:grid-cols-4">
         {stats.map(([value, label]) => (
@@ -258,8 +258,8 @@ function OverviewScreen() {
           <MiniAreaChart overview />
         </div>
         <div className="rz-console-card hidden rounded-lg border p-2.5 lg:block">
-          <p className="rz-console-title text-[10px] font-semibold">Severidades</p>
-          <p className="rz-console-muted mt-1 text-[8px]">Últimos scans</p>
+          <p className="rz-console-title text-[10px] font-semibold">Severities</p>
+          <p className="rz-console-muted mt-1 text-[8px]">Latest scans</p>
           <div className="mt-6">
             <SeverityStrip values={['14', '25', '97', '22']} />
           </div>
@@ -303,7 +303,7 @@ function ScanTypeScreen() {
       <div className="rz-console-card mt-3 overflow-hidden rounded-lg border">
         <div className="rz-console-divider rz-console-subtle grid grid-cols-[1fr_auto] gap-3 border-b px-3 py-2 text-[8px] font-semibold uppercase tracking-wide">
           <span>App</span>
-          <span>Vulnerabilidades</span>
+          <span>Vulnerabilities</span>
         </div>
         {apps.map(([name, total, critical, high, medium, low]) => (
           <div
@@ -342,16 +342,16 @@ function DetailScreen() {
         <ScreenTitle
           eyebrow="SCA / Apps"
           title="mobile-bff"
-          description="Último scan em 29/05/2026, 05:18"
+          description="Latest scan on May 29, 2026, 5:18 AM"
         />
         <span className="rz-console-badge rounded-full border px-2 py-1 font-mono text-[8px]">
-          scan recebido
+          scan received
         </span>
       </div>
       <div className="mt-3 grid grid-cols-3 gap-2">
         {[
           ['5', 'dependencies'],
-          ['10', 'vulnerabilidades'],
+          ['10', 'vulnerabilities'],
           ['4', 'scans'],
         ].map(([value, label]) => (
           <div key={label} className="rz-console-card rounded-lg border p-2">
@@ -362,11 +362,11 @@ function DetailScreen() {
       </div>
       <div className="rz-console-card mt-2 overflow-hidden rounded-lg border">
         <div className="rz-console-divider flex items-center justify-between border-b px-3 py-2">
-          <p className="rz-console-title text-[10px] font-semibold">CVEs encontradas</p>
+          <p className="rz-console-title text-[10px] font-semibold">CVEs found</p>
           <ChartNoAxesCombined className="rz-console-accent h-3.5 w-3.5" />
         </div>
         <div className="rz-console-divider rz-console-subtle grid grid-cols-[1fr_auto] gap-3 border-b px-3 py-1.5 text-[8px] uppercase tracking-wide">
-          <span>Pacote / ID</span>
+          <span>Package / ID</span>
           <span>Fix</span>
         </div>
         {findings.map(([pkg, id, severity, version, fix]) => (
