@@ -21,8 +21,9 @@ Each skill follows the native convention of its assistant:
 
 All three skills follow the same playbook:
 
-1. **Run scans with the runtz CLI.** Every scan needs the CLI installed and
-   `--endpoint`/`--token` (or `RUNTZ_ENDPOINT`/`RUNTZ_TOKEN`).
+1. **Run scans with the runtz CLI.** Every scan needs the CLI installed and a
+   token — from a one-time `runtz login`, or `--token`/`RUNTZ_TOKEN` (and
+   `--endpoint`/`RUNTZ_ENDPOINT` when self-hosted).
 2. **Use the [runtz MCP server](/docs/mcp)** (`mcp.runtz.dev`, nothing to
    install) for documentation lookups via `runtz_docs_*` — it's docs-only, it
    does not run scans.

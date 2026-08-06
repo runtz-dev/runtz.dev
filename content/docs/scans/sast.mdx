@@ -44,18 +44,17 @@ runtz sast (REPO_PATH | FILE_PATH) [flags]
 
 Scan a whole repository:
 
+After a one-time [`runtz login`](/docs/install-cli#authentication):
+
 ```bash
-runtz sast ./ \
-  --endpoint https://engine.runtz.dev \
-  --token rtz_live_...
+runtz sast ./
 ```
 
-Scan a specific directory or file:
+Scan a specific directory or file, or pass the token explicitly (CI/CD):
 
 ```bash
 runtz sast ./services/payments \
   --project payments-api \
-  --endpoint https://engine.runtz.dev \
   --token rtz_live_...
 ```
 
@@ -65,8 +64,8 @@ runtz sast ./services/payments \
 | --- | --- | --- |
 | `--project` | Project name shown in the platform | scanned directory name |
 | `--source` | Source path, repository or URL | scan path |
-| `--endpoint` | Runtz backend endpoint | required |
-| `--token` | Token generated in the platform | required |
+| `--endpoint` | Runtz backend endpoint (self-hosted only) | `https://engine.runtz.dev` |
+| `--token` | Token generated in the platform | stored `runtz login` token |
 
 ## Stored result
 

@@ -69,6 +69,9 @@ This is the recommended way to run runtz in pipelines — see the
 | `runtz host` | Packages installed on a Linux host/rootfs |
 | `runtz container IMAGE` | Packages inside a container image |
 | `runtz k8s` | Kubernetes cluster or manifest posture |
+| `runtz login` | Store a platform token so scans no longer need `--token` |
+| `runtz logout` | Remove the stored token |
+| `runtz whoami` | Show the workspace and source of the current token |
 | `runtz update` | Update the CLI to the latest release |
 | `runtz version` | Print the CLI version |
 
@@ -85,31 +88,37 @@ runtz update --check  # only report if a newer version exists (exit 3 if so)
 
 ## Authentication
 
-Every scan command requires `--endpoint` and `--token`. For the runtz SaaS
-engine, use:
-
-```txt
-https://engine.runtz.dev
-```
-
-The token is generated in the platform (`rtz_live_...`) and resolves your
-workspace automatically. Both values can also come from the environment:
+Every scan authenticates with a workspace token generated in the platform
+(`rtz_live_...`); the token resolves your workspace automatically. For
+interactive use, log in once — `runtz login` verifies the token and stores it
+in `~/.config/runtz/config.json` (permissions `0600`), and scan commands stop
+needing `--token`:
 
 ```bash
-export RUNTZ_ENDPOINT=https://engine.runtz.dev
-export RUNTZ_TOKEN=rtz_live_...
-
-runtz sca ./
+runtz login          # paste the token at a hidden prompt
+runtz whoami         # workspace + where the current token comes from
+runtz logout         # remove the stored token
 ```
+
+In CI/CD, skip `login` and pass the token from a secret on each run. The token
+is resolved in this order — an explicit flag or environment variable always
+beats the stored login:
+
+1. `--token` flag
+2. `RUNTZ_TOKEN` environment variable
+3. `runtz login` stored token
+
+`--endpoint` defaults to the runtz SaaS engine (`https://engine.runtz.dev`).
+Self-hosted deployments pass their own endpoint — `runtz login --endpoint`
+stores it alongside the token — or set `RUNTZ_ENDPOINT`.
 
 ## First scan
 
-From the root of any repository:
+Log in, then scan from the root of any repository:
 
 ```bash
-runtz sca ./ \
-  --endpoint https://engine.runtz.dev \
-  --token rtz_live_...
+runtz login
+runtz sca ./
 ```
 
 Expected output:
@@ -134,7 +143,7 @@ off.
 ```bash
 # Fail the build on a single critical, or on 5+ highs:
 runtz sca ./ \
-  --endpoint https://engine.runtz.dev --token rtz_live_... \
+  --token "$RUNTZ_TOKEN" \
   --critical-threshold 1 \
   --high-threshold 5
 ```
