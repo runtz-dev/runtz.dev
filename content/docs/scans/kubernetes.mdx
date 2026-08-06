@@ -42,10 +42,10 @@ platform, the scan detail screen lets you filter findings by these categories.
 By default the scanner uses the **current kubectl context** — whatever
 `kubectl config current-context` points to:
 
+After a one-time [`runtz login`](/docs/install-cli#authentication):
+
 ```bash
-runtz k8s \
-  --endpoint https://engine.runtz.dev \
-  --token rtz_live_...
+runtz k8s
 ```
 
 The machine running the CLI must have `kubectl` installed and authenticated to
@@ -55,20 +55,13 @@ RBAC resources.
 You can also specify a kubeconfig using the `--kubeconfig` flag:
 
 ```bash
-runtz k8s \
-  --kubeconfig ~/.kube/config2 \
-  --endpoint https://engine.runtz.dev \
-  --token rtz_live_...
+runtz k8s --kubeconfig ~/.kube/config2
 ```
 
 Scope the scan to a specific context and namespace:
 
 ```bash
-runtz k8s \
-  --context production \
-  --namespace payments \
-  --endpoint https://engine.runtz.dev \
-  --token rtz_live_...
+runtz k8s --context production --namespace payments
 ```
 
 ## Scan manifests instead
@@ -83,8 +76,7 @@ runtz k8s (MANIFEST_PATH) [flags]
 ```bash
 runtz k8s ./deploy \
   --target production-manifests \
-  --endpoint https://engine.runtz.dev \
-  --token rtz_live_...
+  --token rtz_live_...   # explicit token, e.g. in CI/CD
 ```
 
 ## Flags
@@ -98,8 +90,8 @@ runtz k8s ./deploy \
 | `--kubectl` | kubectl binary path | `kubectl` |
 | `--target` | Target name shown in the platform | current context or directory name |
 | `--source` | Scan source label, repository or URL | scan target |
-| `--endpoint` | Runtz backend endpoint | required |
-| `--token` | Token generated in the platform | required |
+| `--endpoint` | Runtz backend endpoint (self-hosted only) | `https://engine.runtz.dev` |
+| `--token` | Token generated in the platform | stored `runtz login` token |
 
 ## Stored result
 

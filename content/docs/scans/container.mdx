@@ -39,16 +39,16 @@ runtz container IMAGE [flags]
 
 Scan an image from a registry (default — no Docker needed):
 
-```bash
-runtz container ubuntu:22.04 \
-  --endpoint https://engine.runtz.dev \
-  --token rtz_live_...
-```
+After a one-time [`runtz login`](/docs/install-cli#authentication):
 
 ```bash
-runtz container alpine:3.19 \
-  --endpoint https://engine.runtz.dev \
-  --token rtz_live_...
+runtz container ubuntu:22.04
+```
+
+Or with an explicit token (CI/CD):
+
+```bash
+runtz container alpine:3.19 --token rtz_live_...
 ```
 
 Expected output:
@@ -68,10 +68,7 @@ Vulnerabilities: 164
 For an image that exists only in the local Docker daemon, add `--local`:
 
 ```bash
-runtz container my-app:latest \
-  --local \
-  --endpoint https://engine.runtz.dev \
-  --token rtz_live_...
+runtz container my-app:latest --local
 ```
 
 The image name appears in the Container scanning dashboard. Click the image to
@@ -83,8 +80,8 @@ see the CVEs from the latest scan.
 | --- | --- | --- |
 | `--local` | Read the image from the local Docker daemon instead of a registry | `false` |
 | `--osv-url` | Optional OSV API base URL | `https://api.osv.dev` |
-| `--endpoint` | Runtz backend endpoint | required |
-| `--token` | Token generated in the platform | required |
+| `--endpoint` | Runtz backend endpoint (self-hosted only) | `https://engine.runtz.dev` |
+| `--token` | Token generated in the platform | stored `runtz login` token |
 
 ## How it works
 
