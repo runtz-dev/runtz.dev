@@ -185,6 +185,13 @@ html > body[data-scroll-locked] {
   color: var(--rz-roadmap-pending-badge-fg);
 }
 
+@media (min-width: 768px) {
+  .rz-roadmap-item {
+    flex: none;
+    width: calc(50% - 1.5rem);
+  }
+}
+
 .rz-noise-panel {
   background:
     radial-gradient(circle at 24% 18%, rgba(109, 181, 255, 0.92) 0 1px, transparent 1.4px),

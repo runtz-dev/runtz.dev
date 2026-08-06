@@ -39,13 +39,13 @@ const milestones = [
   },
   {
     date: 'Jan 2027',
-    title: 'Launch Runtz',
+    title: 'Launch runtz',
     emphasizedTitle: '1.0.0 Version',
     status: 'pending',
   },
   {
     date: 'Feb 2027',
-    title: 'Launch Dast on platform',
+    title: 'Launch DAST on platform',
     status: 'pending',
   },
 ] satisfies ReadonlyArray<{
@@ -60,11 +60,9 @@ function StatusBadge({ status }: { status: MilestoneStatus }) {
     return (
       <Badge
         variant="outline"
-        className="rz-roadmap-badge rz-roadmap-badge-completed size-5 p-0"
-        aria-label="Completed"
-        title="Completed"
+        className="rz-roadmap-badge rz-roadmap-badge-completed"
       >
-        <CheckIcon data-icon="inline-start" />
+        Completed
       </Badge>
     );
   }
@@ -124,7 +122,7 @@ export function RoadmapTimeline() {
             step={index + 1}
             render={<li />}
             className={cn(
-              'min-h-18 pb-8 last:min-h-0 last:pb-0 md:w-[calc(50%-1.5rem)] md:pb-9',
+              'rz-roadmap-item min-h-18 pb-8 last:min-h-0 last:pb-0 md:pb-9',
               'md:odd:ms-auto md:even:me-auto md:even:text-right md:even:group-data-[orientation=vertical]/timeline:ms-0 md:even:group-data-[orientation=vertical]/timeline:me-8',
               'md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-indicator]:right-[-1.5rem] md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-indicator]:left-auto',
               'md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-indicator]:translate-x-1/2 md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-separator]:right-[-1.5rem]',
@@ -140,7 +138,8 @@ export function RoadmapTimeline() {
               )}
               <div
                 className={cn(
-                  'flex items-start gap-2.5 md:even:justify-end',
+                  'flex items-start gap-2.5',
+                  index % 2 === 1 && 'md:justify-end',
                   milestone.status === 'running' && 'max-md:flex-col max-md:gap-1.5',
                 )}
               >
