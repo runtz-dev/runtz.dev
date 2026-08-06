@@ -34,16 +34,18 @@ Install the CLI:
 curl -fsSL https://runtz.dev/install.sh | bash
 ```
 
-Scan your repository:
+Log in once with the token generated in the platform, then scan your
+repository:
 
 ```bash
-runtz sca ./ \
-  --endpoint https://engine.runtz.dev \
-  --token rtz_live_...
+runtz login
+runtz sca ./
 ```
 
-The token is generated in the platform and identifies your workspace
-automatically. See [Install runtz CLI](/docs/install-cli) for details, or
+The token identifies your workspace automatically; `runtz login` stores it so
+scan commands no longer need `--token` (in CI/CD, pass `--token` or
+`RUNTZ_TOKEN` from a secret instead). See
+[Install runtz CLI](/docs/install-cli) for details, or
 [Docker Compose](/docs/docker-compose) to self-host the platform.
 
 ## Current capabilities

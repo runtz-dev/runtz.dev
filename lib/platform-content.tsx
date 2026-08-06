@@ -36,7 +36,7 @@ export const platformPages: PlatformPage[] = [
       'Run SCA from the runtz CLI, match npm dependencies against GitHub Global Security Advisories, and review the result by workspace.',
     status: 'Available now',
     command:
-      'runtz sca --file package.json --endpoint https://engine.runtz.dev --token rtz_live_...',
+      'runtz sca ./',
     icon: PackageCheck,
     highlights: ['npm package.json input', 'GHSA matching', 'workspace dashboard'],
     details: [
@@ -63,7 +63,7 @@ export const platformPages: PlatformPage[] = [
       'Run local static rules for source code, normalize findings, and review them beside dependency, host, container and Kubernetes results.',
     status: 'Available now',
     command:
-      'runtz sast --path ./src --endpoint https://engine.runtz.dev --token rtz_live_...',
+      'runtz sast ./src',
     icon: Code2,
     highlights: ['source rules', 'secret checks', 'same workspace model'],
     details: [
@@ -90,7 +90,7 @@ export const platformPages: PlatformPage[] = [
       'DAST is planned as a future scan family for HTTP applications, focused on repeatable evidence and manageable triage.',
     status: 'Coming soon',
     command:
-      'runtz dast --target https://app.example.com --endpoint https://engine.runtz.dev --token rtz_live_...',
+      'runtz dast --target https://app.example.com',
     icon: Radar,
     highlights: ['target-based scans', 'runtime evidence', 'triage-ready reports'],
     details: [
@@ -117,7 +117,7 @@ export const platformPages: PlatformPage[] = [
       'Pull from a registry or read a local Docker image, inspect Debian and Ubuntu package metadata, and ingest CVE matches.',
     status: 'Available now',
     command:
-      'runtz container --image ubuntu:22.04 --endpoint https://engine.runtz.dev --token rtz_live_...',
+      'runtz container ubuntu:22.04',
     icon: Container,
     highlights: ['registry or local Docker', 'dpkg inventory', 'OSV package CVEs'],
     details: [
@@ -144,7 +144,7 @@ export const platformPages: PlatformPage[] = [
       'Use kubectl against the current cluster context, check workload posture and RBAC risk, and send Kubernetes findings to the platform.',
     status: 'Available now',
     command:
-      'runtz k8s --endpoint https://engine.runtz.dev --token rtz_live_...',
+      'runtz k8s',
     icon: ShipWheel,
     highlights: ['kubectl context', 'workload posture', 'RBAC checks'],
     details: [
@@ -171,7 +171,7 @@ export const platformPages: PlatformPage[] = [
       'Inventory packages from Ubuntu or Debian style systems, query CVE data, and keep host findings alongside application scans.',
     status: 'Available now',
     command:
-      'runtz host --endpoint https://engine.runtz.dev --token rtz_live_...',
+      'runtz host',
     icon: Server,
     highlights: ['Ubuntu and Debian support', 'rootfs input', 'OSV CVE matching'],
     details: [

@@ -29,10 +29,16 @@ CVSS 3.x base score published in OSV.
 
 ## Run a scan
 
+After a one-time [`runtz login`](/docs/install-cli#authentication):
+
 ```bash
-runtz host \
-  --endpoint https://engine.runtz.dev \
-  --token rtz_live_...
+runtz host
+```
+
+Or with an explicit token (CI/CD, cron):
+
+```bash
+runtz host --token rtz_live_...
 ```
 
 Expected output:
@@ -52,10 +58,7 @@ Vulnerabilities: 1184
 Use `--hostname` to choose the name shown in the Hosts dashboard:
 
 ```bash
-runtz host \
-  --hostname web-01 \
-  --endpoint https://engine.runtz.dev \
-  --token rtz_live_...
+runtz host --hostname web-01
 ```
 
 ## Flags
@@ -65,8 +68,8 @@ runtz host \
 | `--hostname` | Name shown in the Hosts dashboard | local hostname |
 | `--rootfs` | Root filesystem to scan when not `/` (advanced) | `/` |
 | `--osv-url` | Optional OSV API base URL | `https://api.osv.dev` |
-| `--endpoint` | Runtz backend endpoint | required |
-| `--token` | Token generated in the platform | required |
+| `--endpoint` | Runtz backend endpoint (self-hosted only) | `https://engine.runtz.dev` |
+| `--token` | Token generated in the platform | stored `runtz login` token |
 
 ## Schedule a daily scan
 
