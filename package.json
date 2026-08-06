@@ -10,7 +10,9 @@
     "postinstall": "fumadocs-mdx"
   },
   "dependencies": {
+    "@base-ui/react": "^1.7.0",
     "@paper-design/shaders-react": "^0.0.76",
+    "class-variance-authority": "^0.7.1",
     "fumadocs-core": "16.9.1",
     "fumadocs-mdx": "15.0.8",
     "fumadocs-ui": "16.9.1",
