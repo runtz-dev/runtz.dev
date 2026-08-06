@@ -53,6 +53,17 @@ spec:
               value: {{ .Values.env.NEXT_PUBLIC_RUNTZ_API_URL | quote }}
             - name: NEXT_PUBLIC_PLATFORM_BASE_URL
               value: {{ .Values.env.NEXT_PUBLIC_PLATFORM_BASE_URL | quote }}
+            {{- /*
+              OpenTelemetry, only when an endpoint is configured: @vercel/otel
+              registers no exporter without OTEL_EXPORTER_OTLP_ENDPOINT, so
+              leaving these out entirely is the "telemetry off" state.
+            */}}
+            {{- range $key := list "OTEL_EXPORTER_OTLP_ENDPOINT" "OTEL_RESOURCE_ATTRIBUTES" }}
+            {{- with get $.Values.env $key }}
+            - name: {{ $key }}
+              value: {{ . | quote }}
+            {{- end }}
+            {{- end }}
             {{- with .Values.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
