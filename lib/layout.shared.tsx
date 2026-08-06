@@ -13,7 +13,8 @@ import {
   Server,
   ShipWheel,
 } from 'lucide-react';
-import { gitConfig, platformUrl, playgroundUrl } from './shared';
+import { platformUrl, playgroundUrl } from './shared';
+import { githubUrl } from './platform-content';
 import { RuntzWordmark } from '@/components/runtz-logo';
 
 const platformMenuCardClassName = 'rz-platform-menu-card';
@@ -118,7 +119,7 @@ export function baseOptions(): BaseLayoutProps {
         ),
       },
     ],
-    githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
+    githubUrl,
     searchToggle: {
       enabled: false,
     },
