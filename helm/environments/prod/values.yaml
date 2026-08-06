@@ -17,3 +17,7 @@ image:
 env:
   NEXT_PUBLIC_RUNTZ_API_URL: "https://engine.runtz.dev"
   NEXT_PUBLIC_PLATFORM_BASE_URL: "https://runtz.dev"
+  # Traces go to the in-cluster SigNoz collector. ClusterIP only, so this is
+  # the FQDN — the short name would not resolve from the prod namespace.
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://signoz-otel-collector.signoz.svc.cluster.local:4318"
+  OTEL_RESOURCE_ATTRIBUTES: "deployment.environment=prod,service.namespace=runtz"

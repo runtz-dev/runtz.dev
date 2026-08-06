@@ -40,6 +40,13 @@ env:
   # Same deal for the platform host behind the Login / Playground / checkout
   # links: baked at build time, mirrored here so the pod env matches.
   NEXT_PUBLIC_PLATFORM_BASE_URL: ""
+  # OpenTelemetry, off by default. Point this at an OTLP/HTTP collector to get
+  # traces out of the Next.js server, e.g.
+  #   http://signoz-otel-collector.signoz.svc.cluster.local:4318
+  OTEL_EXPORTER_OTLP_ENDPOINT: ""
+  # Extra resource attributes on every span, as key=value pairs, e.g.
+  #   deployment.environment=prod,service.namespace=runtz
+  OTEL_RESOURCE_ATTRIBUTES: ""
 
 extraEnv: []
 podAnnotations: {}
