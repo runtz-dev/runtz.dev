@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import {
   MarketingPage,
+  PageIntro,
   PrimaryLink,
   SecondaryLink,
-  SectionIntro,
 } from '../_components/marketing';
 import { platformUrl } from '@/lib/shared';
 import { PricingModeSections } from './pricing-mode-sections';
@@ -51,7 +51,7 @@ export default function PricingPage() {
   return (
     <MarketingPage>
       <section className="px-6 py-16 lg:px-8 lg:py-24">
-        <SectionIntro
+        <PageIntro
           eyebrow="pricing"
           title="Security scanning that fits your team."
           body="Start free, get visibility fast, and choose the deployment model that matches how your team ships software."

@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import {
   MarketingPage,
+  PageIntro,
   PrimaryLink,
   SecondaryLink,
 } from '../_components/marketing';
@@ -22,21 +23,12 @@ export const metadata: Metadata = {
 export default function AIPage() {
   return (
     <MarketingPage>
-      <section className="mx-auto w-full max-w-[1400px] px-6 pb-10 pt-16 md:px-12 md:pb-12 md:pt-20">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#2f7eff]/20 bg-[#2f7eff]/8 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase text-[#1d5fc7] dark:border-[#6db5ff]/20 dark:bg-[#6db5ff]/8 dark:text-[#9fd6ff]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#2f7eff] dark:bg-[#6db5ff]" />
-            runtz for AI agents
-          </div>
-          <h1 className="mt-6 text-4xl font-semibold leading-[1.05] tracking-tight md:text-5xl">
-            Plug runtz into
-            <span className="text-[#2f7eff] dark:text-[#6db5ff]"> your favorite AI.</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-[#53657d] dark:text-[#cfe0f5]">
-            Connect runtz to Claude, Codex, or Gemini and bring security scans
-            directly into the AI workflow you already use.
-          </p>
-        </div>
+      <section className="px-6 py-16 lg:px-8 lg:py-24">
+        <PageIntro
+          eyebrow="runtz for AI agents"
+          title="Plug runtz into your favorite AI."
+          body="Connect runtz to Claude, Codex, or Gemini and bring security scans directly into the AI workflow you already use."
+        />
       </section>
 
       <section className="mx-auto grid w-full max-w-[1400px] gap-12 px-6 pb-16 pt-8 md:px-12 md:pb-20 md:pt-10 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:gap-16">
