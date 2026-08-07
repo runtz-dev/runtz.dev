@@ -88,24 +88,35 @@ export function SecondaryLink({
   );
 }
 
-export function SectionIntro({
-  eyebrow,
-  title,
-  body,
-}: {
+type IntroProps = {
   eyebrow: string;
   title: string;
   body: string;
-}) {
+};
+
+function IntroContent({
+  eyebrow,
+  title,
+  body,
+  heading: Heading,
+}: IntroProps & { heading: 'h1' | 'h2' }) {
   return (
     <div className="mx-auto max-w-3xl text-center">
       <p className="font-mono text-xs font-semibold uppercase text-[#2f7eff] dark:text-[#6db5ff]">
         {eyebrow}
       </p>
-      <h2 className="mt-4 text-3xl font-semibold leading-tight md:text-4xl">{title}</h2>
+      <Heading className="mt-4 text-3xl font-semibold leading-tight md:text-4xl">{title}</Heading>
       <p className="mt-5 text-base leading-7 text-[#53657d] dark:text-[#b8cbe4]">{body}</p>
     </div>
   );
+}
+
+export function PageIntro(props: IntroProps) {
+  return <IntroContent {...props} heading="h1" />;
+}
+
+export function SectionIntro(props: IntroProps) {
+  return <IntroContent {...props} heading="h2" />;
 }
 
 export function TerminalPanel({
