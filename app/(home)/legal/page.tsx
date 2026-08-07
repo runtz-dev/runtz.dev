@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, ScrollText } from 'lucide-react';
-import { AccentPill, MarketingPage } from '../_components/marketing';
+import { MarketingPage, PageIntro } from '../_components/marketing';
 import { legalSource } from '@/lib/legal';
 
 export const metadata: Metadata = {
@@ -14,15 +14,12 @@ export default function LegalPage() {
 
   return (
     <MarketingPage>
-      <main className="mx-auto w-full max-w-[860px] px-6 pb-24 pt-16 md:px-12">
-        <AccentPill muted>legal</AccentPill>
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight md:text-4xl">
-          Legal documents
-        </h1>
-        <p className="mt-3 max-w-xl text-sm leading-6 text-[#53657d] dark:text-[#7f96b3]">
-          The documents that govern the use of the Runtz platform and how we
-          handle data.
-        </p>
+      <main className="mx-auto w-full max-w-[860px] px-6 pb-24 pt-16 md:px-12 lg:pt-24">
+        <PageIntro
+          eyebrow="legal"
+          title="Legal documents"
+          body="The documents that govern the use of the Runtz platform and how we handle data."
+        />
 
         <div className="mt-10 flex flex-col gap-4">
           {pages.map((page) => (
