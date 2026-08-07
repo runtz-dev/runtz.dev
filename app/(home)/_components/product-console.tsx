@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import {
   Activity,
@@ -16,7 +15,7 @@ import {
   Shield,
   ShipWheel,
 } from 'lucide-react';
-import { sitePath } from '@/lib/shared';
+import { RuntzWordmark } from '@/components/runtz-logo';
 
 const screens = [
   { id: 'overview', label: 'Overview' },
@@ -88,18 +87,10 @@ function SeverityStrip({
 function ConsoleSidebar({ active }: { active: ScreenId }) {
   return (
     <aside className="rz-console-sidebar hidden w-[118px] shrink-0 border-r p-3 sm:block">
-      <div className="rz-console-title flex items-center gap-2 text-[10px] font-bold">
-        <Image
-          src={sitePath('/brand/favicon.svg')}
-          alt=""
-          width={20}
-          height={20}
-          unoptimized
-          className="h-5 w-5"
-        />
-        runtz
+      <div className="rz-console-title flex items-center">
+        <RuntzWordmark className="text-[10px]" />
       </div>
-      <p className="rz-console-muted mt-1 pl-7 text-[8px]">DevSecOps Platform</p>
+      <p className="rz-console-muted mt-1 text-[8px]">DevSecOps Platform</p>
 
       <div className="rz-console-muted mt-6 space-y-1 text-[9px]">
         <div
