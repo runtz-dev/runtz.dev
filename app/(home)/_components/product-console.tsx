@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import {
   Activity,
@@ -15,6 +16,7 @@ import {
   Shield,
   ShipWheel,
 } from 'lucide-react';
+import { sitePath } from '@/lib/shared';
 
 const screens = [
   { id: 'overview', label: 'Overview' },
@@ -87,9 +89,14 @@ function ConsoleSidebar({ active }: { active: ScreenId }) {
   return (
     <aside className="rz-console-sidebar hidden w-[118px] shrink-0 border-r p-3 sm:block">
       <div className="rz-console-title flex items-center gap-2 text-[10px] font-bold">
-        <span className="rz-console-accent flex h-5 w-5 items-center justify-center rounded bg-[#071222]">
-          ▲
-        </span>
+        <Image
+          src={sitePath('/brand/favicon.svg')}
+          alt=""
+          width={20}
+          height={20}
+          unoptimized
+          className="h-5 w-5"
+        />
         runtz
       </div>
       <p className="rz-console-muted mt-1 pl-7 text-[8px]">DevSecOps Platform</p>

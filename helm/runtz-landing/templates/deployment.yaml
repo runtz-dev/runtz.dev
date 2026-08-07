@@ -5,7 +5,9 @@ metadata:
   labels:
     {{- include "runtz-landing.labels" . | nindent 4 }}
 spec:
+  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "runtz-landing.selectorLabels" . | nindent 6 }}
