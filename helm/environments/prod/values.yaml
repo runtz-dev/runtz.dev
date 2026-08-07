@@ -14,6 +14,21 @@ image:
   tag: ""
   pullPolicy: Always
 
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 75
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 300m
+    memory: 384Mi
+
 env:
   NEXT_PUBLIC_RUNTZ_API_URL: "https://engine.runtz.dev"
   NEXT_PUBLIC_PLATFORM_BASE_URL: "https://runtz.dev"
