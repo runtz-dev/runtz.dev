@@ -53,8 +53,8 @@ export default function PricingPage() {
       <section className="px-6 py-16 lg:px-8 lg:py-24">
         <PageIntro
           eyebrow="pricing"
-          title="Security scanning that fits your team."
-          body="Start free, get visibility fast, and choose the deployment model that matches how your team ships software."
+          title="Get started with runtz"
+          body="Security scanning for every project and team."
         />
         <PricingModeSections />
       </section>

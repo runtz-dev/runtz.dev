@@ -28,6 +28,8 @@ type Plan = {
   cadence: string;
   originalPrice?: string;
   icon: LucideIcon;
+  /** Name of the lower plan this one inherits from, e.g. "Free" on Pro. Renders an "Everything from X, plus:" label above `features`, which then only needs to list what's new. */
+  includesFrom?: string;
   features: string[];
   action: string;
   href: string;
@@ -66,7 +68,6 @@ const plansByMode: Record<HostingMode, Plan[]> = {
       features: [
         '1 private cloud workspace',
         'No infrastructure to run',
-        'Google, GitHub, passwordless email',
         'Core security dashboards and reports',
       ],
       action: 'Start for free',
@@ -80,13 +81,12 @@ const plansByMode: Record<HostingMode, Plan[]> = {
       price: '$20',
       cadence: '/month',
       icon: UsersRound,
+      includesFrom: 'Free',
       features: [
-        '1 shared cloud workspace',
-        'Google, GitHub, passwordless email',
+        'Shared cloud workspaces',
         'Smart email reports',
         'Smart alerts',
         'AI Alert Agent for Slack threads',
-        'Dedicated Slack support',
       ],
       action: 'Choose Pro',
       href: platformUrl,
@@ -100,13 +100,14 @@ const plansByMode: Record<HostingMode, Plan[]> = {
       cadence: '/month',
       originalPrice: '$199/month',
       icon: Building2,
+      includesFrom: 'Pro',
       features: [
         'Multiple cloud workspaces',
         'Organization workspace management',
-        'Google, GitHub, passwordless email',
-        'Smart email reports',
-        'Smart alerts',
-        'AI Alert Agent for Slack threads',
+        'Dedicated Slack support',
+        'Self-host support',
+        'Implementation support',
+        'Team training',
       ],
       action: 'Choose Enterprise',
       href: platformUrl,
@@ -123,7 +124,7 @@ const plansByMode: Record<HostingMode, Plan[]> = {
       cadence: 'forever',
       icon: Server,
       features: [
-        '1 shared workspace',
+        'Multiple workspaces',
         'Runs in your infrastructure',
         'Manual user creation',
         'Core security dashboards and reports',
@@ -140,13 +141,11 @@ const plansByMode: Record<HostingMode, Plan[]> = {
       price: '$20',
       cadence: '/month',
       icon: UsersRound,
+      includesFrom: 'Free',
       features: [
-        '1 shared workspace',
-        'Google and GitHub authentication',
         'Smart email reports',
         'Smart alerts',
         'AI Alert Agent for Slack threads',
-        'Dedicated Slack support',
       ],
       action: 'Choose Pro',
       href: platformUrl,
@@ -160,13 +159,12 @@ const plansByMode: Record<HostingMode, Plan[]> = {
       cadence: '/month',
       originalPrice: '$199/month',
       icon: Building2,
+      includesFrom: 'Pro',
       features: [
-        'Multiple shared workspaces',
-        'Data stays in your infrastructure',
-        'Google and GitHub authentication',
-        'Smart email reports',
-        'Smart alerts',
-        'AI Alert Agent for Slack threads',
+        'Dedicated Slack support',
+        'Self-host support',
+        'Implementation support',
+        'Team training',
       ],
       action: 'Choose Enterprise',
       href: platformUrl,
@@ -219,9 +217,6 @@ export function PricingModeSections() {
   return (
     <>
       <div className="mx-auto mt-10 flex max-w-7xl flex-col items-center gap-4 text-center">
-        <p className="font-mono text-xs font-semibold uppercase text-[#2f7eff] dark:text-[#6db5ff]">
-          Deployment model
-        </p>
         <div className="flex w-full justify-center">
           <HostingModeToggle
             mode={mode}
@@ -332,9 +327,20 @@ function PlanCard({
             {plan.cadence}
           </span>
         </div>
+        {plan.originalPrice ? (
+          <p className="mt-2 text-[11px] text-[#7f96b3] dark:text-[#6d84a3]">
+            Pre-launch pricing, locked in until Jan 2027
+          </p>
+        ) : null}
       </div>
 
-      <ul className="mt-7 grid gap-3">
+      {plan.includesFrom ? (
+        <p className="mt-7 text-sm font-semibold">
+          Everything from {plan.includesFrom}, plus:
+        </p>
+      ) : null}
+
+      <ul className={`grid gap-3 ${plan.includesFrom ? 'mt-3' : 'mt-7'}`}>
         {plan.features.map((feature) => (
           <li key={feature} className="flex gap-2 text-sm leading-6">
             <Check className="mt-1 h-4 w-4 shrink-0 text-[#2f7eff] dark:text-[#6db5ff]" />

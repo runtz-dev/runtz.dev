@@ -108,6 +108,30 @@ const comparisonByMode: Record<HostingMode, ComparisonPreset> = {
           { state: 'included', label: 'Included' },
         ],
       },
+      {
+        feature: 'Self-host support',
+        values: [
+          { state: 'not-included', label: 'Not included' },
+          { state: 'not-included', label: 'Not included' },
+          { state: 'included', label: 'Included' },
+        ],
+      },
+      {
+        feature: 'Implementation support',
+        values: [
+          { state: 'not-included', label: 'Not included' },
+          { state: 'not-included', label: 'Not included' },
+          { state: 'included', label: 'Included' },
+        ],
+      },
+      {
+        feature: 'Team training',
+        values: [
+          { state: 'not-included', label: 'Not included' },
+          { state: 'not-included', label: 'Not included' },
+          { state: 'included', label: 'Included' },
+        ],
+      },
     ],
   },
   'self-hosted': {
@@ -188,13 +212,37 @@ const comparisonByMode: Record<HostingMode, ComparisonPreset> = {
       {
         feature: 'Multiple workspaces',
         values: [
+          { state: 'included', label: 'Included' },
+          { state: 'included', label: 'Included' },
+          { state: 'included', label: 'Included' },
+        ],
+      },
+      {
+        feature: 'Dedicated Slack support',
+        values: [
           { state: 'not-included', label: 'Not included' },
           { state: 'not-included', label: 'Not included' },
           { state: 'included', label: 'Included' },
         ],
       },
       {
-        feature: 'Dedicated Slack support',
+        feature: 'Self-host support',
+        values: [
+          { state: 'not-included', label: 'Not included' },
+          { state: 'not-included', label: 'Not included' },
+          { state: 'included', label: 'Included' },
+        ],
+      },
+      {
+        feature: 'Implementation support',
+        values: [
+          { state: 'not-included', label: 'Not included' },
+          { state: 'not-included', label: 'Not included' },
+          { state: 'included', label: 'Included' },
+        ],
+      },
+      {
+        feature: 'Team training',
         values: [
           { state: 'not-included', label: 'Not included' },
           { state: 'not-included', label: 'Not included' },
