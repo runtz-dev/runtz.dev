@@ -102,10 +102,11 @@ Each license can activate one installation. The engine keeps scan data local and
 sends only the Stripe checkout session plus installation id to the central
 validation endpoint for activation and heartbeat.
 
-Self-hosted Google and GitHub authentication are Pro/Enterprise features. After
-activation, configure your own OAuth apps and set `GOOGLE_CLIENT_ID`,
-`GITHUB_CLIENT_ID`, and `GITHUB_CLIENT_SECRET` on the engine — the frontend
-picks up the Google client id at runtime.
+Google authentication is available on every self-hosted plan, including Free.
+GitHub authentication is cloud-only and isn't available for self-hosted
+deployments. To enable Google sign-in, configure your own OAuth app and set
+`GOOGLE_CLIENT_ID` on the engine — the frontend picks up the client id at
+runtime.
 
 ## Build from source
 
