@@ -305,7 +305,7 @@ function PlanCard({
           <p className="mb-2 flex flex-wrap items-center gap-2 text-sm text-[#53657d] dark:text-[#9fb4cf]">
             <span className="line-through">{plan.originalPrice}</span>
             <span className="rounded-full bg-[#6db5ff] px-2 py-1 font-mono text-[10px] font-bold uppercase text-[#071222]">
-              50% off launch until Jan 2027
+              50% off until Jan 2027
             </span>
           </p>
         ) : null}
