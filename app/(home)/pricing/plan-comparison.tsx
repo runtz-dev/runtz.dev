@@ -212,7 +212,7 @@ const comparisonByMode: Record<HostingMode, ComparisonPreset> = {
       {
         feature: 'Multiple workspaces',
         values: [
-          { state: 'included', label: 'Included' },
+          { state: 'not-included', label: 'Not included' },
           { state: 'included', label: 'Included' },
           { state: 'included', label: 'Included' },
         ],
