@@ -299,10 +299,13 @@ function PlanCard({
 
       <div className="mt-6">
         {plan.originalPrice ? (
-          <p className="mb-2 text-sm text-[#53657d] dark:text-[#9fb4cf]">
+          // flex-wrap (not inline text flow) so the badge wraps as one whole
+          // pill onto its own line on narrow cards instead of splitting its
+          // text mid-word inside the rounded background.
+          <p className="mb-2 flex flex-wrap items-center gap-2 text-sm text-[#53657d] dark:text-[#9fb4cf]">
             <span className="line-through">{plan.originalPrice}</span>
-            <span className="ml-2 rounded-full bg-[#6db5ff] px-2 py-1 font-mono text-[10px] font-bold uppercase text-[#071222]">
-              50% off launch
+            <span className="rounded-full bg-[#6db5ff] px-2 py-1 font-mono text-[10px] font-bold uppercase text-[#071222]">
+              50% off launch until Jan 2027
             </span>
           </p>
         ) : null}
@@ -318,11 +321,6 @@ function PlanCard({
             {plan.cadence}
           </span>
         </div>
-        {plan.originalPrice ? (
-          <p className="mt-2 text-[11px] text-[#7f96b3] dark:text-[#6d84a3]">
-            50% off launch until Jan 2027
-          </p>
-        ) : null}
       </div>
 
       {plan.includesFrom ? (
