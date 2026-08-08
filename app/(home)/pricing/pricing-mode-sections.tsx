@@ -320,7 +320,7 @@ function PlanCard({
         </div>
         {plan.originalPrice ? (
           <p className="mt-2 text-[11px] text-[#7f96b3] dark:text-[#6d84a3]">
-            Pre-launch pricing, locked in until Jan 2027
+            50% off launch until Jan 2027
           </p>
         ) : null}
       </div>
