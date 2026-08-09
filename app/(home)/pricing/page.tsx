@@ -18,32 +18,27 @@ const faqs = [
   {
     question: 'Which plan should I start with?',
     answer:
-      'Start with Free Cloud when you want security scans running immediately. Choose Self-hosted Free when scan data must stay in your own infrastructure.',
+      "We recommend starting with Free Cloud — you'll have security scans running in minutes, with no infrastructure to set up. Choose Self-hosted Free instead if your scan data needs to stay inside your own infrastructure from day one.",
   },
   {
-    question: 'What changes when I upgrade to Pro?',
+    question: 'Can I cancel or downgrade anytime?',
     answer:
-      'Pro raises your limits to fit small and medium teams — up to 50 users, 5 workspaces, and 10,000 scans a month — plus smart email reports, smart alerts, and the AI Alert Agent for Slack threads.',
-  },
-  {
-    question: 'What is the AI Alert Agent?',
-    answer:
-      'When someone replies in a Slack thread asking about a Smart Alert sent by runtz, the agent answers in that thread with context, impact, and next steps.',
+      'Yes. Change plans or cancel whenever you need to, right from your workspace — no long-term contract, no penalties.',
   },
   {
     question: 'Can I keep all data inside my infrastructure?',
     answer:
-      'Yes. Self-hosted plans run in your environment, so scans, findings, reports, and environment details stay under your control.',
+      'Yes. Self-hosted plans run entirely in your own environment, so your data stays fully under your control.',
+  },
+  {
+    question: 'Do I need a security team to use runtz?',
+    answer:
+      "No. runtz is built so any developer can run a scan and act on the results — you don't need in-house security expertise to get value from day one.",
   },
   {
     question: 'Does self-hosted support Google and GitHub authentication?',
     answer:
       "Google authentication is included on every self-hosted plan, including Free. GitHub authentication is cloud-only and isn't available for self-hosted deployments.",
-  },
-  {
-    question: 'When should I choose Enterprise?',
-    answer:
-      "Choose Enterprise when your team outgrows Pro's limits — more users, workspaces, or scans than Pro covers — or you need dedicated Slack support and hands-on implementation help.",
   },
 ];
 
@@ -54,7 +49,7 @@ export default function PricingPage() {
         <PageIntro
           eyebrow="pricing"
           title="Get started with runtz"
-          body="Security scanning for every project and team."
+          body="Security that scales from solo developers to companies of every size."
         />
         <PricingModeSections />
       </section>
@@ -94,12 +89,12 @@ export default function PricingPage() {
             </p>
             <h2 className="mt-3 text-3xl font-bold">Start scanning today.</h2>
             <p className="mt-2 text-sm leading-6 text-[#53657d] dark:text-[#b8cbe4]">
-              Create a free cloud workspace or follow the docs to run runtz in your own infrastructure.
+              Secure your environment with runtz.
             </p>
           </div>
           <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
             <PrimaryLink href={platformUrl}>Start for free</PrimaryLink>
-            <SecondaryLink href="/docs/docker-compose">Self-host docs</SecondaryLink>
+            <SecondaryLink href="/docs">Docs</SecondaryLink>
           </div>
         </div>
       </section>

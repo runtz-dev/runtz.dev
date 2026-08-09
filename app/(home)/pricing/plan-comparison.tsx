@@ -31,30 +31,6 @@ const comparisonByMode: Record<HostingMode, ComparisonPreset> = {
     columns: [{ name: 'Free' }, { name: 'Pro' }, { name: 'Enterprise' }],
     rows: [
       {
-        feature: 'Scans per month',
-        values: [
-          { state: 'value', label: '1,000' },
-          { state: 'value', label: '10,000' },
-          { state: 'value', label: 'Unlimited' },
-        ],
-      },
-      {
-        feature: 'Users',
-        values: [
-          { state: 'value', label: '1' },
-          { state: 'value', label: 'Up to 50' },
-          { state: 'value', label: 'Unlimited' },
-        ],
-      },
-      {
-        feature: 'Workspaces',
-        values: [
-          { state: 'value', label: '1' },
-          { state: 'value', label: 'Up to 5' },
-          { state: 'value', label: 'Unlimited' },
-        ],
-      },
-      {
         feature: 'Cloud workspace',
         values: [
           { state: 'included', label: 'Included' },
@@ -63,7 +39,7 @@ const comparisonByMode: Record<HostingMode, ComparisonPreset> = {
         ],
       },
       {
-        feature: 'Core dashboards',
+        feature: 'All dashboards',
         values: [
           { state: 'included', label: 'Included' },
           { state: 'included', label: 'Included' },
@@ -104,14 +80,6 @@ const comparisonByMode: Record<HostingMode, ComparisonPreset> = {
       },
       {
         feature: 'Smart alerts',
-        values: [
-          { state: 'not-included', label: 'Not included' },
-          { state: 'included', label: 'Included' },
-          { state: 'included', label: 'Included' },
-        ],
-      },
-      {
-        feature: 'AI Alert Agent in Slack threads',
         values: [
           { state: 'not-included', label: 'Not included' },
           { state: 'included', label: 'Included' },
@@ -148,30 +116,6 @@ const comparisonByMode: Record<HostingMode, ComparisonPreset> = {
     columns: [{ name: 'Free' }, { name: 'Pro' }, { name: 'Enterprise' }],
     rows: [
       {
-        feature: 'Scans per month',
-        values: [
-          { state: 'value', label: '1,000' },
-          { state: 'value', label: '10,000' },
-          { state: 'value', label: 'Unlimited' },
-        ],
-      },
-      {
-        feature: 'Users',
-        values: [
-          { state: 'value', label: 'Up to 25' },
-          { state: 'value', label: 'Up to 50' },
-          { state: 'value', label: 'Unlimited' },
-        ],
-      },
-      {
-        feature: 'Workspaces',
-        values: [
-          { state: 'value', label: '1' },
-          { state: 'value', label: 'Up to 5' },
-          { state: 'value', label: 'Unlimited' },
-        ],
-      },
-      {
         feature: 'Self-hosted deployment',
         values: [
           { state: 'included', label: 'Included' },
@@ -188,7 +132,7 @@ const comparisonByMode: Record<HostingMode, ComparisonPreset> = {
         ],
       },
       {
-        feature: 'Core dashboards',
+        feature: 'All dashboards',
         values: [
           { state: 'included', label: 'Included' },
           { state: 'included', label: 'Included' },
@@ -229,14 +173,6 @@ const comparisonByMode: Record<HostingMode, ComparisonPreset> = {
       },
       {
         feature: 'Smart alerts',
-        values: [
-          { state: 'not-included', label: 'Not included' },
-          { state: 'included', label: 'Included' },
-          { state: 'included', label: 'Included' },
-        ],
-      },
-      {
-        feature: 'AI Alert Agent in Slack threads',
         values: [
           { state: 'not-included', label: 'Not included' },
           { state: 'included', label: 'Included' },

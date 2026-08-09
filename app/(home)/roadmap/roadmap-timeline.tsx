@@ -22,7 +22,7 @@ const milestones = [
     status: 'completed',
   },
   {
-    title: 'First Release Candidate Version Publicated',
+    title: 'First Release Candidate',
     status: 'completed',
   },
   {
@@ -39,13 +39,13 @@ const milestones = [
   },
   {
     date: 'Jan 2027',
-    title: 'Launch runtz',
+    title: 'Launch',
     emphasizedTitle: '1.0.0 Version',
     status: 'pending',
   },
   {
     date: 'Feb 2027',
-    title: 'Launch DAST on platform',
+    title: 'Launch DAST',
     status: 'pending',
   },
 ] satisfies ReadonlyArray<{
@@ -54,6 +54,8 @@ const milestones = [
   emphasizedTitle?: string;
   status: MilestoneStatus;
 }>;
+
+const backlogItems = ['IAC Scanning', 'Cloud Scanning'] as const;
 
 function StatusBadge({ status }: { status: MilestoneStatus }) {
   if (status === 'completed') {
@@ -110,11 +112,11 @@ function MilestoneIndicator({ status }: { status: MilestoneStatus }) {
 export function RoadmapTimeline() {
   return (
     <div className="rz-roadmap-frame rounded-2xl border px-5 py-10 sm:px-7 md:px-12 md:py-12">
-      <h2 className="sr-only">Product milestones</h2>
+      <h2 className="sr-only">Product roadmap</h2>
       <Timeline
         defaultValue={4}
         className="mx-auto w-full max-w-3xl"
-        render={<ol aria-label="Runtz product milestones" />}
+        render={<ol aria-label="Runtz product roadmap" />}
       >
         {milestones.map((milestone, index) => (
           <TimelineItem
@@ -155,6 +157,60 @@ export function RoadmapTimeline() {
             </TimelineHeader>
           </TimelineItem>
         ))}
+
+        <TimelineItem
+          step={milestones.length + 1}
+          render={<li />}
+          className={cn(
+            'rz-roadmap-item min-h-20 pb-9',
+            'md:even:me-auto md:even:group-data-[orientation=vertical]/timeline:ms-0 md:even:group-data-[orientation=vertical]/timeline:me-8',
+            'md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-indicator]:right-[-1.5rem] md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-indicator]:left-auto',
+            'md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-indicator]:translate-x-1/2 md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-separator]:right-[-1.5rem]',
+            'md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-separator]:left-auto md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-separator]:translate-x-1/2',
+          )}
+        >
+          <TimelineHeader>
+            <TimelineSeparator className="rz-roadmap-separator" />
+            <TimelineTitle className="sr-only">Backlog</TimelineTitle>
+            <TimelineIndicator className="rz-roadmap-indicator rz-roadmap-indicator-backlog">
+              <span>Backlog</span>
+            </TimelineIndicator>
+          </TimelineHeader>
+        </TimelineItem>
+
+        {backlogItems.map((title, index) => {
+          const timelineIndex = milestones.length + index + 1;
+
+          return (
+            <TimelineItem
+              key={title}
+              step={timelineIndex + 1}
+              render={<li />}
+              className={cn(
+                'rz-roadmap-item min-h-18 pb-8 last:min-h-0 last:pb-0',
+                'md:odd:ms-auto md:even:me-auto md:even:text-right md:even:group-data-[orientation=vertical]/timeline:ms-0 md:even:group-data-[orientation=vertical]/timeline:me-8',
+                'md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-indicator]:right-[-1.5rem] md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-indicator]:left-auto',
+                'md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-indicator]:translate-x-1/2 md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-separator]:right-[-1.5rem]',
+                'md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-separator]:left-auto md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-separator]:translate-x-1/2',
+              )}
+            >
+              <TimelineHeader>
+                <TimelineSeparator className="rz-roadmap-separator" />
+                <div
+                  className={cn(
+                    'flex items-start gap-2.5',
+                    timelineIndex % 2 === 1 && 'md:justify-end',
+                  )}
+                >
+                  <TimelineTitle className="text-base font-semibold leading-6 md:text-[17px]">
+                    {title}
+                  </TimelineTitle>
+                </div>
+                <MilestoneIndicator status="pending" />
+              </TimelineHeader>
+            </TimelineItem>
+          );
+        })}
       </Timeline>
     </div>
   );
