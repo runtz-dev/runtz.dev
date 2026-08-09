@@ -1,160 +1,351 @@
 ---
 title: Privacy Policy
-description: How RAW DEVOPS LTDA processes personal data in the Runtz platform.
+description: How RAW DEVOPS LTDA collects, uses, shares and protects personal data in Runtz.
 ---
 
-> **DRAFT — pending legal review.** Placeholders are marked with [BRACKETS].
+**Effective date:** August 8, 2026
 
-**Effective date:** [SET BEFORE PUBLISHING]
+This Privacy Policy explains how **RAW DEVOPS LTDA**, enrolled with the CNPJ
+under no. 51.460.107/0001-53, with registered office at Avenida Portugal, 1148,
+Goiânia, State of Goiás, 74150-030, Brazil ("Runtz", "we", "us" or "our"),
+processes personal data in connection with the Runtz website, Cloud Service,
+hosted documentation and MCP server, licensing service, support and related
+services.
 
-This Privacy Policy explains how **RAW DEVOPS LTDA** (CNPJ
-51.460.107/0001-53, registered address [FULL REGISTERED ADDRESS]) — "Runtz",
-"we", "us" — processes personal data when you use the Runtz platform, the
-runtz.dev website and related services.
+This Policy applies to personal data processed by Runtz. It does not govern a
+Self-Hosted Deployment operated independently by a customer, or third-party
+services that you access directly.
 
-We act as the **data controller** for the personal data described here. For
-Scan Data processed in the Cloud Service on behalf of your organization, we
-act as a **processor/operator** and your organization is the controller.
+## 1. Our role
 
-**Self-hosted note:** if you run a Self-Hosted Deployment, your scan data and
-account data stay in your own infrastructure. We only receive the licensing
-telemetry described in Section 1.4.
+Runtz acts as the **controller** of personal data used to manage accounts,
+billing, licensing, security, communications and our own business operations.
 
-## 1. Data We Collect
+For personal data contained in Scan Data that a customer submits to the Cloud
+Service, the customer determines the purpose and means of the scan. The
+customer is the controller and Runtz acts as its **operator/processor**, using
+the data to provide the Services and follow the customer's lawful
+instructions. If your organization provided your data, direct requests about
+that data to the organization first; we will assist it as required.
 
-### 1.1 Account data
+For a Self-Hosted Deployment, the customer operates the local database and
+controls local accounts and Scan Data. Runtz does not receive that local data
+unless it is deliberately sent to us, for example in a support request. Paid
+self-hosted installations send only the limited checkout and licensing data
+described below to our central service.
 
-Name, email address, username, hashed password (for password login), and
-workspace membership. If you sign in with Google or GitHub, we receive your
-name, email and account identifier from the provider — we never receive your
-password.
+## 2. Personal data we process
 
-### 1.2 Billing data
+### 2.1 Account and profile data
 
-Plan, subscription status and billing events. Payments are processed by
-**Stripe**; we do not store full card numbers. Stripe processes your payment
-data as described in its own privacy policy.
+Depending on how you sign in, we process your username, email address, display
+name, avatar URL, organization or workspace membership, role, authentication
+provider identifier, onboarding status and login timestamps.
 
-### 1.3 Scan Data (Cloud Service)
+For password authentication, we store a one-way password hash, not the
+password itself. For email-code authentication, we process the email address,
+a one-way hash of the short-lived code, attempt count and expiry. If you use
+Google or GitHub sign-in, we receive the name, verified email, profile image
+when available and provider account identifier needed to authenticate you. We
+do not receive your Google or GitHub password.
 
-Data submitted by the CLI/scanners: dependency and package inventories,
-findings, vulnerability matches, project names, hostnames, container image
-names, Kubernetes resource metadata and related technical information. Scan
-Data may incidentally contain personal data present in your systems (e.g., a
-hostname with a person's name); avoid submitting unnecessary personal data.
+### 2.2 Workspace and security data
 
-### 1.4 Self-hosted licensing telemetry
+We process workspace names and identifiers, membership, user roles, API-key
+names and prefixes, one-way API-key hashes, creation and last-use timestamps,
+session-token hashes, session expiry and limited user-agent information.
 
-Self-Hosted Deployments with paid plans contact our central engine to
-activate and periodically validate licenses ("heartbeat"). This includes the
-license identifier, installation identifier, plan and validation status. It
-does not include your Scan Data.
+### 2.3 Billing and licensing data
 
-### 1.5 Technical data
+We process your billing email, selected plan and deployment mode, subscription
+status and renewal date, cancellation status, Stripe customer, subscription
+and checkout identifiers, price identifier and related billing events. Stripe
+processes payment-method and billing-address details; Runtz does not store full
+payment-card numbers.
 
-Logs (IP address, user agent, timestamps, request metadata), and strictly
-necessary cookies/local storage for authentication and session state. We do
-not use advertising cookies.
+For a paid Self-Hosted Deployment, we also process an installation identifier,
+license-key prefix and one-way hash, plan, entitlement and validation status,
+checkout session identifier, and activation and heartbeat timestamps. A
+self-hosted checkout may transmit the administrator's email and installation
+identifier to the central Runtz service and Stripe. License activation and
+heartbeat do **not** transmit local accounts or Scan Data.
 
-### 1.6 Communications
+### 2.4 Cloud Scan Data
 
-Messages you send us (support, security reports) and transactional emails we
-send via **Resend** (e.g., sign-in codes and invitations).
+The CLI runs scans in the environment where you invoke it and sends normalized
+results to the Runtz engine selected by you. For the Cloud Service, these
+results may include:
 
-## 2. Why We Process Data (Legal Bases — LGPD art. 7)
+- project, source, target and workspace names;
+- dependency and installed-package names and versions;
+- vulnerability identifiers, severity, fix availability and advisory details;
+- finding category, title, description, remediation, file path, line and
+  column;
+- hostname, operating-system and package-manager information;
+- container image name, reference and digest;
+- Kubernetes resource type, name, namespace and configuration findings; and
+- scanner version, counts, status and scan timestamp.
 
-| Purpose | Legal basis |
-| --- | --- |
-| Providing the Services (accounts, scans, dashboards) | Performance of contract |
-| Billing and license management | Performance of contract; legal obligation |
-| Security, fraud and abuse prevention, audit logs | Legitimate interest; legal obligation |
-| Transactional email (codes, invites, billing notices) | Performance of contract |
-| Service improvement with aggregated, de-identified data | Legitimate interest |
-| Marketing communications (if any) | Consent (opt-in, revocable) |
+Runtz scanners are designed to send normalized inventories and findings, not
+entire source repositories, container layers, kubeconfig credentials or raw
+private keys. Scan Data can nevertheless reveal sensitive details about your
+systems and can incidentally include personal data in names, paths, hostnames
+or metadata. Configure scan inputs carefully and do not submit unnecessary
+personal data or secrets.
 
-## 3. Sharing and Processors
+### 2.5 Website, application and operational data
 
-We do not sell personal data. We share data only with processors needed to
-run the Services:
+When you access our hosted services, we and our infrastructure providers may
+process IP address, user agent, date and time, requested route, HTTP method and
+status, latency, referrer, approximate network location, security events,
+trace identifiers and service/runtime metrics. Our database tracing is
+configured not to record query documents, which can contain live application
+data.
 
-- **Stripe** — payments and subscription management
-- **Resend** — transactional email
-- **Google** — optional sign-in (OAuth)
-- **GitHub** — optional sign-in (OAuth)
-- **Cloudflare** — network, DNS and traffic protection
-- Cloud/hosting infrastructure providers used to operate the Cloud Service
+We use this information to deliver requests, troubleshoot, measure reliability
+and protect the Services. We do not currently use third-party advertising
+trackers or behavioral advertising cookies.
 
-We may also disclose data if required by law or competent authority, and in
-a merger/acquisition context under equivalent safeguards.
+### 2.6 Hosted MCP server
 
-## 4. International Transfers
+The hosted Runtz MCP server is docs-only. It processes protocol requests and
+documentation search terms transiently to return documentation. It does not
+run scans or request your source code or Runtz API key. Request metadata may be
+included in the operational data described above, but request bodies are not
+intentionally recorded in our application telemetry.
 
-Some processors listed above process data outside Brazil (e.g., in the
-United States). Transfers rely on the safeguards of LGPD arts. 33–36 (e.g.,
-contractual clauses with processors) and, for EEA/UK users, on GDPR
-mechanisms such as Standard Contractual Clauses.
+### 2.7 Communications
 
-## 5. Retention
+We process the contact details, message content and attachments you send to our
+support, legal, privacy, licensing and security channels. Resend processes the
+address and content required to deliver transactional emails such as login
+codes and invitations.
 
-- Account data: for the life of the account and up to 5 years after closure
-  where needed for legal defense and obligations.
-- Billing records: as required by Brazilian tax law (at least 5 years).
-- Scan Data (Cloud Service): while your workspace is active; deleted or
-  anonymized within 30 days after account termination, except where law
-  requires longer.
-- Logs: up to 12 months, unless needed for an ongoing security
-  investigation.
+### 2.8 Device preferences
 
-## 6. Your Rights
+The application stores limited preferences on your device, including theme,
+selected workspace, vulnerability filters and onboarding state. These values
+do not contain your password, raw session token or API key.
 
-### 6.1 LGPD (Brazil)
+## 3. How we obtain data
 
-You may request: confirmation of processing, access, correction,
-anonymization or deletion, portability, information about sharing, and
-review of automated decisions, and you may revoke consent (LGPD art. 18).
-Contact: privacy@runtz.dev. You may also complain to the ANPD (Brazilian
-National Data Protection Authority).
+We obtain personal data:
 
-### 6.2 GDPR (EEA/UK users)
+- directly from you when you register, purchase, configure or contact us;
+- from your organization's administrators when they add or manage you;
+- from Google or GitHub when you choose federated sign-in;
+- from Stripe when you start or manage a subscription;
+- automatically from your browser, device, CLI or installation when you use
+  hosted services or validate a paid license; and
+- from scanners and integrations that you or your organization configure.
 
-You have equivalent rights of access, rectification, erasure, restriction,
-portability and objection, and the right to lodge a complaint with your
-supervisory authority.
+## 4. Purposes and legal bases
 
-### 6.3 US users
+Under the Brazilian General Data Protection Law (LGPD), we rely on the legal
+bases below as applicable to each activity:
 
-Depending on your state (e.g., California), you may have rights to know,
-delete and correct personal information and to opt out of "sales" or
-"sharing" — we do not sell or share personal information as defined by the
-CCPA/CPRA.
+| Purpose | Personal data involved | Legal basis |
+| --- | --- | --- |
+| Create accounts, authenticate users and provide workspaces, scans, dashboards, documentation and support | Account, workspace, Scan Data, MCP requests and communications | Performance of a contract or preliminary procedures requested by you (LGPD art. 7, V) |
+| Process Cloud Scan Data under a customer's instructions | Scan Data | Customer's lawful basis; performance of our contract with the customer |
+| Process subscriptions, payments and self-hosted licenses | Account, billing and licensing data | Performance of a contract (art. 7, V); compliance with legal or regulatory obligations (art. 7, II) |
+| Prevent fraud, abuse and unauthorized access; investigate incidents; keep required access records | Account, security, device and operational data | Legitimate interests (art. 7, IX); compliance with legal or regulatory obligations (art. 7, II) |
+| Establish, exercise or defend legal claims and enforce our agreements | Relevant account, billing, content, communication and operational data | Regular exercise of rights (art. 7, VI) |
+| Monitor reliability and improve the Services | Operational data and aggregated or de-identified usage information | Legitimate interests (art. 7, IX) |
+| Send service, security, login, billing and support messages | Account and communication data | Performance of a contract (art. 7, V); legitimate interests (art. 7, IX) |
+| Send optional marketing communications, if offered | Name, email and communication preferences | Consent (art. 7, I), revocable at any time, or another basis permitted by applicable law |
 
-We respond to verified requests within the timelines required by applicable
+Where we rely on legitimate interests, we consider the purpose, necessity and
+impact on individuals and apply safeguards appropriate to the risk. We do not
+use personal data for advertising profiles and do not make solely automated
+decisions about individuals that produce legal or similarly significant
+effects. Automated scan severity and vulnerability matching evaluate technical
+assets, not people.
+
+## 5. How we share personal data
+
+We do not sell or rent personal data and do not share it for cross-context
+behavioral advertising. We disclose only what is necessary in the following
+circumstances:
+
+- **Stripe** processes checkout, payments, subscription management and the
+  customer billing portal.
+- **Resend** delivers transactional email, including login codes and
+  invitations.
+- **Google** and **GitHub** process optional sign-in and return the profile data
+  described in Section 2.1.
+- **Cloudflare** provides DNS, network routing, traffic protection and related
+  edge services.
+- **Hosting, database and observability infrastructure** stores or processes
+  data on our behalf to operate and secure the Cloud Service, website, engine
+  and hosted MCP server.
+- **Professional advisers and authorities** may receive data where reasonably
+  necessary for legal, audit, insurance, security or compliance purposes, or
+  when disclosure is required by a valid legal demand.
+- **Corporate transactions** may involve disclosure to a buyer, investor or
+  successor under confidentiality and equivalent data-protection obligations.
+
+Service providers that process data on our behalf are limited by contract and
+may use it only to deliver the contracted service, subject to applicable law.
+
+The CLI may connect directly from your environment to independent services
+such as GitHub Security Advisories, OSV, a container registry or an update
+repository. Those direct connections are controlled by you and governed by the
+third party's privacy notice; Runtz does not act as the recipient merely because
+the CLI initiated the request.
+
+## 6. International transfers
+
+Some providers above are based in, or may make data accessible from, the
+**United States**. Global network and infrastructure providers may also process
+limited data in other countries identified in their published infrastructure
+or subprocessor documentation, depending on routing, availability and support.
+
+When personal data is transferred from Brazil, we use a mechanism permitted by
+LGPD articles 33–36 and the ANPD International Data Transfer Regulation,
+including an adequacy decision or the ANPD standard contractual clauses where
+applicable. We require a level of protection compatible with Brazilian law and
+limit the transfer to what is necessary for the stated purpose. You may request
+additional information about the applicable destination, provider and
+safeguard at privacy@runtz.dev.
+
+## 7. Retention and deletion
+
+We retain personal data only for as long as necessary for the purpose described
+in this Policy, including the periods below:
+
+- **Email login codes:** valid for 10 minutes and automatically removed after
+  expiry; related short-term anti-abuse lockouts generally expire within one
+  hour.
+- **Browser sessions:** expire after seven days and are removed after expiry or
+  sign-out, subject to the database's background cleanup interval.
+- **Account, workspace and Cloud Scan Data:** retained while the account or
+  workspace is active and then deleted or anonymized following closure or a
+  valid deletion request, unless continued retention is required for another
+  lawful purpose.
+- **Billing, subscription and licensing records:** retained for the duration of
+  the commercial relationship and afterward as required for tax, accounting,
+  fraud prevention, audit and the establishment or defense of legal claims.
+- **Application access records and operational telemetry:** retained for at
+  least six months where required by article 15 of the Brazilian Marco Civil da
+  Internet and generally no longer than 12 months, unless a longer period is
+  required by a lawful preservation request, security investigation or legal
+  claim.
+- **Support, privacy, legal and security communications:** retained while the
+  request is handled and afterward for the applicable legal, audit or security
+  period.
+- **Device preferences:** retained on your device until their configured expiry
+  or until you clear browser storage.
+
+Deletion from backups may occur on the next scheduled backup rotation. Until
+then, backup copies are isolated from ordinary use and retained only for
+recovery, security and legal purposes.
+
+## 8. Cookies and local storage
+
+Runtz currently uses only storage necessary to provide the application and
+remember user choices:
+
+- `runtz_session` is an HttpOnly, SameSite=Lax authentication cookie that
+  expires after seven days. It is marked Secure when the application is served
+  over HTTPS. The server stores only a one-way hash of its random value.
+- `sidebar_state` remembers whether the application sidebar is open and expires
+  after seven days.
+- Local storage remembers theme, selected workspace and vulnerability-filter
+  preferences until you clear it.
+- Session storage holds short-lived onboarding and GitHub OAuth state and is
+  cleared when the browser session ends or the flow completes.
+
+Disabling essential storage may prevent authentication or parts of the
+application from working. We will update this Policy and implement any consent
+controls required by law before introducing non-essential advertising or
+cross-site tracking technologies.
+
+## 9. Security
+
+We use technical and organizational safeguards appropriate to the nature and
+risk of the data, including TLS in transit for hosted endpoints, one-way hashes
+for passwords and service credentials, HttpOnly session cookies, scoped
+workspace access, access controls, secret-management practices and monitoring.
+We periodically review these measures, but no system can be guaranteed to be
+completely secure.
+
+Customers are responsible for securing their accounts, endpoints and
+Self-Hosted Deployments. If you discover a vulnerability or suspect a breach,
+contact security@runtz.dev. We will notify affected customers, individuals and
+the ANPD of a personal-data incident when and within the period required by
+applicable law.
+
+## 10. Your privacy rights
+
+Subject to the conditions and exceptions in applicable law, a data subject may
+request:
+
+- confirmation that processing exists and access to personal data;
+- correction of incomplete, inaccurate or outdated data;
+- anonymization, blocking or deletion of data that is unnecessary, excessive
+  or processed unlawfully;
+- portability, subject to applicable regulation and protection of trade and
+  industrial secrets;
+- deletion of data processed on consent, where applicable;
+- information about the public and private entities with which data was shared;
+- information about the possibility and consequences of refusing consent;
+- withdrawal of consent through a free and facilitated process;
+- opposition to processing that violates the LGPD; and
+- review of a decision made solely by automated processing that affects your
+  interests, where applicable.
+
+Send a request to privacy@runtz.dev. We may ask for information reasonably
+necessary to verify identity and authority, and we will not disclose data that
+belongs to another person or customer. The LGPD provides for immediate
+simplified access or a complete access statement within 15 days. Other
+requests are handled within the period required for the request and applicable
 law.
 
-## 7. Security
+Some data cannot be deleted immediately when it is necessary to perform an
+active contract, comply with a legal obligation, protect another person's
+rights, prevent fraud or establish or defend legal claims. We will explain an
+applicable restriction in our response.
 
-We apply technical and organizational measures appropriate to a security
-product, including encryption in transit (TLS), hashed passwords, scoped API
-keys, secret-management practices and access controls. No system is 100%
-secure; report vulnerabilities to security@runtz.dev (see our Security
-Policy).
+You may also petition the **Brazilian National Data Protection Authority
+(ANPD)** or a consumer-protection body. Depending on where you live, you may
+have additional rights, such as objection, restriction, erasure, portability
+or appeal to a local supervisory authority. Runtz does not sell personal data
+or use it for targeted advertising.
 
-## 8. Children
+## 11. Children and adolescents
 
-The Services are not directed to children under 18, and we do not knowingly
-process their data.
+The Services are intended for professionals and organizations and are not
+directed to anyone under 18. We do not knowingly create accounts for or collect
+personal data directly from children or adolescents. If you believe a minor
+has provided personal data, contact privacy@runtz.dev so we can investigate and
+take appropriate action.
 
-## 9. Changes
+## 12. Third-party sites and customer integrations
 
-We will post updates on this page and, for material changes, notify you by
-email or in-app notice at least 15 days before they take effect.
+Our Services and Documentation may link to third-party sites or allow you to
+configure third-party integrations. This Policy does not govern an independent
+third party's processing. Review its privacy notice before enabling the
+integration or providing data.
 
-## 10. Contact / DPO
+## 13. Changes to this Policy
 
-- Privacy requests: privacy@runtz.dev
-- Data Protection Officer (LGPD art. 41): [NAME], privacy@runtz.dev
+We may update this Policy to reflect changes in our Services, providers,
+security practices or legal obligations. We will publish the revised Policy
+with a new effective date. For a material change that adversely affects how we
+process existing personal data, we will provide at least 15 days' advance
+notice by email, in-product notice or another reasonable method, except when an
+earlier change is required by law or an urgent security need.
+
+## 14. Contact and privacy channel
+
+- **Controller:** RAW DEVOPS LTDA
+- **CNPJ:** 51.460.107/0001-53
+- **Address:** Avenida Portugal, 1148, Goiânia, GO 74150-030, Brazil
+- **Privacy channel for data subjects and the ANPD:** privacy@runtz.dev
+- **Security reports:** security@runtz.dev
+- **General legal matters:** legal@runtz.dev
 
 ---
 
-RAW DEVOPS LTDA · CNPJ 51.460.107/0001-53 · Copyright © 2026 Runtz. All
-rights reserved.
+Copyright © 2026 Runtz. All rights reserved.
