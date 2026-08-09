@@ -15,7 +15,9 @@ type ComparisonRow = {
 };
 
 type ComparisonCell = {
-  state: 'included' | 'not-included';
+  // 'value' renders label as text (quotas: scans, users, workspaces) instead
+  // of a check/dash icon, so the actual numbers are visible in the table.
+  state: 'included' | 'not-included' | 'value';
   label: string;
 };
 
@@ -29,11 +31,27 @@ const comparisonByMode: Record<HostingMode, ComparisonPreset> = {
     columns: [{ name: 'Free' }, { name: 'Pro' }, { name: 'Enterprise' }],
     rows: [
       {
-        feature: 'Security scans',
+        feature: 'Scans per month',
         values: [
-          { state: 'included', label: 'Included' },
-          { state: 'included', label: 'Included' },
-          { state: 'included', label: 'Included' },
+          { state: 'value', label: '1,000' },
+          { state: 'value', label: '10,000' },
+          { state: 'value', label: 'Unlimited' },
+        ],
+      },
+      {
+        feature: 'Users',
+        values: [
+          { state: 'value', label: '1' },
+          { state: 'value', label: 'Up to 50' },
+          { state: 'value', label: 'Unlimited' },
+        ],
+      },
+      {
+        feature: 'Workspaces',
+        values: [
+          { state: 'value', label: '1' },
+          { state: 'value', label: 'Up to 5' },
+          { state: 'value', label: 'Unlimited' },
         ],
       },
       {
@@ -53,7 +71,15 @@ const comparisonByMode: Record<HostingMode, ComparisonPreset> = {
         ],
       },
       {
-        feature: 'Google and GitHub authentication',
+        feature: 'Google authentication',
+        values: [
+          { state: 'included', label: 'Included' },
+          { state: 'included', label: 'Included' },
+          { state: 'included', label: 'Included' },
+        ],
+      },
+      {
+        feature: 'GitHub authentication',
         values: [
           { state: 'included', label: 'Included' },
           { state: 'included', label: 'Included' },
@@ -93,7 +119,7 @@ const comparisonByMode: Record<HostingMode, ComparisonPreset> = {
         ],
       },
       {
-        feature: 'Multiple workspaces',
+        feature: 'Dedicated Slack support',
         values: [
           { state: 'not-included', label: 'Not included' },
           { state: 'not-included', label: 'Not included' },
@@ -101,7 +127,15 @@ const comparisonByMode: Record<HostingMode, ComparisonPreset> = {
         ],
       },
       {
-        feature: 'Dedicated Slack support',
+        feature: 'Self-host support',
+        values: [
+          { state: 'not-included', label: 'Not included' },
+          { state: 'not-included', label: 'Not included' },
+          { state: 'included', label: 'Included' },
+        ],
+      },
+      {
+        feature: 'Implementation support',
         values: [
           { state: 'not-included', label: 'Not included' },
           { state: 'not-included', label: 'Not included' },
@@ -114,11 +148,27 @@ const comparisonByMode: Record<HostingMode, ComparisonPreset> = {
     columns: [{ name: 'Free' }, { name: 'Pro' }, { name: 'Enterprise' }],
     rows: [
       {
-        feature: 'Security scans',
+        feature: 'Scans per month',
         values: [
-          { state: 'included', label: 'Included' },
-          { state: 'included', label: 'Included' },
-          { state: 'included', label: 'Included' },
+          { state: 'value', label: '1,000' },
+          { state: 'value', label: '10,000' },
+          { state: 'value', label: 'Unlimited' },
+        ],
+      },
+      {
+        feature: 'Users',
+        values: [
+          { state: 'value', label: 'Up to 25' },
+          { state: 'value', label: 'Up to 50' },
+          { state: 'value', label: 'Unlimited' },
+        ],
+      },
+      {
+        feature: 'Workspaces',
+        values: [
+          { state: 'value', label: '1' },
+          { state: 'value', label: 'Up to 5' },
+          { state: 'value', label: 'Unlimited' },
         ],
       },
       {
@@ -154,11 +204,19 @@ const comparisonByMode: Record<HostingMode, ComparisonPreset> = {
         ],
       },
       {
-        feature: 'Google and GitHub authentication',
+        feature: 'Google authentication',
+        values: [
+          { state: 'included', label: 'Included' },
+          { state: 'included', label: 'Included' },
+          { state: 'included', label: 'Included' },
+        ],
+      },
+      {
+        feature: 'GitHub authentication',
         values: [
           { state: 'not-included', label: 'Not included' },
-          { state: 'included', label: 'Included' },
-          { state: 'included', label: 'Included' },
+          { state: 'not-included', label: 'Not included' },
+          { state: 'not-included', label: 'Not included' },
         ],
       },
       {
@@ -186,7 +244,7 @@ const comparisonByMode: Record<HostingMode, ComparisonPreset> = {
         ],
       },
       {
-        feature: 'Multiple workspaces',
+        feature: 'Dedicated Slack support',
         values: [
           { state: 'not-included', label: 'Not included' },
           { state: 'not-included', label: 'Not included' },
@@ -194,7 +252,15 @@ const comparisonByMode: Record<HostingMode, ComparisonPreset> = {
         ],
       },
       {
-        feature: 'Dedicated Slack support',
+        feature: 'Self-host support',
+        values: [
+          { state: 'not-included', label: 'Not included' },
+          { state: 'not-included', label: 'Not included' },
+          { state: 'included', label: 'Included' },
+        ],
+      },
+      {
+        feature: 'Implementation support',
         values: [
           { state: 'not-included', label: 'Not included' },
           { state: 'not-included', label: 'Not included' },
@@ -348,6 +414,18 @@ function ComparisonCellStatus({ cell }: { cell: ComparisonCell }) {
         aria-label={cell.label}
       >
         <span className="font-mono text-xl leading-none">-</span>
+      </div>
+    );
+  }
+
+  if (cell.state === 'value') {
+    return (
+      <div
+        className="flex items-center justify-center text-sm font-semibold tabular-nums leading-6"
+        title={cell.label}
+        aria-label={cell.label}
+      >
+        {cell.label}
       </div>
     );
   }

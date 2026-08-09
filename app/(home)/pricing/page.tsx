@@ -23,7 +23,7 @@ const faqs = [
   {
     question: 'What changes when I upgrade to Pro?',
     answer:
-      'Pro adds Google and GitHub authentication for self-hosted deployments, smart email reports, smart alerts, and the AI Alert Agent for Slack threads.',
+      'Pro raises your limits to fit small and medium teams — up to 50 users, 5 workspaces, and 10,000 scans a month — plus smart email reports, smart alerts, and the AI Alert Agent for Slack threads.',
   },
   {
     question: 'What is the AI Alert Agent?',
@@ -38,12 +38,12 @@ const faqs = [
   {
     question: 'Does self-hosted support Google and GitHub authentication?',
     answer:
-      'Yes. Self-hosted Pro and Enterprise include Google and GitHub authentication. Self-hosted Free keeps setup simple with manual user creation.',
+      "Google authentication is included on every self-hosted plan, including Free. GitHub authentication is cloud-only and isn't available for self-hosted deployments.",
   },
   {
     question: 'When should I choose Enterprise?',
     answer:
-      'Choose Enterprise when you need multiple workspaces across teams, products, clients, or environments, plus dedicated Slack support.',
+      "Choose Enterprise when your team outgrows Pro's limits — more users, workspaces, or scans than Pro covers — or you need dedicated Slack support and hands-on implementation help.",
   },
 ];
 
@@ -53,8 +53,8 @@ export default function PricingPage() {
       <section className="px-6 py-16 lg:px-8 lg:py-24">
         <PageIntro
           eyebrow="pricing"
-          title="Security scanning that fits your team."
-          body="Start free, get visibility fast, and choose the deployment model that matches how your team ships software."
+          title="Get started with runtz"
+          body="Security scanning for every project and team."
         />
         <PricingModeSections />
       </section>

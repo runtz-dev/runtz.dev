@@ -28,6 +28,8 @@ type Plan = {
   cadence: string;
   originalPrice?: string;
   icon: LucideIcon;
+  /** Name of the lower plan this one inherits from, e.g. "Free" on Pro. Renders an "Everything from X, plus:" label above `features`, which then only needs to list what's new. */
+  includesFrom?: string;
   features: string[];
   action: string;
   href: string;
@@ -64,10 +66,8 @@ const plansByMode: Record<HostingMode, Plan[]> = {
       cadence: 'forever',
       icon: Cloud,
       features: [
-        '1 private cloud workspace',
+        'Private workspace',
         'No infrastructure to run',
-        'Google, GitHub, passwordless email',
-        'Core security dashboards and reports',
       ],
       action: 'Start for free',
       href: platformUrl,
@@ -76,17 +76,15 @@ const plansByMode: Record<HostingMode, Plan[]> = {
       name: 'Pro',
       planKey: 'pro',
       eyebrow: 'team',
-      description: 'A hosted team workspace for small teams shipping software together.',
+      description: 'Comfortable limits — built for small and medium teams.',
       price: '$20',
       cadence: '/month',
       icon: UsersRound,
+      includesFrom: 'Free',
       features: [
-        '1 shared cloud workspace',
-        'Google, GitHub, passwordless email',
-        'Smart email reports',
+        'Shared workspaces',
+        'Smart reports',
         'Smart alerts',
-        'AI Alert Agent for Slack threads',
-        'Dedicated Slack support',
       ],
       action: 'Choose Pro',
       href: platformUrl,
@@ -100,13 +98,11 @@ const plansByMode: Record<HostingMode, Plan[]> = {
       cadence: '/month',
       originalPrice: '$199/month',
       icon: Building2,
+      includesFrom: 'Pro',
       features: [
-        'Multiple cloud workspaces',
-        'Organization workspace management',
-        'Google, GitHub, passwordless email',
-        'Smart email reports',
-        'Smart alerts',
-        'AI Alert Agent for Slack threads',
+        'Custom platform limits',
+        'Dedicated Slack support',
+        'Implementation support',
       ],
       action: 'Choose Enterprise',
       href: platformUrl,
@@ -123,10 +119,8 @@ const plansByMode: Record<HostingMode, Plan[]> = {
       cadence: 'forever',
       icon: Server,
       features: [
-        '1 shared workspace',
+        'Shared workspaces',
         'Runs in your infrastructure',
-        'Manual user creation',
-        'Core security dashboards and reports',
       ],
       action: 'Self-host runtz',
       href: '/docs/docker-compose',
@@ -136,17 +130,14 @@ const plansByMode: Record<HostingMode, Plan[]> = {
       name: 'Pro',
       planKey: 'pro',
       eyebrow: 'team',
-      description: 'Team security workflows inside your own runtz deployment.',
+      description: 'Comfortable limits — built for small and medium teams.',
       price: '$20',
       cadence: '/month',
       icon: UsersRound,
+      includesFrom: 'Free',
       features: [
-        '1 shared workspace',
-        'Google and GitHub authentication',
         'Smart email reports',
         'Smart alerts',
-        'AI Alert Agent for Slack threads',
-        'Dedicated Slack support',
       ],
       action: 'Choose Pro',
       href: platformUrl,
@@ -160,13 +151,11 @@ const plansByMode: Record<HostingMode, Plan[]> = {
       cadence: '/month',
       originalPrice: '$199/month',
       icon: Building2,
+      includesFrom: 'Pro',
       features: [
-        'Multiple shared workspaces',
-        'Data stays in your infrastructure',
-        'Google and GitHub authentication',
-        'Smart email reports',
-        'Smart alerts',
-        'AI Alert Agent for Slack threads',
+        'Custom platform limits',
+        'Dedicated Slack support',
+        'Self-host Implementation support',
       ],
       action: 'Choose Enterprise',
       href: platformUrl,
@@ -219,9 +208,6 @@ export function PricingModeSections() {
   return (
     <>
       <div className="mx-auto mt-10 flex max-w-7xl flex-col items-center gap-4 text-center">
-        <p className="font-mono text-xs font-semibold uppercase text-[#2f7eff] dark:text-[#6db5ff]">
-          Deployment model
-        </p>
         <div className="flex w-full justify-center">
           <HostingModeToggle
             mode={mode}
@@ -313,10 +299,13 @@ function PlanCard({
 
       <div className="mt-6">
         {plan.originalPrice ? (
-          <p className="mb-2 text-sm text-[#53657d] dark:text-[#9fb4cf]">
+          // flex-wrap (not inline text flow) so the badge wraps as one whole
+          // pill onto its own line on narrow cards instead of splitting its
+          // text mid-word inside the rounded background.
+          <p className="mb-2 flex flex-wrap items-center gap-2 text-sm text-[#53657d] dark:text-[#9fb4cf]">
             <span className="line-through">{plan.originalPrice}</span>
-            <span className="ml-2 rounded-full bg-[#6db5ff] px-2 py-1 font-mono text-[10px] font-bold uppercase text-[#071222]">
-              50% off launch
+            <span className="rounded-full bg-[#6db5ff] px-2 py-1 font-mono text-[10px] font-bold uppercase text-[#071222]">
+              50% off until Jan 2027
             </span>
           </p>
         ) : null}
@@ -334,7 +323,13 @@ function PlanCard({
         </div>
       </div>
 
-      <ul className="mt-7 grid gap-3">
+      {plan.includesFrom ? (
+        <p className="mt-7 text-sm font-semibold">
+          Everything from {plan.includesFrom}, plus:
+        </p>
+      ) : null}
+
+      <ul className={`grid gap-3 ${plan.includesFrom ? 'mt-3' : 'mt-7'}`}>
         {plan.features.map((feature) => (
           <li key={feature} className="flex gap-2 text-sm leading-6">
             <Check className="mt-1 h-4 w-4 shrink-0 text-[#2f7eff] dark:text-[#6db5ff]" />
