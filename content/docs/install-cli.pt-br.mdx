@@ -1,0 +1,126 @@
+---
+title: Instalar a CLI do runtz
+description: Instale a CLI do runtz e execute seu primeiro scan.
+---
+
+# Instalar a CLI do runtz
+
+A CLI do runtz é um único binário estático em Go. O script detecta o sistema operacional e a arquitetura, baixa o binário e o instala em `/usr/local/bin`:
+
+```bash
+curl -fsSL https://runtz.dev/install.sh | bash
+```
+
+Confira a instalação:
+
+```bash
+runtz version
+```
+
+```txt
+runtz 1.0.0-rc1 (linux/amd64)
+```
+
+Linux e macOS são compatíveis com `amd64` e `arm64`.
+
+### Opções do script
+
+O script aceita variáveis de ambiente:
+
+```bash
+# Instalar uma versão específica
+RUNTZ_VERSION=v1.0.0-rc1 curl -fsSL https://runtz.dev/install.sh | bash
+
+# Instalar em outro diretório (sem sudo se houver permissão de escrita)
+RUNTZ_INSTALL_DIR=$HOME/.local/bin curl -fsSL https://runtz.dev/install.sh | bash
+```
+
+### Instalação manual
+
+Baixe o binário na [página de releases do GitHub](https://github.com/runtz-dev/runtz-cli/releases) e execute:
+
+```bash
+chmod +x runtz_linux_amd64
+sudo mv runtz_linux_amd64 /usr/local/bin/runtz
+runtz version
+```
+
+### Imagem Docker
+
+A CLI também é publicada como imagem de container, com o binário `runtz` como entrypoint:
+
+```bash
+docker run --rm runtzdev/runtz-cli:latest version
+```
+
+Esse é o modo recomendado para pipelines. Consulte os [guias de CI/CD](/pt-br/docs/cicd/github-actions) para exemplos de GitHub Actions, GitLab, Jenkins, Azure DevOps, Bitbucket e CircleCI.
+
+## Comandos
+
+| Comando | Scan ou ação |
+| --- | --- |
+| `runtz sca (REPO_PATH \| FILE_PATH)` | Vulnerabilidades em dependências de manifests |
+| `runtz sast (REPO_PATH \| FILE_PATH)` | Achados estáticos no código-fonte |
+| `runtz host` | Pacotes instalados em um host ou rootfs Linux |
+| `runtz container IMAGE` | Pacotes dentro de uma imagem de container |
+| `runtz k8s` | Postura de cluster ou manifests Kubernetes |
+| `runtz login` | Armazena um token da plataforma |
+| `runtz logout` | Remove o token armazenado |
+| `runtz whoami` | Mostra o workspace e a origem do token atual |
+| `runtz update` | Atualiza a CLI para a versão mais recente |
+| `runtz version` | Exibe a versão da CLI |
+
+## Atualização
+
+A CLI se atualiza no lugar e confere o SHA-256 do download antes de substituir o binário:
+
+```bash
+runtz update          # pede confirmação
+runtz update --yes    # sem confirmação, ideal para automação
+runtz update --check  # apenas informa se existe uma versão nova
+```
+
+## Autenticação
+
+Cada scan usa um token de workspace gerado na plataforma (`rtz_live_...`). Para uso interativo, faça login uma vez. O `runtz login` valida o token e o salva em `~/.config/runtz/config.json` com permissão `0600`:
+
+```bash
+runtz login          # cole o token no prompt oculto
+runtz whoami         # workspace e origem do token
+runtz logout         # remova o token armazenado
+```
+
+Em CI/CD, pule o login e passe o token a partir de um secret. A resolução segue esta ordem:
+
+1. flag `--token`
+2. variável `RUNTZ_TOKEN`
+3. token salvo pelo `runtz login`
+
+O `--endpoint` aponta por padrão para `https://engine.runtz.dev`. Em ambientes self-hosted, passe seu endpoint no `runtz login --endpoint` ou defina `RUNTZ_ENDPOINT`.
+
+## Primeiro scan
+
+```bash
+runtz login
+runtz sca ./
+```
+
+## Gates de severidade em CI/CD
+
+Todo comando de scan pode falhar o pipeline quando encontra problemas demais em uma severidade. Os limites são opcionais; `0` desativa o gate.
+
+```bash
+# Falha com um crítico ou com 5 ou mais altos
+runtz sca ./ \
+  --token "$RUNTZ_TOKEN" \
+  --critical-threshold 1 \
+  --high-threshold 5
+```
+
+Todos os scans aceitam `--critical-threshold N`, `--high-threshold N`, `--medium-threshold N` e `--low-threshold N`, além das variáveis equivalentes `RUNTZ_*_THRESHOLD`.
+
+Os resultados sempre são enviados antes da avaliação do gate, portanto até um gate reprovado fica registrado.
+
+**Códigos de saída:** `0` sucesso · `1` erro de execução · `2` erro de uso · `3` gate de severidade acionado ou atualização encontrada por `runtz update --check`.
+
+Veja a [seção de scans](/pt-br/docs/scans/sca) para conhecer o escopo e as flags de cada tipo.

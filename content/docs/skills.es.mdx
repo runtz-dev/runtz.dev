@@ -1,0 +1,47 @@
+---
+title: Skills
+description: Skills listas para enseñar a Claude, Codex y Gemini a ejecutar análisis de runtz.
+---
+
+# Skills
+
+Las skills de runtz enseñan a los asistentes de programación a ejecutar análisis SCA, SAST, de hosts, contenedores y Kubernetes, además de consultar la documentación correctamente y sin manipular tu token en un prompt.
+
+Cada skill sigue la convención nativa del asistente:
+
+| Asistente | Convención | Ubicación |
+| --- | --- | --- |
+| **Claude** (Code / Desktop) | `SKILL.md` + `reference/` | `~/.claude/skills/runtz-security-scans/` o `.claude/skills/` del proyecto |
+| **Codex** (OpenAI) | `AGENTS.md` | raíz del proyecto o integrado en un `AGENTS.md` existente |
+| **Gemini** (Gemini CLI) | `GEMINI.md` | raíz del proyecto o `~/.gemini/` |
+
+## Cómo funcionan
+
+Las tres skills siguen el mismo proceso:
+
+1. **Ejecutan análisis con la CLI de runtz.** La CLI debe estar instalada y autenticada con `runtz login`, `--token` o `RUNTZ_TOKEN`.
+2. **Consultan el [servidor MCP de runtz](/es/docs/mcp)** para leer la documentación mediante `runtz_docs_*`. MCP no ejecuta análisis.
+3. **Mantienen el token en la configuración**, nunca en prompts ni comandos impresos.
+4. **Resumen los hallazgos** con severidad y soluciones concretas.
+
+## Elegir el análisis correcto
+
+| Lo que quiere el usuario | Análisis |
+| --- | --- |
+| Comprobar dependencias o `package.json` en busca de CVEs | SCA |
+| Encontrar secretos o patrones inseguros en el código | SAST |
+| Auditar un host Linux o rootfs montado | host |
+| Auditar una imagen Docker o de contenedor | container |
+| Revisar un clúster o manifiestos Kubernetes | k8s |
+
+## Instalación
+
+```bash
+git clone https://github.com/runtz-dev/runtz-skills
+```
+
+- **Claude Code:** copia `claude/` a `~/.claude/skills/runtz-security-scans/`.
+- **Codex:** copia `codex/AGENTS.md` a la raíz del proyecto.
+- **Gemini:** copia `gemini/GEMINI.md` a la raíz del proyecto o `~/.gemini/`.
+
+Combina cualquier skill con el [servidor MCP de runtz](/es/docs/mcp) para que el asistente consulte la documentación sin adivinar.

@@ -1,6 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextFetchEvent, NextRequest, NextResponse } from 'next/server';
 import { isMarkdownPreferred, rewritePath } from 'fumadocs-core/negotiation';
+import { createI18nMiddleware } from 'fumadocs-core/i18n/middleware';
 import { basePath, docsContentRoute, docsRoute } from '@/lib/shared';
+import { i18n, pathLocale } from '@/lib/i18n';
+
+const handleI18n = createI18nMiddleware(i18n);
 
 const { rewrite: rewriteDocs } = rewritePath(
   `${docsRoute}{/*path}`,
@@ -18,48 +22,67 @@ const { rewrite: rewriteSuffix } = rewritePath(
 const installScriptUrl =
   'https://raw.githubusercontent.com/runtz-dev/runtz-cli/main/install.sh';
 
-// Files that llmstxt.org (and every crawler implementing it) expects at the
-// domain root, not under the /home basePath. The ingress routes these two exact
-// paths to this app; here they are rewritten onto the real routes.
+// Files that llmstxt.org expects at the domain root. The ingress routes these
+// exact paths to this app; they remain English/default-locale entry points.
 const rootLlmsFiles = new Set(['/llms.txt', '/llms-full.txt']);
 
 // `request.nextUrl.pathname` has the basePath stripped, and NextResponse.rewrite
-// does not add it back — so every internal rewrite target must be prefixed by
-// hand or it lands on the platform frontend's 404.
+// does not add it back. Internal rewrites therefore restore `/home` manually.
 function rewriteToApp(request: NextRequest, pathname: string) {
   return NextResponse.rewrite(new URL(`${basePath}${pathname}`, request.url));
 }
 
-export default function proxy(request: NextRequest) {
+function localizedInternalPath(pathname: string, locale: string) {
+  return `/${locale}${pathname === '/' ? '' : pathname}`;
+}
+
+export default function proxy(request: NextRequest, event: NextFetchEvent) {
   const { pathname } = request.nextUrl;
 
   if (pathname === '/install.sh') {
     return NextResponse.redirect(installScriptUrl, 302);
   }
 
-  // Serve the legal pages at runtz.dev/legal/* (without the /home basePath):
-  // the ingress routes /legal to this app and the request is rewritten to the
-  // basePath-prefixed route.
+  // `/legal` is also exposed without the app basePath by the existing ingress.
+  // Keep that compatibility URL tied to the default English locale.
   if (pathname === '/legal' || pathname.startsWith('/legal/')) {
-    return rewriteToApp(request, pathname);
+    return rewriteToApp(request, localizedInternalPath(pathname, 'en'));
   }
 
   if (rootLlmsFiles.has(pathname)) {
     return rewriteToApp(request, pathname);
   }
 
-  const result = rewriteSuffix(pathname);
-  if (result) {
-    return rewriteToApp(request, result);
+  const localized = pathLocale(pathname);
+  const suffixResult = rewriteSuffix(localized.pathname);
+
+  if (suffixResult) {
+    return rewriteToApp(
+      request,
+      localizedInternalPath(suffixResult, localized.locale),
+    );
   }
 
   if (isMarkdownPreferred(request)) {
-    const result = rewriteDocs(pathname);
+    const markdownResult = rewriteDocs(localized.pathname);
 
-    if (result) {
-      return rewriteToApp(request, result);
+    if (markdownResult) {
+      return rewriteToApp(
+        request,
+        localizedInternalPath(markdownResult, localized.locale),
+      );
     }
   }
 
-  return NextResponse.next();
+  // Public files, Next.js internals and route handlers do not belong to the
+  // locale tree and must never receive a language prefix.
+  if (
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/api/') ||
+    /\.[^/]+$/.test(pathname)
+  ) {
+    return NextResponse.next();
+  }
+
+  return handleI18n(request, event);
 }

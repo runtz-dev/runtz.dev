@@ -1,0 +1,43 @@
+---
+title: GitLab CI/CD
+description: Execute scans do runtz em pipelines do GitLab CI/CD.
+---
+
+# GitLab CI/CD
+
+No GitLab, o job pode rodar dentro da própria imagem da CLI: o checkout já é o diretório de trabalho e `runtz` está no `PATH`.
+
+## Credenciais
+
+Em `Settings → CI/CD → Variables`, adicione `RUNTZ_ENDPOINT` e `RUNTZ_TOKEN`. Marque o token como **Masked**. A CLI lê as duas variáveis diretamente do ambiente.
+
+## Analisar o repositório
+
+Adicione ao `.gitlab-ci.yml`:
+
+```yaml
+stages: [security]
+.runtz:
+  stage: security
+  image:
+    name: runtzdev/runtz-cli:latest
+    entrypoint: [""]
+runtz-sca:
+  extends: .runtz
+  script:
+    - runtz sca . --project "$CI_PROJECT_NAME" --source "$CI_PROJECT_URL"
+runtz-sast:
+  extends: .runtz
+  script:
+    - runtz sast . --project "$CI_PROJECT_NAME" --source "$CI_PROJECT_URL"
+```
+
+O `entrypoint: [""]` permite que o GitLab use seu shell para executar `script`.
+
+## Containers e Kubernetes
+
+Para uma imagem pública, adicione `runtz container my-org/my-app:latest`. Para imagens privadas recém-criadas, use `--local` em um runner com o socket Docker, seguindo o [exemplo do GitHub Actions](/pt-br/docs/cicd/github-actions#analisar-a-imagem-criada).
+
+Para manifests, execute `runtz k8s ./deploy --target "$CI_PROJECT_NAME" --source "$CI_PROJECT_URL"`.
+
+Fixe uma tag de release e use gates de severidade se os achados precisarem falhar o pipeline.

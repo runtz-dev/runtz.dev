@@ -1,0 +1,67 @@
+---
+title: Argo
+description: Ejecuta análisis de runtz con Argo Workflows y Argo CD.
+---
+
+# Argo
+
+runtz encaja de forma natural en Argo: el entrypoint de la imagen es el binario `runtz`, por lo que un paso solo necesita la imagen y `args`. El análisis de contenedores lee las capas directamente del registry, sin daemon Docker ni sidecar privilegiado.
+
+## Guardar las credenciales
+
+Crea un Secret en el namespace de los workflows:
+
+```bash
+kubectl create secret generic runtz-credentials -n argo \
+  --from-literal=RUNTZ_ENDPOINT=https://engine.runtz.dev \
+  --from-literal=RUNTZ_TOKEN=rtz_live_...
+```
+
+## Analizar el repositorio
+
+Un template parametrizado puede ejecutar SCA y SAST sobre un artefacto Git:
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: runtz-scans-
+spec:
+  entrypoint: security-scans
+  templates:
+    - name: security-scans
+      dag:
+        tasks:
+          - name: sca
+            template: runtz-scan
+            arguments: { parameters: [{ name: command, value: sca }] }
+          - name: sast
+            template: runtz-scan
+            arguments: { parameters: [{ name: command, value: sast }] }
+    - name: runtz-scan
+      inputs:
+        parameters: [{ name: command }]
+        artifacts:
+          - name: source
+            path: /src
+            git: { repo: https://github.com/my-org/my-app.git, revision: main }
+      container:
+        image: runtzdev/runtz-cli:latest
+        args: ["{{inputs.parameters.command}}", /src, --project, my-app]
+        envFrom:
+          - secretRef: { name: runtz-credentials }
+```
+
+Para repositorios privados, configura `usernameSecret`/`passwordSecret` o `sshPrivateKeySecret` en el artefacto Git.
+
+## Imágenes y programación
+
+Después de publicar una imagen, ejecuta `args: ["container", "my-org/my-app:latest"]`. Un `CronWorkflow` con `schedule: "0 3 * * *"` mantiene el dashboard actualizado incluso sin commits nuevos.
+
+## Análisis después del despliegue en Argo CD
+
+Un hook `PostSync` puede ejecutar `runtz k8s` después de cada sync. Usa una ServiceAccount con acceso de lectura a pods, services, workloads, ingresses y recursos RBAC. Como la imagen mínima no incluye kubectl, copia el binario con un init container y pasa `--kubectl /tools/kubectl`.
+
+Para limitarlo al namespace de la aplicación, usa `--namespace my-app`; en ese caso, `Role` y `RoleBinding` son suficientes para los recursos del namespace.
+
+Fija una tag de release para workflows reproducibles. También puedes analizar manifiestos sin acceso al clúster con `runtz k8s /src/deploy`.

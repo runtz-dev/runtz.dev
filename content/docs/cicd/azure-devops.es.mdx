@@ -1,0 +1,48 @@
+---
+title: Azure DevOps
+description: Ejecuta análisis de runtz en Azure Pipelines.
+---
+
+# Azure DevOps
+
+Ejecuta runtz en Azure Pipelines con pasos `docker run` en un agente Linux alojado por Microsoft. La imagen mínima de la CLI no cumple los requisitos de un container job, así que se invoca directamente.
+
+## Credenciales
+
+En `Pipelines → Library` o `Edit → Variables`, añade `RUNTZ_TOKEN` y márcalo como secreto. Las variables secretas deben mapearse explícitamente con `env:`.
+
+## Analizar el repositorio
+
+```yaml
+trigger:
+  branches:
+    include: [main]
+pool:
+  vmImage: ubuntu-latest
+variables:
+  RUNTZ_ENDPOINT: https://engine.runtz.dev
+steps:
+  - checkout: self
+  - script: |
+      docker run --rm -v "$(Build.SourcesDirectory):/src" \
+        -e RUNTZ_ENDPOINT -e RUNTZ_TOKEN \
+        runtzdev/runtz-cli:latest sca /src \
+        --project "$(Build.Repository.Name)" --source "$(Build.Repository.Uri)"
+    displayName: Análisis SCA
+    env:
+      RUNTZ_TOKEN: $(RUNTZ_TOKEN)
+  - script: |
+      docker run --rm -v "$(Build.SourcesDirectory):/src" \
+        -e RUNTZ_ENDPOINT -e RUNTZ_TOKEN \
+        runtzdev/runtz-cli:latest sast /src \
+        --project "$(Build.Repository.Name)" --source "$(Build.Repository.Uri)"
+    displayName: Análisis SAST
+    env:
+      RUNTZ_TOKEN: $(RUNTZ_TOKEN)
+```
+
+## Analizar una imagen creada
+
+Después de `docker build`, monta el socket, usa `--group-add "$(stat -c %g /var/run/docker.sock)"` y ejecuta `runtz container IMAGE --local`. Para registries públicos, usa la referencia sin montar el socket.
+
+Fija una tag de la CLI para pipelines reproducibles y usa gates de severidad cuando los hallazgos deban bloquear el pipeline.

@@ -1,0 +1,124 @@
+---
+title: Instalar la CLI de runtz
+description: Instala la CLI de runtz y ejecuta tu primer análisis.
+---
+
+# Instalar la CLI de runtz
+
+La CLI de runtz es un único binario estático en Go. El script detecta el sistema operativo y la arquitectura, descarga el binario y lo instala en `/usr/local/bin`:
+
+```bash
+curl -fsSL https://runtz.dev/install.sh | bash
+```
+
+Comprueba la instalación:
+
+```bash
+runtz version
+```
+
+```txt
+runtz 1.0.0-rc1 (linux/amd64)
+```
+
+Linux y macOS son compatibles con `amd64` y `arm64`.
+
+### Opciones del script
+
+```bash
+# Instalar una versión específica
+RUNTZ_VERSION=v1.0.0-rc1 curl -fsSL https://runtz.dev/install.sh | bash
+
+# Instalar en otro directorio (sin sudo si se puede escribir)
+RUNTZ_INSTALL_DIR=$HOME/.local/bin curl -fsSL https://runtz.dev/install.sh | bash
+```
+
+### Instalación manual
+
+Descarga el binario desde la [página de releases de GitHub](https://github.com/runtz-dev/runtz-cli/releases) y ejecuta:
+
+```bash
+chmod +x runtz_linux_amd64
+sudo mv runtz_linux_amd64 /usr/local/bin/runtz
+runtz version
+```
+
+### Imagen Docker
+
+La CLI también se publica como imagen de contenedor, con el binario `runtz` como entrypoint:
+
+```bash
+docker run --rm runtzdev/runtz-cli:latest version
+```
+
+Es la forma recomendada de usar runtz en pipelines. Consulta las [guías de CI/CD](/es/docs/cicd/github-actions) para ejemplos de GitHub Actions, GitLab, Jenkins, Azure DevOps, Bitbucket y CircleCI.
+
+## Comandos
+
+| Comando | Análisis o acción |
+| --- | --- |
+| `runtz sca (REPO_PATH \| FILE_PATH)` | Vulnerabilidades en dependencias de manifiestos |
+| `runtz sast (REPO_PATH \| FILE_PATH)` | Hallazgos estáticos en el código fuente |
+| `runtz host` | Paquetes instalados en un host o rootfs Linux |
+| `runtz container IMAGE` | Paquetes dentro de una imagen de contenedor |
+| `runtz k8s` | Postura de clúster o manifiestos Kubernetes |
+| `runtz login` | Guarda un token de la plataforma |
+| `runtz logout` | Elimina el token guardado |
+| `runtz whoami` | Muestra el espacio y el origen del token actual |
+| `runtz update` | Actualiza la CLI a la última versión |
+| `runtz version` | Muestra la versión de la CLI |
+
+## Actualización
+
+La CLI se actualiza en el lugar y verifica el SHA-256 antes de sustituir el binario:
+
+```bash
+runtz update          # pide confirmación
+runtz update --yes    # sin confirmación, ideal para automatización
+runtz update --check  # solo informa si hay una versión nueva
+```
+
+## Autenticación
+
+Cada análisis usa un token de espacio generado en la plataforma (`rtz_live_...`). Para uso interactivo, inicia sesión una vez. `runtz login` valida el token y lo guarda en `~/.config/runtz/config.json` con permisos `0600`:
+
+```bash
+runtz login          # pega el token en el prompt oculto
+runtz whoami         # espacio y origen del token
+runtz logout         # elimina el token guardado
+```
+
+En CI/CD, omite el login y pasa el token desde un secreto. Se resuelve en este orden:
+
+1. flag `--token`
+2. variable `RUNTZ_TOKEN`
+3. token guardado por `runtz login`
+
+`--endpoint` apunta de forma predeterminada a `https://engine.runtz.dev`. En entornos self-hosted, pásalo a `runtz login --endpoint` o define `RUNTZ_ENDPOINT`.
+
+## Primer análisis
+
+```bash
+runtz login
+runtz sca ./
+```
+
+## Gates de severidad en CI/CD
+
+Cada comando puede hacer fallar el pipeline si encuentra demasiados problemas de una severidad. Los límites son opcionales; `0` desactiva el gate.
+
+```bash
+# Falla con un crítico o con 5 o más altos
+runtz sca ./ \
+  --token "$RUNTZ_TOKEN" \
+  --critical-threshold 1 \
+  --high-threshold 5
+```
+
+Todos los análisis aceptan `--critical-threshold N`, `--high-threshold N`, `--medium-threshold N` y `--low-threshold N`, además de las variables equivalentes `RUNTZ_*_THRESHOLD`.
+
+Los resultados siempre se envían antes de evaluar el gate, por lo que incluso un gate fallido queda registrado.
+
+**Códigos de salida:** `0` éxito · `1` error de ejecución · `2` error de uso · `3` gate activado o actualización encontrada por `runtz update --check`.
+
+Consulta la [sección de análisis](/es/docs/scans/sca) para conocer el alcance y las flags de cada tipo.

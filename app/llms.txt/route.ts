@@ -13,7 +13,7 @@ function absoluteLinks(markdown: string) {
 }
 
 export function GET() {
-  return new Response(absoluteLinks(llms(source).index()), {
+  return new Response(absoluteLinks(llms(source).index('en')), {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
     },

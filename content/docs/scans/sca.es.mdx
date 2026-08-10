@@ -1,0 +1,61 @@
+---
+title: SCA
+description: Análisis de composición de software en runtz.
+---
+
+# SCA
+
+SCA encuentra vulnerabilidades conocidas en las dependencias del proyecto. Apunta `runtz sca` a un repositorio: la CLI descubre los manifiestos compatibles, extrae los paquetes declarados y consulta GitHub Advisory Database.
+
+## Lenguajes compatibles
+
+| Lenguaje | Ecosistema | Archivos |
+| --- | --- | --- |
+| JavaScript / TypeScript | npm | `package.json` |
+| Python | pip | `requirements.txt` |
+| Go | Go modules | `go.mod` |
+| Java / Kotlin | Maven | `pom.xml` |
+| Ruby | RubyGems | `Gemfile.lock` |
+| PHP | Composer | `composer.json` |
+| Rust | crates.io | `Cargo.toml` |
+| C# / .NET | NuGet | `*.csproj` |
+
+Los directorios de dependencias y build, como `node_modules`, `vendor`, `target`, `dist` y `.git`, se omiten automáticamente.
+
+Cuando un manifiesto usa un rango de versiones, la CLI intenta obtener una versión concreta. Las entradas sin versión resoluble se inventarían, pero no se consultan en los avisos.
+
+## Uso
+
+```txt
+runtz sca (REPO_PATH | FILE_PATH) [flags]
+```
+
+Después de [`runtz login`](/es/docs/install-cli#autenticación), analiza todo el repositorio:
+
+```bash
+runtz sca ./
+```
+
+O analiza un manifiesto y pasa el token explícitamente en CI/CD:
+
+```bash
+runtz sca ./package.json --token rtz_live_...
+```
+
+## Flags
+
+| Flag | Descripción | Predeterminado |
+| --- | --- | --- |
+| `--project` | Nombre mostrado en la plataforma | nombre del directorio |
+| `--source` | Ruta, repositorio o URL de origen | ruta analizada |
+| `--github-token` | Token GitHub para ampliar el límite de API | `GITHUB_TOKEN` |
+| `--endpoint` | Endpoint del backend self-hosted | `https://engine.runtz.dev` |
+| `--token` | Token generado en la plataforma | token guardado en login |
+
+## Consulta de avisos
+
+Cada dependencia con versión resoluble se consulta en [GitHub Global Security Advisories](https://docs.github.com/en/rest/security-advisories/global-advisories) por ecosistema y `package@version`. Los avisos se normalizan y se envían al backend.
+
+## Resultado almacenado
+
+El backend guarda proyecto y espacio, origen y manifiestos, dependencias, vulnerabilidades con CVE/GHSA, severidad, CVSS y versión corregida, resumen por severidad y fecha del análisis. El frontend usa estos datos en el dashboard y la tabla de CVEs/GHSAs.
