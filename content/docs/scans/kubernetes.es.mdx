@@ -1,0 +1,68 @@
+---
+title: Análisis de Kubernetes
+description: Análisis de clústeres Kubernetes en runtz.
+---
+
+# Análisis de Kubernetes
+
+El análisis lee el clúster conectado mediante `kubectl`, comprueba workloads, exposición de red y RBAC con reglas de postura y envía los hallazgos al backend. También puede analizar manifiestos YAML/JSON de un repositorio o chart renderizado sin acceder a un clúster.
+
+## Comprobaciones
+
+| ID | Comprobación | Categoría | Severidad |
+| --- | --- | --- | --- |
+| K8S001–003 | `hostNetwork`, `hostPID` o `hostIPC` habilitado | pod-security | alta |
+| K8S004 | Volumen `hostPath` montado | pod-security | alta/media |
+| K8S005 | Contenedor privilegiado | container-security | crítica |
+| K8S006–008 | Escalada, ejecución como root o rootfs escribible | container-security | media/baja |
+| K8S014 | Capability Linux peligrosa | container-security | alta |
+| K8S009 | Tag mutable (`latest` o ausente) | supply-chain | media |
+| K8S012–013 | Binding `cluster-admin` o regla RBAC comodín | rbac | crítica/alta |
+| K8S018–019 | Service account predeterminada o token montado | rbac | baja/media |
+| K8S010–011 | Servicio público o Ingress sin TLS | network | media |
+| K8S015–017 | Recursos o probes ausentes | resilience | media/baja |
+
+Cada hallazgo incluye una descripción y una solución concreta. En la plataforma puedes filtrar por estas categorías.
+
+## Analizar un clúster activo
+
+De forma predeterminada, el escáner usa el contexto actual de kubectl. Después de [`runtz login`](/es/docs/install-cli#autenticación):
+
+```bash
+runtz k8s
+```
+
+La máquina necesita `kubectl` instalado y autenticado. Se analizan todos los namespaces y los recursos RBAC del clúster por defecto.
+
+```bash
+runtz k8s --kubeconfig ~/.kube/config2
+runtz k8s --context production --namespace payments
+```
+
+## Analizar manifiestos
+
+Pasa un archivo o directorio para analizar charts renderizados o manifiestos sin tocar el clúster:
+
+```bash
+runtz k8s ./deploy \
+  --target production-manifests \
+  --token rtz_live_...
+```
+
+## Flags
+
+| Flag | Descripción | Predeterminado |
+| --- | --- | --- |
+| `--kubeconfig` | Ruta del kubeconfig | kubeconfig activo |
+| `--context` | Contexto Kubernetes | contexto actual |
+| `--namespace` | Namespace específico | todos |
+| `--all-namespaces` | Analiza todos si no se define `--namespace` | `true` |
+| `--kubectl` | Ruta del binario kubectl | `kubectl` |
+| `--target` | Nombre del objetivo en la plataforma | contexto o directorio |
+| `--source` | Origen, repositorio o URL | objetivo del análisis |
+| `--endpoint` | Endpoint del backend self-hosted | `https://engine.runtz.dev` |
+| `--token` | Token generado en la plataforma | token guardado en login |
+
+## Resultado almacenado
+
+El backend guarda objetivo, origen, recursos y manifiestos analizados, hallazgos con categoría y severidad y fecha. El token identifica el espacio automáticamente.

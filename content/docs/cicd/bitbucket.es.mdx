@@ -1,0 +1,36 @@
+---
+title: Bitbucket Pipelines
+description: Ejecuta análisis de runtz en Bitbucket Pipelines.
+---
+
+# Bitbucket Pipelines
+
+En Bitbucket, el paso se ejecuta dentro de la propia imagen de la CLI: el clone ya es el directorio de trabajo y `runtz` está en el `PATH`.
+
+## Credenciales
+
+En `Repository settings → Repository variables`, añade `RUNTZ_ENDPOINT` y `RUNTZ_TOKEN`. Marca el token como **Secured**. Las variables se inyectan automáticamente en el entorno.
+
+## Analizar el repositorio
+
+```yaml
+pipelines:
+  default:
+    - parallel:
+        - step:
+            name: Análisis SCA de runtz
+            image: runtzdev/runtz-cli:latest
+            script:
+              - runtz sca . --project "$BITBUCKET_REPO_SLUG" --source "https://bitbucket.org/$BITBUCKET_REPO_FULL_NAME"
+        - step:
+            name: Análisis SAST de runtz
+            image: runtzdev/runtz-cli:latest
+            script:
+              - runtz sast . --project "$BITBUCKET_REPO_SLUG" --source "https://bitbucket.org/$BITBUCKET_REPO_FULL_NAME"
+```
+
+## Analizar una imagen
+
+Para imágenes públicas, añade un paso con `runtz container my-org/my-app:latest`. Las imágenes privadas se pueden analizar con `--local` en un runner cuyo daemon contenga la imagen recién creada.
+
+Fija una tag de release para pipelines reproducibles. Mueve los pasos a `pipelines: branches: main:` si quieres ejecutarlos solo en la rama principal.

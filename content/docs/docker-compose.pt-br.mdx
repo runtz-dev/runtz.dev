@@ -1,0 +1,72 @@
+---
+title: Docker Compose
+description: Hospede a plataforma runtz com Docker Compose.
+---
+
+# Docker Compose
+
+Execute toda a stack do runtz — frontend, engine backend e MongoDB — em qualquer máquina com Docker. A stack usa as imagens públicas `runtzdev/runtz-engine` e `runtzdev/runtz-frontend` do Docker Hub.
+
+## Requisitos
+
+- Docker e Docker Compose.
+
+## Instalação
+
+```bash
+curl -fsSL https://runtz.dev/home/docker-compose.yml -o docker-compose.yml
+docker compose up -d
+```
+
+Não é preciso definir secrets: a engine emite e armazena suas próprias sessões, chaves de API e códigos de login.
+
+Abra `http://localhost:3000`. A saúde do backend fica em `http://localhost:8080/health` e o MongoDB em `localhost:27017`.
+
+Se as portas `8080`, `3000` ou `27017` já estiverem em uso, altere `BACKEND_PORT`, `FRONTEND_PORT` e `MONGODB_PORT` no `.env`.
+
+## Primeiro acesso
+
+No primeiro acesso, informe `Admin username`, `Password` e `Workspace Name`. Depois, a pessoa administradora pode criar workspaces e gerenciar usuários em `Settings`.
+
+## Variáveis de ambiente
+
+```bash
+PORT=8080
+MONGODB_URI=mongodb://mongodb:27017
+MONGODB_DATABASE=runtz
+RUNTZ_DEPLOYMENT_MODE=self-hosted
+RUNTZ_PUBLIC_URL=http://localhost:3000
+CORS_ALLOWED_ORIGINS=http://localhost:3000
+RUNTZ_VERSION=1.0.0-rc1
+```
+
+Implantações centrais ou cloud também precisam das chaves da Stripe e da chave privada que assina licenças:
+
+```bash
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_PRICE_PRO_CLOUD=price_...
+STRIPE_PRICE_ENTERPRISE_CLOUD=price_...
+STRIPE_PRICE_PRO_SELF_HOSTED=price_...
+STRIPE_PRICE_ENTERPRISE_SELF_HOSTED=price_...
+RUNTZ_LICENSE_PRIVATE_KEY=base64-ed25519-private-key
+```
+
+## Ativação self-hosted Pro e Enterprise
+
+O Self-hosted Free roda totalmente na sua infraestrutura. Pro e Enterprise são ativados em `Settings → Billing` dentro do app.
+
+A engine self-hosted não precisa de chaves Stripe. Ela inicia o Checkout pela engine central, redireciona o admin à Stripe, retorna à mesma instalação e ativa a licença automaticamente. O único requisito de rede é acesso HTTPS de saída a `https://engine.runtz.dev`.
+
+Cada licença ativa uma instalação. Os dados dos scans continuam locais; apenas a sessão do Checkout e o ID da instalação são enviados ao endpoint central para ativação e heartbeat.
+
+A autenticação com Google está disponível em todos os planos self-hosted. GitHub é exclusivo da cloud. Para ativar o Google, configure seu próprio app OAuth e defina `GOOGLE_CLIENT_ID` na engine.
+
+## Compilar a partir do código-fonte
+
+```bash
+git clone https://github.com/runtz-dev/runtz
+cd runtz
+cp .env.example .env
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+```

@@ -1,0 +1,68 @@
+---
+title: Servidor MCP
+description: Lee la documentación de runtz desde cualquier agente de IA con el servidor MCP alojado.
+---
+
+# Servidor MCP
+
+`runtz-mcp` es un servidor alojado del [Model Context Protocol](https://modelcontextprotocol.io) para runtz. Conéctalo a Claude, Codex, Gemini u otro cliente compatible y el asistente recibirá una copia de esta documentación como herramientas nativas. **No hay nada que instalar**: apunta el cliente a `https://mcp.runtz.dev/mcp`.
+
+Está escrito en Go, sin dependencias de terceros, y usa JSON-RPC 2.0 sobre el transporte HTTP streamable de MCP.
+
+- **Solo documentación, a propósito.** El servidor responde únicamente preguntas sobre la documentación. Ejecuta los análisis DevSecOps directamente con la [CLI de runtz](/es/docs/install-cli), ya que necesitan acceder al código en la máquina local.
+- **Instalación cero.** runtz opera y mantiene el servidor por ti.
+
+## Herramientas
+
+| Herramienta | Finalidad |
+| --- | --- |
+| `runtz_docs_list` | Lista las páginas con sus resúmenes |
+| `runtz_docs_read` | Lee una página completa por slug |
+| `runtz_docs_search` | Busca en la documentación y devuelve fragmentos |
+
+Cada página también se expone como recurso MCP (`runtz-docs://<slug>`).
+
+## Endpoints
+
+| Entorno | URL |
+| --- | --- |
+| Producción | `https://mcp.runtz.dev/mcp` |
+| Desarrollo | `https://mcp-dev.runtz.dev/mcp` |
+
+## Configuración de clientes
+
+### Claude Code / Desktop
+
+Guarda como `.mcp.json` en el proyecto o intégralo en `~/.claude.json` / `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "runtz": { "type": "http", "url": "https://mcp.runtz.dev/mcp" }
+  }
+}
+```
+
+### Codex
+
+Añade a `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.runtz]
+type = "http"
+url = "https://mcp.runtz.dev/mcp"
+```
+
+### Gemini CLI
+
+Añade a `~/.gemini/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "runtz": { "httpUrl": "https://mcp.runtz.dev/mcp" }
+  }
+}
+```
+
+Combina el servidor MCP con la [skill correspondiente](/es/docs/skills) para que el asistente sepa cuándo y cómo usar las herramientas.

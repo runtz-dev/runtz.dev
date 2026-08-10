@@ -1,0 +1,43 @@
+---
+title: CircleCI
+description: Ejecuta análisis de runtz en pipelines de CircleCI.
+---
+
+# CircleCI
+
+Ejecuta runtz con pasos `docker run` en un executor `machine`. Este executor ya incluye un daemon Docker, también para analizar imágenes recién creadas.
+
+## Credenciales
+
+En `Project Settings → Environment Variables`, añade `RUNTZ_ENDPOINT` y `RUNTZ_TOKEN`. Para compartir entre proyectos, usa un [context](https://circleci.com/docs/contexts/).
+
+## Analizar el repositorio
+
+```yaml
+version: 2.1
+jobs:
+  runtz-scans:
+    machine:
+      image: ubuntu-2404:current
+    steps:
+      - checkout
+      - run:
+          name: Análisis SCA
+          command: |
+            docker run --rm -v "$PWD:/src" -e RUNTZ_ENDPOINT -e RUNTZ_TOKEN \
+              runtzdev/runtz-cli:latest sca /src \
+              --project "$CIRCLE_PROJECT_REPONAME" --source "$CIRCLE_REPOSITORY_URL"
+      - run:
+          name: Análisis SAST
+          command: |
+            docker run --rm -v "$PWD:/src" -e RUNTZ_ENDPOINT -e RUNTZ_TOKEN \
+              runtzdev/runtz-cli:latest sast /src \
+              --project "$CIRCLE_PROJECT_REPONAME" --source "$CIRCLE_REPOSITORY_URL"
+workflows:
+  security:
+    jobs: [runtz-scans]
+```
+
+Para una imagen local, monta el socket Docker, añade su grupo con `--group-add` y usa `runtz container IMAGE --local`.
+
+No se recomienda el executor `docker` con la imagen mínima de la CLI como principal porque el checkout de CircleCI necesita `git` y `ssh`.

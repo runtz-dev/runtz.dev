@@ -1,0 +1,158 @@
+---
+title: Política de Privacidade
+description: Como a RAW DEVOPS LTDA coleta, usa, compartilha e protege dados pessoais no Runtz.
+---
+
+**Data de vigência:** 8 de agosto de 2026
+
+Esta Política explica como a **RAW DEVOPS LTDA**, CNPJ 51.460.107/0001-53, com sede na Avenida Portugal, 1148, Goiânia, Goiás, 74150-030, Brasil ("Runtz" ou "nós"), trata dados pessoais relacionados ao site, Serviço Cloud, documentação e MCP hospedados, licenciamento, suporte e serviços relacionados.
+
+A Política se aplica aos dados tratados pela Runtz. Não rege uma implantação self-hosted operada independentemente pelo cliente nem serviços de terceiros acessados diretamente.
+
+## 1. Nosso papel
+
+A Runtz atua como **controladora** dos dados usados para gerenciar contas, cobrança, licenciamento, segurança, comunicações e operações próprias.
+
+Quando uma organização envia Dados de Scan ao Serviço Cloud, ela define finalidade e meios do scan, atua como controladora e a Runtz atua como **operadora/processadora**, seguindo instruções legais. Se sua organização forneceu os dados, dirija primeiro a ela os pedidos relacionados; nós prestaremos o auxílio exigido.
+
+Em uma implantação self-hosted, o cliente opera o banco local e controla contas e Dados de Scan. Não recebemos esses dados salvo envio deliberado, por exemplo em suporte. Instalações pagas enviam somente os dados limitados de checkout e licença descritos abaixo.
+
+## 2. Dados pessoais tratados
+
+### 2.1. Conta e perfil
+
+Podemos tratar username, e-mail, nome, avatar, organização ou workspace, papel, identificador do provedor de autenticação, onboarding e horários de login. Senhas são armazenadas como hash unidirecional. Códigos por e-mail também são armazenados como hash temporário. Em login Google ou GitHub, recebemos nome, e-mail verificado, imagem e identificador necessários, nunca a senha desses serviços.
+
+### 2.2. Workspace e segurança
+
+Tratamos nomes e IDs de workspaces, participação, papéis, nomes e prefixos de chaves de API, hashes unidirecionais, datas de criação e último uso, hashes de sessão, expiração e informações limitadas do user agent.
+
+### 2.3. Cobrança e licenciamento
+
+Tratamos e-mail de cobrança, plano, modo de implantação, status e renovação da assinatura, cancelamento, IDs de cliente, assinatura e checkout da Stripe, price ID e eventos relacionados. A Stripe processa método de pagamento e endereço; a Runtz não armazena o número completo do cartão.
+
+Em self-hosted pago, também tratamos ID da instalação, prefixo e hash da licença, plano, entitlement, validação, sessão de checkout, ativação e heartbeat. Checkout pode transmitir e-mail do admin e ID da instalação ao serviço central e à Stripe. Ativação e heartbeat **não** enviam contas locais ou Dados de Scan.
+
+### 2.4. Dados de Scan Cloud
+
+A CLI executa scans no ambiente em que é chamada e envia resultados normalizados à engine escolhida. No Cloud, eles podem incluir:
+
+- nomes de projeto, origem, alvo e workspace;
+- nomes e versões de dependências e pacotes;
+- vulnerabilidades, severidade, correções e alertas;
+- categoria, título, descrição, remediação, arquivo, linha e coluna do achado;
+- hostname, sistema operacional e gerenciador de pacotes;
+- nome, referência e digest de imagem;
+- tipo, nome, namespace e achados de recursos Kubernetes; e
+- versão do scanner, contagens, status e horário.
+
+Os scanners enviam inventários e achados, não repositórios completos, camadas, credenciais de kubeconfig ou chaves privadas brutas. Mesmo assim, nomes, caminhos, hostnames ou metadados podem revelar informações sensíveis ou dados pessoais. Configure as entradas com cuidado e não envie dados ou segredos desnecessários.
+
+### 2.5. Site, aplicação e operação
+
+Ao acessar serviços hospedados, nós e provedores podemos tratar IP, user agent, data e hora, rota, método e status HTTP, latência, referrer, localização aproximada de rede, eventos de segurança, traces e métricas. O tracing do banco não registra documentos de consulta. Usamos esses dados para entregar requisições, diagnosticar, medir confiabilidade e proteger os Serviços. Não usamos atualmente trackers de publicidade comportamental.
+
+### 2.6. Servidor MCP hospedado
+
+O MCP é restrito à documentação. Ele trata requisições de protocolo e termos de busca transitoriamente, não executa scans nem solicita código ou chave de API. Metadados podem entrar nos dados operacionais, mas corpos de requisições não são registrados intencionalmente na telemetria da aplicação.
+
+### 2.7. Comunicações e preferências
+
+Tratamos contatos, mensagens e anexos enviados a suporte, jurídico, privacidade, licenciamento e segurança. A Resend processa endereço e conteúdo necessários a e-mails transacionais. No dispositivo, armazenamos preferências limitadas de tema, workspace, filtros e onboarding, nunca senha, token bruto de sessão ou chave de API.
+
+## 3. Como obtemos os dados
+
+Obtemos dados diretamente de você; de administradores da organização; do Google ou GitHub no login federado; da Stripe em assinaturas; automaticamente do navegador, dispositivo, CLI ou instalação; e de scanners e integrações configurados por você ou sua organização.
+
+## 4. Finalidades e bases legais
+
+Conforme a LGPD, usamos as bases aplicáveis:
+
+| Finalidade | Base legal |
+| --- | --- |
+| Criar contas, autenticar e fornecer workspaces, scans, dashboards, documentação e suporte | Execução de contrato ou procedimentos preliminares (art. 7º, V) |
+| Tratar Dados de Scan conforme instruções do cliente | Base legal do cliente e execução do contrato |
+| Assinaturas, pagamentos e licenças | Contrato (V) e obrigação legal/regulatória (II) |
+| Prevenir fraude, abuso e acesso indevido; investigar incidentes e manter registros | Legítimo interesse (IX) e obrigação legal (II) |
+| Exercer ou defender direitos | Exercício regular de direitos (VI) |
+| Confiabilidade e melhoria | Legítimo interesse (IX), dados agregados ou desidentificados |
+| Mensagens de serviço, segurança, login, cobrança e suporte | Contrato (V) e legítimo interesse (IX) |
+| Marketing opcional, se oferecido | Consentimento (I), revogável, ou outra base permitida |
+
+Ao usar legítimo interesse, avaliamos finalidade, necessidade e impacto e adotamos salvaguardas. Não criamos perfis publicitários nem tomamos decisões exclusivamente automatizadas sobre pessoas com efeitos jurídicos relevantes. Classificação de vulnerabilidades avalia ativos técnicos, não pessoas.
+
+## 5. Compartilhamento
+
+Não vendemos nem alugamos dados e não os compartilhamos para publicidade comportamental entre contextos. Divulgamos apenas o necessário a:
+
+- **Stripe**, para checkout, pagamentos, assinaturas e portal de cobrança;
+- **Resend**, para e-mails transacionais;
+- **Google** e **GitHub**, para login opcional;
+- **Cloudflare**, para DNS, rede, proteção de tráfego e edge;
+- infraestrutura de hospedagem, banco e observabilidade para operar e proteger os serviços;
+- consultores e autoridades quando necessário ou legalmente exigido; e
+- compradores, investidores ou sucessores em transação societária, sob confidencialidade e proteção equivalente.
+
+Provedores agindo em nosso nome são limitados por contrato. A CLI também pode se conectar diretamente a GitHub Security Advisories, OSV, registries ou repositórios de atualização, sob controle do cliente e políticas desses terceiros.
+
+## 6. Transferências internacionais
+
+Alguns provedores ficam nos **Estados Unidos** ou podem acessar dados de outros países. Transferências a partir do Brasil usam mecanismo permitido pelos artigos 33–36 da LGPD e pela regulamentação da ANPD, incluindo decisão de adequação ou cláusulas-padrão quando aplicável. Exigimos proteção compatível e limitamos ao necessário. Informações adicionais podem ser solicitadas em privacy@runtz.dev.
+
+## 7. Retenção e exclusão
+
+- **Códigos de login:** válidos por 10 minutos; bloqueios antifraude geralmente expiram em uma hora.
+- **Sessões:** expiram em sete dias e são removidas após expiração ou logout.
+- **Contas, workspaces e Dados de Scan Cloud:** enquanto ativos, depois excluídos ou anonimizados, salvo outra base legal.
+- **Cobrança, assinatura e licença:** durante a relação e depois pelo prazo fiscal, contábil, de auditoria, fraude e defesa de direitos.
+- **Registros de acesso e telemetria:** ao menos seis meses quando exigido pelo Marco Civil e, em geral, até 12 meses, salvo preservação, investigação ou demanda legal.
+- **Comunicações:** enquanto tratadas e durante o período jurídico, de auditoria ou segurança aplicável.
+- **Preferências do dispositivo:** até expiração configurada ou limpeza do armazenamento.
+
+A exclusão de backups ocorre no ciclo de rotação. Até lá, cópias ficam isoladas do uso comum e servem apenas a recuperação, segurança e obrigações legais.
+
+## 8. Cookies e armazenamento local
+
+- `runtz_session`: cookie HttpOnly, SameSite=Lax, de sete dias, Secure em HTTPS; o servidor guarda apenas hash unidirecional.
+- `sidebar_state`: lembra o estado da barra lateral por sete dias.
+- Local storage: tema, workspace e filtros até você limpar.
+- Session storage: estados temporários de onboarding e OAuth GitHub.
+
+Desabilitar armazenamento essencial pode impedir autenticação ou funções. Antes de adotar publicidade ou tracking não essencial, atualizaremos esta Política e implementaremos os controles de consentimento exigidos.
+
+## 9. Segurança
+
+Adotamos salvaguardas proporcionais, incluindo TLS, hashes unidirecionais, cookies HttpOnly, acesso por workspace, controles, gestão de secrets e monitoramento. Nenhum sistema é completamente seguro. Clientes devem proteger contas, endpoints e implantações self-hosted. Comunique vulnerabilidades ou incidentes a security@runtz.dev. Notificaremos clientes, titulares e ANPD quando e no prazo exigido.
+
+## 10. Seus direitos
+
+Nos termos da lei, o titular pode solicitar confirmação e acesso; correção; anonimização, bloqueio ou exclusão de dados desnecessários, excessivos ou ilícitos; portabilidade; exclusão de dados tratados por consentimento; informações sobre compartilhamento e sobre recusa de consentimento; revogação do consentimento; oposição a tratamento irregular; e revisão de decisão exclusivamente automatizada que afete seus interesses.
+
+Envie o pedido a privacy@runtz.dev. Podemos solicitar dados para verificar identidade e autoridade e não divulgaremos dados de outra pessoa ou cliente. A LGPD prevê acesso simplificado imediato ou declaração completa em até 15 dias. Outros pedidos seguem o prazo legal aplicável.
+
+Alguns dados não podem ser excluídos imediatamente quando necessários a contrato ativo, obrigação legal, direitos de terceiros, prevenção de fraude ou defesa de direitos. Explicaremos a restrição. Você também pode peticionar à **ANPD** ou a órgão de defesa do consumidor e pode ter direitos adicionais conforme seu local de residência. A Runtz não vende dados nem os usa para publicidade direcionada.
+
+## 11. Crianças e adolescentes
+
+Os Serviços se destinam a profissionais e organizações, não a menores de 18 anos. Não criamos conscientemente contas nem coletamos diretamente seus dados. Se acreditar que um menor forneceu dados, escreva a privacy@runtz.dev.
+
+## 12. Sites de terceiros e integrações
+
+Links e integrações de terceiros estão sujeitos às políticas próprias desses terceiros. Consulte-as antes de habilitar a integração ou fornecer dados.
+
+## 13. Alterações
+
+Podemos atualizar esta Política por mudanças nos Serviços, provedores, segurança ou lei. Publicaremos a versão e a data. Mudança material desfavorável ao tratamento de dados existentes será avisada com pelo menos 15 dias, salvo obrigação legal ou urgência de segurança.
+
+## 14. Contato e canal de privacidade
+
+- **Controladora:** RAW DEVOPS LTDA
+- **CNPJ:** 51.460.107/0001-53
+- **Endereço:** Avenida Portugal, 1148, Goiânia, GO 74150-030, Brasil
+- **Titulares e ANPD:** privacy@runtz.dev
+- **Segurança:** security@runtz.dev
+- **Jurídico:** legal@runtz.dev
+
+---
+
+Copyright © 2026 Runtz. Todos os direitos reservados.

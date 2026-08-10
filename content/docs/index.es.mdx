@@ -1,0 +1,62 @@
+---
+title: Introducción
+description: Qué es runtz y qué analiza.
+---
+
+# runtz
+
+runtz es una plataforma open source de análisis DevSecOps. Ejecutas los análisis con una sola CLI y los resultados llegan a dashboards en los que tu equipo puede actuar.
+
+La plataforma se compone de tres servicios:
+
+- `frontend`: plataforma web creada con Next.js y shadcn/ui.
+- `runtz`: engine backend en Go usado por el frontend y la CLI.
+- `cli`: escáner de línea de comandos en Go que ejecuta los análisis y envía los resultados al backend.
+
+## Tipos de análisis
+
+| Análisis | Comando | Qué cubre |
+| --- | --- | --- |
+| [SCA](/es/docs/scans/sca) | `runtz sca` | Dependencias vulnerables en 10 lenguajes y ecosistemas |
+| [SAST](/es/docs/scans/sast) | `runtz sast` | Pruebas estáticas: secretos, criptografía débil, TLS deshabilitado y ejecución dinámica |
+| [Hosts](/es/docs/scans/host) | `runtz host` | CVEs de paquetes en hosts Debian, RPM, Alpine y Arch |
+| [Contenedores](/es/docs/scans/container) | `runtz container` | CVEs de paquetes dentro de imágenes de contenedor |
+| [Kubernetes](/es/docs/scans/kubernetes) | `runtz k8s` | Hallazgos de postura en clústeres y manifiestos |
+
+DAST estará disponible próximamente.
+
+## Inicio rápido
+
+Instala la CLI:
+
+```bash
+curl -fsSL https://runtz.dev/install.sh | bash
+```
+
+Inicia sesión una vez con el token generado en la plataforma y analiza tu repositorio:
+
+```bash
+runtz login
+runtz sca ./
+```
+
+El token identifica tu espacio automáticamente. `runtz login` lo guarda para que los siguientes comandos no necesiten `--token`. En CI/CD, usa `--token` o `RUNTZ_TOKEN` desde un secreto. Consulta [Instalar la CLI](/es/docs/install-cli) o [Docker Compose](/es/docs/docker-compose) para alojar la plataforma.
+
+## Funciones actuales
+
+- Configuración inicial del administrador, espacios y gestión de usuarios.
+- SCA para manifiestos de JavaScript/TypeScript, Python, Go, Java/Kotlin, Ruby, PHP, Rust y C#/.NET.
+- Dashboard SCA con CVEs y GHSAs de las dependencias.
+- Ingesta y dashboard de hallazgos SAST.
+- Análisis y dashboards de paquetes en hosts y contenedores.
+- Análisis de postura de clústeres Kubernetes.
+- Instalación self-hosted con Docker Compose o Helm.
+
+## Estructura del repositorio
+
+```txt
+runtz/
+  frontend/  # plataforma web Next.js
+  cli/       # CLI de análisis en Go
+  runtz/     # engine backend en Go
+```

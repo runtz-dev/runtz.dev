@@ -1,0 +1,68 @@
+---
+title: Servidor MCP
+description: Leia a documentação do runtz a partir de qualquer agente de IA com o servidor MCP hospedado.
+---
+
+# Servidor MCP
+
+O `runtz-mcp` é um servidor hospedado do [Model Context Protocol](https://modelcontextprotocol.io) para o runtz. Conecte-o a Claude, Codex, Gemini ou outro cliente compatível e o assistente recebe uma cópia desta documentação como ferramentas nativas. **Não há nada para instalar**: aponte o cliente para `https://mcp.runtz.dev/mcp`.
+
+Ele é escrito em Go, sem dependências de terceiros, e usa JSON-RPC 2.0 sobre o transporte HTTP streamable do MCP.
+
+- **Somente documentação, de propósito.** O servidor responde apenas a perguntas sobre a documentação. Execute os scans DevSecOps diretamente com a [CLI do runtz](/pt-br/docs/install-cli), pois eles precisam acessar o código na máquina local.
+- **Zero instalação.** O runtz opera e mantém o servidor para você.
+
+## Ferramentas
+
+| Ferramenta | Finalidade |
+| --- | --- |
+| `runtz_docs_list` | Lista as páginas com seus resumos |
+| `runtz_docs_read` | Lê uma página completa pelo slug |
+| `runtz_docs_search` | Busca na documentação e retorna trechos |
+
+Cada página também é exposta como um recurso MCP (`runtz-docs://<slug>`).
+
+## Endpoints
+
+| Ambiente | URL |
+| --- | --- |
+| Produção | `https://mcp.runtz.dev/mcp` |
+| Desenvolvimento | `https://mcp-dev.runtz.dev/mcp` |
+
+## Configuração dos clientes
+
+### Claude Code / Desktop
+
+Salve como `.mcp.json` no projeto ou mescle em `~/.claude.json` / `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "runtz": { "type": "http", "url": "https://mcp.runtz.dev/mcp" }
+  }
+}
+```
+
+### Codex
+
+Adicione a `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.runtz]
+type = "http"
+url = "https://mcp.runtz.dev/mcp"
+```
+
+### Gemini CLI
+
+Adicione a `~/.gemini/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "runtz": { "httpUrl": "https://mcp.runtz.dev/mcp" }
+  }
+}
+```
+
+Combine o servidor MCP com a [skill correspondente](/pt-br/docs/skills) para que o assistente saiba quando e como usar as ferramentas.
