@@ -1,0 +1,59 @@
+---
+title: Scan de containers
+description: Analise os pacotes que compõem uma imagem de container.
+---
+
+# Scan de containers
+
+O scan inventaria os pacotes do sistema operacional dentro de uma imagem, consulta o OSV e envia o resultado normalizado ao backend.
+
+O scanner é independente: baixa a imagem do registry, lê as camadas OCI e reconstrói apenas os bancos de pacotes. Não chama Trivy ou Grype e não precisa do Docker para scans de registry.
+
+## Sistemas compatíveis
+
+| Família | Imagens de exemplo | Banco de pacotes | CVEs |
+| --- | --- | --- | --- |
+| Debian | `debian`, `ubuntu`, `node:*-slim` | dpkg | OSV (`Debian`, `Ubuntu`) |
+| RPM | `rockylinux`, `almalinux`, `ubi`, `opensuse` | rpm | feeds OSV correspondentes |
+| Alpine | `alpine`, `node:*-alpine`, `nginx:*-alpine` | apk | OSV (`Alpine`) |
+| Arch | `archlinux` | pacman | somente inventário |
+
+A família é detectada pelo `os-release` da imagem. Em imagens sem feed OSV, o inventário completo ainda é enviado sem correspondência de CVEs.
+
+## Uso
+
+```txt
+runtz container IMAGE [flags]
+```
+
+Após um [`runtz login`](/pt-br/docs/install-cli#autenticação), analise uma imagem do registry:
+
+```bash
+runtz container ubuntu:22.04
+```
+
+Para uma imagem que existe apenas no daemon Docker local:
+
+```bash
+runtz container my-app:latest --local
+```
+
+## Flags
+
+| Flag | Descrição | Padrão |
+| --- | --- | --- |
+| `--local` | Lê a imagem do daemon Docker local | `false` |
+| `--osv-url` | URL base opcional da API OSV | `https://api.osv.dev` |
+| `--endpoint` | Endpoint do backend self-hosted | `https://engine.runtz.dev` |
+| `--token` | Token gerado na plataforma | token salvo no login |
+
+## Como funciona
+
+1. O manifest e as camadas são baixados do registry ou exportados do Docker com `--local`.
+2. As camadas são aplicadas em ordem, incluindo whiteouts, reconstruindo `os-release` e os bancos de pacotes.
+3. A distribuição é detectada e seu banco é processado.
+4. Os pacotes de origem são consultados no OSV; os alertas recebem severidade e versão corrigida.
+
+## Resultado armazenado
+
+O backend armazena nome, referência e digest da imagem, detalhes do sistema, gerenciador e inventário de pacotes, vulnerabilidades, resumo por severidade e horário.

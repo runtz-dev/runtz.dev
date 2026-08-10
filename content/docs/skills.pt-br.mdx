@@ -1,0 +1,47 @@
+---
+title: Skills
+description: Skills prontas que ensinam Claude, Codex e Gemini a executar scans do runtz.
+---
+
+# Skills
+
+As skills do runtz ensinam assistentes de programação a executar scans SCA, SAST, de hosts, containers e Kubernetes, além de consultar a documentação corretamente e sem manipular seu token em um prompt.
+
+Cada skill segue a convenção nativa do assistente:
+
+| Assistente | Convenção | Local |
+| --- | --- | --- |
+| **Claude** (Code / Desktop) | `SKILL.md` + `reference/` | `~/.claude/skills/runtz-security-scans/` ou `.claude/skills/` do projeto |
+| **Codex** (OpenAI) | `AGENTS.md` | raiz do projeto ou mesclado a um `AGENTS.md` existente |
+| **Gemini** (Gemini CLI) | `GEMINI.md` | raiz do projeto ou `~/.gemini/` |
+
+## Como funcionam
+
+As três skills seguem o mesmo processo:
+
+1. **Executam scans pela CLI do runtz.** A CLI precisa estar instalada e autenticada por `runtz login`, `--token` ou `RUNTZ_TOKEN`.
+2. **Consultam o [servidor MCP do runtz](/pt-br/docs/mcp)** para ler a documentação com as ferramentas `runtz_docs_*`. O MCP não executa scans.
+3. **Mantêm o token na configuração**, nunca nos prompts ou em comandos impressos.
+4. **Resumem os achados** com severidade e correções concretas.
+
+## Escolha do scan
+
+| O que a pessoa quer | Scan |
+| --- | --- |
+| Verificar dependências ou `package.json` em busca de CVEs | SCA |
+| Encontrar segredos ou padrões inseguros no código | SAST |
+| Auditar um host Linux ou rootfs montado | host |
+| Auditar uma imagem Docker ou de container | container |
+| Revisar um cluster ou manifests Kubernetes | k8s |
+
+## Instalação
+
+```bash
+git clone https://github.com/runtz-dev/runtz-skills
+```
+
+- **Claude Code:** copie `claude/` para `~/.claude/skills/runtz-security-scans/`.
+- **Codex:** copie `codex/AGENTS.md` para a raiz do projeto.
+- **Gemini:** copie `gemini/GEMINI.md` para a raiz do projeto ou `~/.gemini/`.
+
+Combine qualquer skill com o [servidor MCP do runtz](/pt-br/docs/mcp) para que o assistente consulte a documentação sem adivinhar.

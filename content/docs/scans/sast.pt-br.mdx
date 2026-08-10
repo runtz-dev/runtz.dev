@@ -1,0 +1,60 @@
+---
+title: SAST
+description: Teste estático de segurança de aplicações no runtz.
+---
+
+# SAST
+
+O SAST analisa arquivos de código localmente com regras estáticas de alto sinal e envia somente os achados normalizados ao backend do runtz. Seu código-fonte nunca sai da máquina.
+
+## Linguagens compatíveis
+
+| Linguagem | Extensões |
+| --- | --- |
+| JavaScript / TypeScript | `.js`, `.jsx`, `.mjs`, `.cjs`, `.ts`, `.tsx` |
+| Python | `.py` |
+| Go | `.go` |
+| Java / Kotlin | `.java`, `.kt`, `.kts` |
+| Ruby | `.rb` |
+| PHP | `.php` |
+| Rust | `.rs` |
+| C# / .NET | `.cs` |
+
+Diretórios gerados ou de dependências, como `.git`, `node_modules`, `dist`, `build`, `vendor` e `.next`, são ignorados.
+
+## Regras
+
+As regras iniciais detectam chaves privadas e credenciais cloud versionadas, segredos hardcoded, execução dinâmica como `eval`, padrões de shell sujeitos a injeção, validação TLS desabilitada e hashes fracos como MD5 e SHA-1.
+
+## Uso
+
+```txt
+runtz sast (REPO_PATH | FILE_PATH) [flags]
+```
+
+Após um [`runtz login`](/pt-br/docs/install-cli#autenticação):
+
+```bash
+runtz sast ./
+```
+
+Em uma pasta específica ou CI/CD:
+
+```bash
+runtz sast ./services/payments \
+  --project payments-api \
+  --token rtz_live_...
+```
+
+## Flags
+
+| Flag | Descrição | Padrão |
+| --- | --- | --- |
+| `--project` | Nome do projeto na plataforma | diretório analisado |
+| `--source` | Caminho, repositório ou URL | caminho analisado |
+| `--endpoint` | Endpoint do backend self-hosted | `https://engine.runtz.dev` |
+| `--token` | Token gerado na plataforma | token salvo no login |
+
+## Resultado armazenado
+
+O backend armazena projeto, origem, arquivos analisados, achados, resumo por severidade e horário. O token identifica o workspace automaticamente.

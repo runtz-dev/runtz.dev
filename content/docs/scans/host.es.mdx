@@ -1,0 +1,69 @@
+---
+title: Análisis de hosts
+description: Analiza los paquetes instalados en un host.
+---
+
+# Análisis de hosts
+
+El análisis de hosts inventaría los paquetes instalados en la máquina donde se ejecuta la CLI, consulta la base de vulnerabilidades OSV y envía el resultado normalizado al backend. Siempre analiza el host actual; no acepta una ruta como argumento.
+
+## Sistemas operativos compatibles
+
+| Familia | Ejemplos | Base de paquetes | CVEs |
+| --- | --- | --- | --- |
+| Debian | Debian, Ubuntu, Linux Mint | dpkg (`/var/lib/dpkg/status`) | OSV (`Debian`, `Ubuntu`) |
+| RPM | RHEL, CentOS, Rocky, AlmaLinux, openSUSE, SLES | rpm (`rpm -qa`) | feeds OSV correspondientes |
+| Alpine | Alpine | apk (`/lib/apk/db/installed`) | OSV (`Alpine`) |
+| Arch | Arch, Manjaro | pacman (`/var/lib/pacman/local`) | solo inventario |
+
+La familia se detecta mediante `/etc/os-release` (`ID` e `ID_LIKE`). En distribuciones sin feed OSV se envía el inventario completo, pero sin coincidencias de CVE. La severidad usa el aviso de la distribución o, como alternativa, el score base CVSS 3.x de OSV.
+
+## Ejecutar un análisis
+
+Después de [`runtz login`](/es/docs/install-cli#autenticación):
+
+```bash
+runtz host
+```
+
+Con token explícito o nombre personalizado:
+
+```bash
+runtz host --token rtz_live_...
+runtz host --hostname web-01
+```
+
+## Flags
+
+| Flag | Descripción | Predeterminado |
+| --- | --- | --- |
+| `--hostname` | Nombre mostrado en el dashboard de hosts | hostname local |
+| `--rootfs` | Sistema de archivos raíz alternativo | `/` |
+| `--osv-url` | URL base opcional de la API OSV | `https://api.osv.dev` |
+| `--endpoint` | Endpoint del backend self-hosted | `https://engine.runtz.dev` |
+| `--token` | Token generado en la plataforma | token guardado en login |
+
+## Programar un análisis diario
+
+Guarda las credenciales en un archivo accesible solo por root:
+
+```bash
+sudo mkdir -p /etc/runtz
+sudo tee /etc/runtz/env > /dev/null <<'EOF'
+RUNTZ_ENDPOINT=https://engine.runtz.dev
+RUNTZ_TOKEN=rtz_live_...
+EOF
+sudo chmod 600 /etc/runtz/env
+```
+
+Ejemplo de cron diario a las 03:00:
+
+```bash
+0 3 * * * root . /etc/runtz/env && /usr/local/bin/runtz host >> /var/log/runtz-host-scan.log 2>&1
+```
+
+También puedes usar un timer de systemd que ejecute `/usr/local/bin/runtz host` con `EnvironmentFile=/etc/runtz/env`.
+
+## Resultado almacenado
+
+El backend guarda hostname, sistema operativo, gestor e inventario de paquetes, vulnerabilidades, resumen por severidad y fecha. Cada análisis actualiza el estado del mismo host en el dashboard.

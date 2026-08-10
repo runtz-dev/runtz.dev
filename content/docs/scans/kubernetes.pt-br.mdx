@@ -1,0 +1,68 @@
+---
+title: Scan de Kubernetes
+description: Scan de clusters Kubernetes no runtz.
+---
+
+# Scan de Kubernetes
+
+O scan lê o cluster conectado por meio do `kubectl`, verifica workloads, exposição de rede e RBAC com regras de postura e envia os achados ao backend. Também é possível analisar manifests YAML/JSON de um repositório ou chart renderizado sem acessar um cluster.
+
+## Verificações
+
+| ID | Verificação | Categoria | Severidade |
+| --- | --- | --- | --- |
+| K8S001–003 | `hostNetwork`, `hostPID` ou `hostIPC` habilitado | pod-security | alta |
+| K8S004 | Volume `hostPath` montado | pod-security | alta/média |
+| K8S005 | Container privilegiado | container-security | crítica |
+| K8S006–008 | Escalação, execução como root ou rootfs gravável | container-security | média/baixa |
+| K8S014 | Capability Linux perigosa | container-security | alta |
+| K8S009 | Tag mutável (`latest` ou ausente) | supply-chain | média |
+| K8S012–013 | Binding `cluster-admin` ou regra RBAC curinga | rbac | crítica/alta |
+| K8S018–019 | Service account padrão ou token montado | rbac | baixa/média |
+| K8S010–011 | Serviço público ou Ingress sem TLS | network | média |
+| K8S015–017 | Recursos ou probes ausentes | resilience | média/baixa |
+
+Todo achado inclui descrição e correção concreta. Na plataforma, você pode filtrar pelas categorias acima.
+
+## Analisar um cluster ativo
+
+Por padrão, o scanner usa o contexto atual do kubectl. Após um [`runtz login`](/pt-br/docs/install-cli#autenticação):
+
+```bash
+runtz k8s
+```
+
+A máquina precisa ter `kubectl` instalado e autenticado. Todos os namespaces e os recursos RBAC do cluster são analisados por padrão.
+
+```bash
+runtz k8s --kubeconfig ~/.kube/config2
+runtz k8s --context production --namespace payments
+```
+
+## Analisar manifests
+
+Passe um arquivo ou diretório para analisar charts renderizados ou manifests sem tocar no cluster:
+
+```bash
+runtz k8s ./deploy \
+  --target production-manifests \
+  --token rtz_live_...
+```
+
+## Flags
+
+| Flag | Descrição | Padrão |
+| --- | --- | --- |
+| `--kubeconfig` | Caminho do kubeconfig | kubeconfig ativo |
+| `--context` | Contexto Kubernetes | contexto atual |
+| `--namespace` | Namespace específico | todos |
+| `--all-namespaces` | Analisa todos quando `--namespace` não foi definido | `true` |
+| `--kubectl` | Caminho do binário kubectl | `kubectl` |
+| `--target` | Nome do alvo na plataforma | contexto ou diretório |
+| `--source` | Origem, repositório ou URL | alvo do scan |
+| `--endpoint` | Endpoint do backend self-hosted | `https://engine.runtz.dev` |
+| `--token` | Token gerado na plataforma | token salvo no login |
+
+## Resultado armazenado
+
+O backend armazena alvo, origem, recursos e manifests analisados, achados com categoria e severidade e horário. O token identifica o workspace automaticamente.

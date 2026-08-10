@@ -1,0 +1,59 @@
+---
+title: Análisis de contenedores
+description: Analiza los paquetes que componen una imagen de contenedor.
+---
+
+# Análisis de contenedores
+
+El análisis inventaría los paquetes del sistema operativo dentro de una imagen, consulta OSV y envía el resultado normalizado al backend.
+
+El escáner es autónomo: descarga la imagen del registry, lee las capas OCI y reconstruye solo las bases de paquetes. No llama a Trivy o Grype y no necesita Docker para análisis desde un registry.
+
+## Sistemas compatibles
+
+| Familia | Imágenes de ejemplo | Base de paquetes | CVEs |
+| --- | --- | --- | --- |
+| Debian | `debian`, `ubuntu`, `node:*-slim` | dpkg | OSV (`Debian`, `Ubuntu`) |
+| RPM | `rockylinux`, `almalinux`, `ubi`, `opensuse` | rpm | feeds OSV correspondientes |
+| Alpine | `alpine`, `node:*-alpine`, `nginx:*-alpine` | apk | OSV (`Alpine`) |
+| Arch | `archlinux` | pacman | solo inventario |
+
+La familia se detecta desde `os-release` dentro de la imagen. En imágenes sin feed OSV se envía el inventario completo sin coincidencias de CVE.
+
+## Uso
+
+```txt
+runtz container IMAGE [flags]
+```
+
+Después de [`runtz login`](/es/docs/install-cli#autenticación), analiza una imagen del registry:
+
+```bash
+runtz container ubuntu:22.04
+```
+
+Para una imagen que solo existe en el daemon Docker local:
+
+```bash
+runtz container my-app:latest --local
+```
+
+## Flags
+
+| Flag | Descripción | Predeterminado |
+| --- | --- | --- |
+| `--local` | Lee la imagen del daemon Docker local | `false` |
+| `--osv-url` | URL base opcional de la API OSV | `https://api.osv.dev` |
+| `--endpoint` | Endpoint del backend self-hosted | `https://engine.runtz.dev` |
+| `--token` | Token generado en la plataforma | token guardado en login |
+
+## Cómo funciona
+
+1. El manifiesto y las capas se descargan del registry o se exportan desde Docker con `--local`.
+2. Las capas se aplican en orden, incluidos whiteouts, reconstruyendo `os-release` y las bases de paquetes.
+3. Se detecta la distribución y se procesa su base.
+4. Los paquetes fuente se consultan en OSV; los avisos reciben severidad y versión corregida.
+
+## Resultado almacenado
+
+El backend guarda nombre, referencia y digest de la imagen, sistema, gestor e inventario de paquetes, vulnerabilidades, resumen por severidad y fecha.

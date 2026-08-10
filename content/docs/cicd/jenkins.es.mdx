@@ -1,0 +1,45 @@
+---
+title: Jenkins
+description: Ejecuta análisis de runtz en pipelines de Jenkins.
+---
+
+# Jenkins
+
+Usa un pipeline declarativo con la imagen de la CLI como agente. Necesitas el plugin Docker Pipeline y Docker disponible en el agente.
+
+## Credenciales
+
+En `Manage Jenkins → Credentials`, crea una credencial **Secret text** con ID `runtz-token` y el token generado en la plataforma.
+
+## Analizar el repositorio
+
+```groovy
+pipeline {
+  agent {
+    docker {
+      image 'runtzdev/runtz-cli:latest'
+      args '--entrypoint='
+    }
+  }
+  environment {
+    RUNTZ_ENDPOINT = 'https://engine.runtz.dev'
+    RUNTZ_TOKEN = credentials('runtz-token')
+  }
+  stages {
+    stage('Análisis SCA') {
+      steps { sh 'runtz sca . --project "$JOB_BASE_NAME" --source "$GIT_URL"' }
+    }
+    stage('Análisis SAST') {
+      steps { sh 'runtz sast . --project "$JOB_BASE_NAME" --source "$GIT_URL"' }
+    }
+  }
+}
+```
+
+`args '--entrypoint='` limpia el entrypoint para que Jenkins inicie su propio shell. El workspace se monta automáticamente y `credentials()` oculta el token en los logs.
+
+## Analizar una imagen
+
+Para una imagen pública, ejecuta `runtz container my-org/my-app:latest`. Para una imagen local, ejecuta la CLI en un stage `agent any`, monta `/var/run/docker.sock`, añade el grupo del socket con `--group-add` y usa `--local`.
+
+Fija una tag de release para builds reproducibles. Por defecto, los hallazgos no fallan el build; configura gates de severidad cuando sea necesario.

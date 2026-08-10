@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { createElement } from 'react';
 import { docsContentRoute, docsImageRoute, docsRoute, sitePath, siteUrl } from './shared';
+import { i18n, localizedPath, pathLocale, type Locale } from './i18n';
 
 const sidebarIconByUrl: Record<string, LucideIcon> = {
   '/docs': BookOpen,
@@ -42,7 +43,7 @@ function sidebarIcon(Icon: LucideIcon) {
 
 const sidebarIconTransformer = {
   file(node: PageTree.Item) {
-    const Icon = sidebarIconByUrl[node.url];
+    const Icon = sidebarIconByUrl[pathLocale(node.url).pathname];
 
     if (Icon) {
       node.icon = sidebarIcon(Icon);
@@ -63,6 +64,7 @@ const sidebarIconTransformer = {
 export const source = loader({
   baseUrl: docsRoute,
   source: docs.toFumadocsSource(),
+  i18n,
   pageTree: {
     transformers: [sidebarIconTransformer],
   },
@@ -71,21 +73,21 @@ export const source = loader({
 
 // `segments` feed generateStaticParams (route params, no basePath); `url` is
 // handed to the browser as a plain string, so it must carry the basePath.
-export function getPageImage(page: (typeof source)['$inferPage']) {
+export function getPageImage(page: (typeof source)['$inferPage'], locale: Locale) {
   const segments = [...page.slugs, 'image.png'];
 
   return {
     segments,
-    url: sitePath(`${docsImageRoute}/${segments.join('/')}`),
+    url: siteUrl(localizedPath(locale, `${docsImageRoute}/${segments.join('/')}`)),
   };
 }
 
-export function getPageMarkdownUrl(page: (typeof source)['$inferPage']) {
+export function getPageMarkdownUrl(page: (typeof source)['$inferPage'], locale: Locale) {
   const segments = [...page.slugs, 'content.md'];
 
   return {
     segments,
-    url: sitePath(`${docsContentRoute}/${segments.join('/')}`),
+    url: sitePath(localizedPath(locale, `${docsContentRoute}/${segments.join('/')}`)),
   };
 }
 

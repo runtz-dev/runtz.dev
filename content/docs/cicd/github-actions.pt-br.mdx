@@ -1,0 +1,57 @@
+---
+title: GitHub Actions
+description: Execute scans do runtz em workflows do GitHub Actions.
+---
+
+# GitHub Actions
+
+Execute scans em todo push e pull request com a imagem oficial `runtzdev/runtz-cli`. A imagem é chamada com `docker run` porque é mínima, baseada em Alpine e não root.
+
+## Armazenar as credenciais
+
+Em `Settings → Secrets and variables → Actions`, crie o secret `RUNTZ_TOKEN` com o token gerado na plataforma. O endpoint não é sensível e pode ficar no workflow.
+
+## Analisar o repositório
+
+Crie `.github/workflows/runtz.yml`:
+
+```yaml
+name: runtz
+on: [push, pull_request]
+jobs:
+  security-scans:
+    runs-on: ubuntu-latest
+    env:
+      RUNTZ_ENDPOINT: https://engine.runtz.dev
+      RUNTZ_TOKEN: ${{ secrets.RUNTZ_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan SCA
+        run: |
+          docker run --rm -v "$PWD:/src" -e RUNTZ_ENDPOINT -e RUNTZ_TOKEN \
+            runtzdev/runtz-cli:latest sca /src \
+            --project "${{ github.event.repository.name }}" \
+            --source "${{ github.server_url }}/${{ github.repository }}"
+      - name: Scan SAST
+        run: |
+          docker run --rm -v "$PWD:/src" -e RUNTZ_ENDPOINT -e RUNTZ_TOKEN \
+            runtzdev/runtz-cli:latest sast /src \
+            --project "${{ github.event.repository.name }}" \
+            --source "${{ github.server_url }}/${{ github.repository }}"
+```
+
+## Analisar a imagem criada
+
+Após `docker build`, monte o socket e use `--local`:
+
+```bash
+docker run --rm \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  --group-add "$(stat -c %g /var/run/docker.sock)" \
+  -e RUNTZ_ENDPOINT -e RUNTZ_TOKEN \
+  runtzdev/runtz-cli:latest container my-app:${{ github.sha }} --local
+```
+
+Imagens em registries públicos podem ser analisadas pela referência, sem socket. Para manifests Kubernetes, monte o checkout e execute `runtz k8s /src/deploy`.
+
+Fixe uma tag de release para builds reproduzíveis. Achados não falham o workflow por padrão; use os [gates de severidade](/pt-br/docs/install-cli#gates-de-severidade-em-cicd) quando quiser bloquear o pipeline.

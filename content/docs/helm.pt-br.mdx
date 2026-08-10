@@ -1,0 +1,42 @@
+---
+title: Helm
+description: Implante a plataforma runtz no Kubernetes com Helm.
+---
+
+# Helm
+
+Implante o runtz em um cluster Kubernetes com o chart oficial.
+
+## Requisitos
+
+- Um cluster Kubernetes.
+- Helm 3.
+
+## Instalação
+
+```bash
+helm repo add runtz https://helm.runtz.dev
+helm repo update
+
+helm upgrade --install runtz runtz/runtz \
+  --namespace runtz \
+  --create-namespace
+```
+
+Não são necessários secrets para a instalação básica. Integrações opcionais — OAuth, login por e-mail e Stripe — usam secrets. Coloque-os em `values.secrets.yaml`, mantenha o arquivo fora do Git e passe-o com `-f`, ou aponte `backend.secrets.existingSecret` para um Secret existente.
+
+Sem ingress (`ingress.enabled=false`, o padrão), acesse a plataforma com um port-forward:
+
+```bash
+kubectl port-forward svc/runtz-frontend 3000:3000 -n runtz
+```
+
+## Primeiro acesso
+
+Informe `Admin username`, `Password` e `Workspace Name`. Depois, gerencie workspaces e usuários em `Settings`.
+
+## Configuração
+
+O chart implanta engine, frontend e um MongoDB opcional dentro do cluster (`mongodb.enabled=true` por padrão). Defina `backend.env.MONGODB_URI` para usar um banco externo. As tags das imagens seguem o `appVersion` do chart.
+
+Veja a lista de [variáveis de ambiente](/pt-br/docs/docker-compose#variáveis-de-ambiente) e a [ativação Pro e Enterprise](/pt-br/docs/docker-compose#ativação-self-hosted-pro-e-enterprise).

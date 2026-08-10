@@ -1,0 +1,62 @@
+---
+title: Introdução
+description: O que é o runtz e quais scans ele executa.
+---
+
+# runtz
+
+O runtz é uma plataforma open source de scans DevSecOps. Você executa os scans com uma única CLI, e os resultados chegam a dashboards em que sua equipe pode agir.
+
+A plataforma é formada por três serviços:
+
+- `frontend`: plataforma web criada com Next.js e shadcn/ui.
+- `runtz`: engine backend em Go usada pelo frontend e pela CLI.
+- `cli`: scanner de linha de comando em Go que executa os scans e envia os resultados ao backend.
+
+## Tipos de scan
+
+| Scan | Comando | O que cobre |
+| --- | --- | --- |
+| [SCA](/pt-br/docs/scans/sca) | `runtz sca` | Dependências vulneráveis em 10 linguagens e ecossistemas |
+| [SAST](/pt-br/docs/scans/sast) | `runtz sast` | Verificações estáticas: segredos, criptografia fraca, TLS desabilitado e execução dinâmica |
+| [Hosts](/pt-br/docs/scans/host) | `runtz host` | CVEs de pacotes em hosts Debian, RPM, Alpine e Arch |
+| [Containers](/pt-br/docs/scans/container) | `runtz container` | CVEs de pacotes dentro de imagens de container |
+| [Kubernetes](/pt-br/docs/scans/kubernetes) | `runtz k8s` | Achados de postura em clusters e manifests |
+
+O DAST estará disponível em breve.
+
+## Início rápido
+
+Instale a CLI:
+
+```bash
+curl -fsSL https://runtz.dev/install.sh | bash
+```
+
+Faça login uma vez com o token gerado na plataforma e analise seu repositório:
+
+```bash
+runtz login
+runtz sca ./
+```
+
+O token identifica seu workspace automaticamente. O `runtz login` o armazena para que os próximos comandos não precisem de `--token`. Em CI/CD, use `--token` ou `RUNTZ_TOKEN` a partir de um secret. Veja [Instalar a CLI](/pt-br/docs/install-cli) ou [Docker Compose](/pt-br/docs/docker-compose) para hospedar a plataforma.
+
+## Recursos atuais
+
+- Configuração inicial do admin, workspaces e administração de usuários.
+- SCA para manifests de JavaScript/TypeScript, Python, Go, Java/Kotlin, Ruby, PHP, Rust e C#/.NET.
+- Dashboard SCA com CVEs e GHSAs encontrados nas dependências.
+- Ingestão e dashboard de achados SAST.
+- Scans e dashboards de pacotes em hosts e containers.
+- Scans de postura de clusters Kubernetes.
+- Instalação self-hosted com Docker Compose ou Helm.
+
+## Estrutura do repositório
+
+```txt
+runtz/
+  frontend/  # plataforma web Next.js
+  cli/       # CLI de scans em Go
+  runtz/     # engine backend em Go
+```
