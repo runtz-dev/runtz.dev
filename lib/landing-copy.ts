@@ -88,6 +88,24 @@ export type LandingCopy = {
       body: string;
     }>;
   };
+  developerWorkflow: {
+    cliTitle: string;
+    cliBody: string;
+    installMethodLabel: string;
+    unixLabel: string;
+    windowsLabel: string;
+    copyCommand: string;
+    copied: string;
+    vscodeTitle: string;
+    vscodeBody: string;
+    explorerLabel: string;
+    contextMenu: {
+      open: string;
+      openToSide: string;
+      copyPath: string;
+      scan: string;
+    };
+  };
   deployment: {
     eyebrow: string;
     title: string;
@@ -167,6 +185,26 @@ export const landingCopy: Record<Locale, LandingCopy> = {
           body: 'Review clusters, workloads, exposure, and RBAC posture from the same workspace.',
         },
       ],
+    },
+    developerWorkflow: {
+      cliTitle: 'Install runtz-cli and start scanning in seconds',
+      cliBody:
+        'Install the runtz CLI, scan a project, and uncover dependency risk without breaking your flow.',
+      installMethodLabel: 'Choose your operating system',
+      unixLabel: 'Linux & macOS',
+      windowsLabel: 'Windows',
+      copyCommand: 'Copy command',
+      copied: 'Copied',
+      vscodeTitle: 'Scan easily with the Runtz VS Code Extension',
+      vscodeBody:
+        'Right-click a supported manifest and run an SCA scan directly from the Explorer.',
+      explorerLabel: 'Explorer',
+      contextMenu: {
+        open: 'Open',
+        openToSide: 'Open to the Side',
+        copyPath: 'Copy Path',
+        scan: 'Runtz: SCA Scan',
+      },
     },
     deployment: {
       eyebrow: 'cloud or self-hosted',
@@ -324,6 +362,26 @@ export const landingCopy: Record<Locale, LandingCopy> = {
         },
       ],
     },
+    developerWorkflow: {
+      cliTitle: 'Instale a runtz-cli e comece a analisar em segundos',
+      cliBody:
+        'Instale a CLI da runtz, analise um projeto e encontre riscos nas dependências sem interromper seu fluxo.',
+      installMethodLabel: 'Escolha seu sistema operacional',
+      unixLabel: 'Linux e macOS',
+      windowsLabel: 'Windows',
+      copyCommand: 'Copiar comando',
+      copied: 'Copiado',
+      vscodeTitle: 'Analise facilmente com a extensão Runtz para VS Code',
+      vscodeBody:
+        'Clique com o botão direito em um manifest compatível e execute um scan SCA direto pelo Explorer.',
+      explorerLabel: 'Explorer',
+      contextMenu: {
+        open: 'Abrir',
+        openToSide: 'Abrir ao lado',
+        copyPath: 'Copiar caminho',
+        scan: 'Runtz: SCA Scan',
+      },
+    },
     deployment: {
       eyebrow: 'nuvem ou infraestrutura própria',
       title: 'Comece agora na nuvem ou execute na sua própria infraestrutura.',
@@ -479,6 +537,26 @@ export const landingCopy: Record<Locale, LandingCopy> = {
           body: 'Revisa clústeres, cargas de trabajo, exposición y postura de RBAC desde el mismo espacio de trabajo.',
         },
       ],
+    },
+    developerWorkflow: {
+      cliTitle: 'Instala runtz-cli y comienza a analizar en segundos',
+      cliBody:
+        'Instala la CLI de runtz, analiza un proyecto y detecta riesgos en las dependencias sin interrumpir tu flujo.',
+      installMethodLabel: 'Elige tu sistema operativo',
+      unixLabel: 'Linux y macOS',
+      windowsLabel: 'Windows',
+      copyCommand: 'Copiar comando',
+      copied: 'Copiado',
+      vscodeTitle: 'Analiza fácilmente con la extensión Runtz para VS Code',
+      vscodeBody:
+        'Haz clic derecho en un manifiesto compatible y ejecuta un análisis SCA directamente desde el Explorador.',
+      explorerLabel: 'Explorador',
+      contextMenu: {
+        open: 'Abrir',
+        openToSide: 'Abrir a un lado',
+        copyPath: 'Copiar ruta',
+        scan: 'Runtz: SCA Scan',
+      },
     },
     deployment: {
       eyebrow: 'nube o infraestructura propia',
