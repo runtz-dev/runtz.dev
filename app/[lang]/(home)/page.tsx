@@ -26,6 +26,7 @@ import {
   SecondaryLink,
   SectionIntro,
 } from './_components/marketing';
+import { DeveloperWorkflow } from './_components/developer-workflow';
 import { InstallMethodTabs } from './_components/install-method-tabs';
 import { HeroBackdrop, WarpField } from './_components/shaders';
 import { installOptions } from '@/lib/platform-content';
@@ -175,6 +176,8 @@ export default async function HomePage({ params }: PageProps<'/[lang]'>) {
           />
         </div>
       </section>
+
+      <DeveloperWorkflow copy={copy.developerWorkflow} />
 
       <section className="mx-auto w-full max-w-[1400px] px-6 py-10 md:px-12 md:py-12">
         <h2 className="text-center text-3xl font-semibold text-[#2f7eff] dark:text-[#6db5ff] md:text-4xl">

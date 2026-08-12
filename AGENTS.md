@@ -26,13 +26,13 @@ npm run build
 ## Hard architectural rule: this app owns no ingress at all
 
 `runtz.dev` / `runtz-dev.runtz.dev` (including `/home`, `/legal`,
-`/llms.txt`, `/llms-full.txt` and `/install.sh` — the CLI installer redirect,
-see `proxy.ts`) are routed by a
+`/llms.txt`, `/llms-full.txt`, `/install.sh` and `/install.ps1` — the CLI
+installer redirects, see `proxy.ts`) are routed by a
 single Ingress per environment that is **not** in any repository: it lives in
 the private `secrets-helm` folder (`ingress-dev.yaml` / `ingress-prod.yaml`)
 and is applied with kubectl, because the hostnames and the `cloudflare-tunnel`
 ingress class are specific to our cluster. It points `/home`, `/legal`, `/llms.txt`,
-`/llms-full.txt` and `/install.sh` at the `runtz-landing` Service this chart
+`/llms-full.txt`, `/install.sh` and `/install.ps1` at the `runtz-landing` Service this chart
 creates, and everything else at the platform frontend. This chart (`helm/runtz-landing`) does not
 define an Ingress resource at all.
 
