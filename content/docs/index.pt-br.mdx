@@ -3,6 +3,8 @@ title: Introdução
 description: O que é o runtz e quais scans ele executa.
 ---
 
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
+
 # runtz
 
 O runtz é uma plataforma open source de scans DevSecOps. Você executa os scans com uma única CLI, e os resultados chegam a dashboards em que sua equipe pode agir.
@@ -29,9 +31,18 @@ O DAST estará disponível em breve.
 
 Instale a CLI:
 
+<Tabs items={['Linux e macOS', 'Windows']}>
+<Tab value="Linux e macOS">
 ```bash
 curl -fsSL https://runtz.dev/install.sh | bash
 ```
+</Tab>
+<Tab value="Windows">
+```powershell
+irm https://runtz.dev/install.ps1 | iex
+```
+</Tab>
+</Tabs>
 
 Faça login uma vez com o token gerado na plataforma e analise seu repositório:
 

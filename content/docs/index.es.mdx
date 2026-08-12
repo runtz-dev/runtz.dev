@@ -3,6 +3,8 @@ title: Introducción
 description: Qué es runtz y qué analiza.
 ---
 
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
+
 # runtz
 
 runtz es una plataforma open source de análisis DevSecOps. Ejecutas los análisis con una sola CLI y los resultados llegan a dashboards en los que tu equipo puede actuar.
@@ -29,9 +31,18 @@ DAST estará disponible próximamente.
 
 Instala la CLI:
 
+<Tabs items={['Linux y macOS', 'Windows']}>
+<Tab value="Linux y macOS">
 ```bash
 curl -fsSL https://runtz.dev/install.sh | bash
 ```
+</Tab>
+<Tab value="Windows">
+```powershell
+irm https://runtz.dev/install.ps1 | iex
+```
+</Tab>
+</Tabs>
 
 Inicia sesión una vez con el token generado en la plataforma y analiza tu repositorio:
 

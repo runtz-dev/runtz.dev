@@ -3,6 +3,8 @@ title: Introduction
 description: What runtz is and what it scans.
 ---
 
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
+
 # runtz
 
 runtz is an open source DevSecOps scans platform. You run scans with a single
@@ -30,9 +32,18 @@ DAST is coming soon.
 
 Install the CLI:
 
+<Tabs items={['Linux & macOS', 'Windows']}>
+<Tab value="Linux & macOS">
 ```bash
 curl -fsSL https://runtz.dev/install.sh | bash
 ```
+</Tab>
+<Tab value="Windows">
+```powershell
+irm https://runtz.dev/install.ps1 | iex
+```
+</Tab>
+</Tabs>
 
 Log in once with the token generated in the platform, then scan your
 repository:

@@ -22,6 +22,13 @@ const { rewrite: rewriteSuffix } = rewritePath(
 const installScriptUrl =
   'https://raw.githubusercontent.com/runtz-dev/runtz-cli/main/install.sh';
 
+// runtz.dev/install.ps1 installs the CLI on Windows (irm https://runtz.dev/
+// install.ps1 | iex). Independent from install.sh above — separate script,
+// separate command, own doc page — served the same way: redirected straight
+// to the canonical file in the CLI repository.
+const installPs1ScriptUrl =
+  'https://raw.githubusercontent.com/runtz-dev/runtz-cli/main/install.ps1';
+
 // Files that llmstxt.org expects at the domain root. The ingress routes these
 // exact paths to this app; they remain English/default-locale entry points.
 const rootLlmsFiles = new Set(['/llms.txt', '/llms-full.txt']);
@@ -41,6 +48,10 @@ export default function proxy(request: NextRequest, event: NextFetchEvent) {
 
   if (pathname === '/install.sh') {
     return NextResponse.redirect(installScriptUrl, 302);
+  }
+
+  if (pathname === '/install.ps1') {
+    return NextResponse.redirect(installPs1ScriptUrl, 302);
   }
 
   // `/legal` is also exposed without the app basePath by the existing ingress.

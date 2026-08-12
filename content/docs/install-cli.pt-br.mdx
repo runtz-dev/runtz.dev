@@ -3,13 +3,28 @@ title: Instalar a CLI do runtz
 description: Instale a CLI do runtz e execute seu primeiro scan.
 ---
 
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
+
 # Instalar a CLI do runtz
 
-A CLI do runtz é um único binário estático em Go. O script detecta o sistema operacional e a arquitetura, baixa o binário e o instala em `/usr/local/bin`:
+A CLI do runtz é um único binário estático em Go. O script detecta a arquitetura, baixa o binário e o deixa disponível no seu `PATH`.
+
+<Tabs items={['Linux e macOS', 'Windows']}>
+<Tab value="Linux e macOS">
+Instala em `/usr/local/bin`:
 
 ```bash
 curl -fsSL https://runtz.dev/install.sh | bash
 ```
+</Tab>
+<Tab value="Windows">
+Instala em `%LOCALAPPDATA%\runtz` e adiciona ao seu `PATH` de usuário:
+
+```powershell
+irm https://runtz.dev/install.ps1 | iex
+```
+</Tab>
+</Tabs>
 
 Confira a instalação:
 
@@ -21,12 +36,14 @@ runtz version
 runtz 1.0.0-rc1 (linux/amd64)
 ```
 
-Linux e macOS são compatíveis com `amd64` e `arm64`.
+Linux e macOS são compatíveis com `amd64` e `arm64`; Windows com `amd64`.
 
 ### Opções do script
 
-O script aceita variáveis de ambiente:
+Os dois scripts aceitam as mesmas variáveis de ambiente.
 
+<Tabs items={['Linux e macOS', 'Windows']}>
+<Tab value="Linux e macOS">
 ```bash
 # Instalar uma versão específica
 RUNTZ_VERSION=v1.0.0-rc1 curl -fsSL https://runtz.dev/install.sh | bash
@@ -34,16 +51,38 @@ RUNTZ_VERSION=v1.0.0-rc1 curl -fsSL https://runtz.dev/install.sh | bash
 # Instalar em outro diretório (sem sudo se houver permissão de escrita)
 RUNTZ_INSTALL_DIR=$HOME/.local/bin curl -fsSL https://runtz.dev/install.sh | bash
 ```
+</Tab>
+<Tab value="Windows">
+```powershell
+# Instalar uma versão específica
+$env:RUNTZ_VERSION = "v1.0.0-rc1"; irm https://runtz.dev/install.ps1 | iex
+
+# Instalar em outro diretório
+$env:RUNTZ_INSTALL_DIR = "C:\tools\runtz"; irm https://runtz.dev/install.ps1 | iex
+```
+</Tab>
+</Tabs>
 
 ### Instalação manual
 
 Baixe o binário na [página de releases do GitHub](https://github.com/runtz-dev/runtz-cli/releases) e execute:
 
+<Tabs items={['Linux e macOS', 'Windows']}>
+<Tab value="Linux e macOS">
 ```bash
 chmod +x runtz_linux_amd64
 sudo mv runtz_linux_amd64 /usr/local/bin/runtz
 runtz version
 ```
+</Tab>
+<Tab value="Windows">
+```powershell
+New-Item -ItemType Directory -Force $env:LOCALAPPDATA\runtz | Out-Null
+Move-Item runtz_windows_amd64.exe $env:LOCALAPPDATA\runtz\runtz.exe
+runtz version
+```
+</Tab>
+</Tabs>
 
 ### Imagem Docker
 
