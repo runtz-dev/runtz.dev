@@ -24,10 +24,10 @@ autoscaling:
 resources:
   requests:
     cpu: 50m
-    memory: 128Mi
+    memory: 256Mi
   limits:
     cpu: 300m
-    memory: 384Mi
+    memory: 512Mi
 
 env:
   NEXT_PUBLIC_RUNTZ_API_URL: "https://engine.runtz.dev"
