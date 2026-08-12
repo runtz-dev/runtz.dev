@@ -23,10 +23,10 @@ autoscaling:
 
 resources:
   requests:
-    cpu: 50m
+    cpu: 200m
     memory: 256Mi
   limits:
-    cpu: 300m
+    cpu: 1000m
     memory: 512Mi
 
 env:
