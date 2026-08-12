@@ -3,12 +3,16 @@ import { i18nProvider } from 'fumadocs-ui/i18n';
 import '../global.css';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import {
   fumadocsTranslations,
   localeDetails,
   locales,
   parseLocale,
 } from '@/lib/i18n';
+
+// Google tag (gtag.js) for runtz.dev — Google Analytics 4 property.
+const GA_MEASUREMENT_ID = 'G-Y4FXTJ79MW';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -126,6 +130,18 @@ export default async function Layout({
       suppressHydrationWarning
     >
       <body className="flex flex-col min-h-screen">
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
         <RootProvider i18n={i18nProvider(fumadocsTranslations, locale)}>
           {children}
         </RootProvider>
