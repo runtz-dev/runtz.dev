@@ -9,7 +9,7 @@ import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
 
 A CLI do runtz é um único binário estático em Go. O script detecta a arquitetura, baixa o binário e o deixa disponível no seu `PATH`.
 
-<Tabs items={['Linux e macOS', 'Windows']}>
+<Tabs items={['Linux e macOS', 'Windows (PowerShell)']}>
 <Tab value="Linux e macOS">
 Instala em `/usr/local/bin`:
 
@@ -17,7 +17,7 @@ Instala em `/usr/local/bin`:
 curl -fsSL https://runtz.dev/install.sh | bash
 ```
 </Tab>
-<Tab value="Windows">
+<Tab value="Windows (PowerShell)">
 Instala em `%LOCALAPPDATA%\runtz` e adiciona ao seu `PATH` de usuário:
 
 ```powershell
@@ -42,7 +42,7 @@ Linux e macOS são compatíveis com `amd64` e `arm64`; Windows com `amd64`.
 
 Os dois scripts aceitam as mesmas variáveis de ambiente.
 
-<Tabs items={['Linux e macOS', 'Windows']}>
+<Tabs items={['Linux e macOS', 'Windows (PowerShell)']}>
 <Tab value="Linux e macOS">
 ```bash
 # Instalar uma versão específica
@@ -52,7 +52,7 @@ RUNTZ_VERSION=v1.0.0-rc1 curl -fsSL https://runtz.dev/install.sh | bash
 RUNTZ_INSTALL_DIR=$HOME/.local/bin curl -fsSL https://runtz.dev/install.sh | bash
 ```
 </Tab>
-<Tab value="Windows">
+<Tab value="Windows (PowerShell)">
 ```powershell
 # Instalar uma versão específica
 $env:RUNTZ_VERSION = "v1.0.0-rc1"; irm https://runtz.dev/install.ps1 | iex
@@ -67,7 +67,7 @@ $env:RUNTZ_INSTALL_DIR = "C:\tools\runtz"; irm https://runtz.dev/install.ps1 | i
 
 Baixe o binário na [página de releases do GitHub](https://github.com/runtz-dev/runtz-cli/releases) e execute:
 
-<Tabs items={['Linux e macOS', 'Windows']}>
+<Tabs items={['Linux e macOS', 'Windows (PowerShell)']}>
 <Tab value="Linux e macOS">
 ```bash
 chmod +x runtz_linux_amd64
@@ -75,7 +75,7 @@ sudo mv runtz_linux_amd64 /usr/local/bin/runtz
 runtz version
 ```
 </Tab>
-<Tab value="Windows">
+<Tab value="Windows (PowerShell)">
 ```powershell
 New-Item -ItemType Directory -Force $env:LOCALAPPDATA\runtz | Out-Null
 Move-Item runtz_windows_amd64.exe $env:LOCALAPPDATA\runtz\runtz.exe
