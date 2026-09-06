@@ -75,7 +75,7 @@ Letter spacing stays `0` everywhere except the hero and lead statement, which us
 - Make claims concrete: scan types, local Docker Compose, MongoDB, Go CLI, Next.js dashboard.
 - Do not imply paid, hosted, or enterprise features that are not implemented.
 - Use "coming soon" only for DAST until that workflow is implemented.
-- Pricing must include Free Cloud at $0, Self-hosted at $0, Standard at $20/month, and Enterprise at $99/month during launch, normally $199/month. Enterprise can also be activated on self-hosted deployments.
+- Pricing must include Free Cloud at $0, Self-hosted at $0, Standard at $20/month, and Enterprise at $199/month. Enterprise can also be activated on self-hosted deployments.
 - Product CTAs for Login, Playground, and Start for free should point to `https://runtz.dev/login` or `https://runtz.dev/playground`.
 
 ## Agent Prompt Guide

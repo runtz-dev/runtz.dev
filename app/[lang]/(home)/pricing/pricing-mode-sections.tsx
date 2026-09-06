@@ -28,7 +28,6 @@ type Plan = {
   description: string;
   price: string;
   cadence: string;
-  originalPrice?: string;
   icon: LucideIcon;
   /** Name of the lower plan this one inherits from, e.g. "Free" on Pro. Renders an "Everything from X, plus:" label above `features`, which then only needs to list what's new. */
   includesFrom?: string;
@@ -56,117 +55,6 @@ function planRank(plan: CurrentPlan) {
   }
   return 1;
 }
-
-const plansByMode: Record<HostingMode, Plan[]> = {
-  cloud: [
-    {
-      name: 'Free',
-      planKey: 'free',
-      eyebrow: 'personal',
-      description: 'A hosted workspace for developers who want to start scanning now.',
-      price: '$0',
-      cadence: 'forever',
-      icon: Cloud,
-      features: [
-        'All security scans',
-        'Personal workspace',
-        'No infrastructure to run',
-      ],
-      action: 'Start for free',
-      href: platformUrl,
-    },
-    {
-      name: 'Pro',
-      planKey: 'pro',
-      eyebrow: 'team',
-      description: 'Comfortable limits — built for small and medium teams.',
-      price: '$20',
-      cadence: '/month',
-      icon: UsersRound,
-      includesFrom: 'Free',
-      features: [
-        'Shared workspaces',
-        'Smart reports',
-        'Smart alerts',
-      ],
-      action: 'Choose Pro',
-      href: platformUrl,
-    },
-    {
-      name: 'Enterprise',
-      planKey: 'enterprise',
-      eyebrow: 'launch offer',
-      description: 'Security at scale for large and growing organizations.',
-      price: '$99',
-      cadence: '/month',
-      originalPrice: '$199/month',
-      icon: Building2,
-      includesFrom: 'Pro',
-      features: [
-        'Custom platform limits',
-        'Dedicated Slack support',
-        'Implementation support',
-      ],
-      action: 'Choose Enterprise',
-      href: platformUrl,
-      featured: true,
-    },
-  ],
-  'self-hosted': [
-    {
-      name: 'Free',
-      planKey: 'free',
-      eyebrow: 'open source',
-      description: 'Run Runtz on your own infrastructure when you need to keep data in-house.',
-      price: '$0',
-      cadence: 'forever',
-      icon: Server,
-      features: [
-        'All security scans',
-        'Shared workspaces',
-        'Runs in your infrastructure',
-      ],
-      action: 'Self-host runtz',
-      href: '/docs/docker-compose',
-      secondary: true,
-    },
-    {
-      name: 'Pro',
-      planKey: 'pro',
-      eyebrow: 'team',
-      description: 'Comfortable limits — built for small and medium teams.',
-      price: '$20',
-      cadence: '/month',
-      icon: UsersRound,
-      includesFrom: 'Free',
-      features: [
-        'Smart email reports',
-        'Smart alerts',
-      ],
-      action: 'Choose Pro',
-      href: platformUrl,
-    },
-    {
-      name: 'Enterprise',
-      planKey: 'enterprise',
-      eyebrow: 'launch offer',
-      description: 'Security at scale for large and growing organizations.',
-      price: '$99',
-      cadence: '/month',
-      originalPrice: '$199/month',
-      icon: Building2,
-      includesFrom: 'Pro',
-      features: [
-        'Custom platform limits',
-        'Dedicated Slack support',
-        'Self-host Implementation support',
-      ],
-      action: 'Choose Enterprise',
-      href: platformUrl,
-      featured: true,
-    },
-  ],
-};
 
 const planKeys = ['free', 'pro', 'enterprise'] as const;
 const planIcons = [Cloud, UsersRound, Building2] as const;
@@ -340,17 +228,6 @@ function PlanCard({
       </p>
 
       <div className="mt-6">
-        {plan.originalPrice ? (
-          // flex-wrap (not inline text flow) so the badge wraps as one whole
-          // pill onto its own line on narrow cards instead of splitting its
-          // text mid-word inside the rounded background.
-          <p className="mb-2 flex flex-wrap items-center gap-2 text-sm text-[#53657d] dark:text-[#9fb4cf]">
-            <span className="line-through">{plan.originalPrice}</span>
-            <span className="rounded-full bg-[#6db5ff] px-2 py-1 font-mono text-[10px] font-bold uppercase text-[#071222]">
-              {copy.discount}
-            </span>
-          </p>
-        ) : null}
         <div className="flex items-end gap-2">
           <span className="text-5xl font-bold">{plan.price}</span>
           <span

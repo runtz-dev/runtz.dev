@@ -6,7 +6,6 @@ export type PricingPlanCopy = {
   description: string;
   price: string;
   cadence: string;
-  originalPrice?: string;
   includesFrom?: string;
   features: string[];
   action: string;
@@ -20,7 +19,6 @@ export type PricingCopy = {
   modeAriaLabel: string;
   modeLabels: { cloud: string; selfHosted: string };
   plans: { cloud: PricingPlanCopy[]; selfHosted: PricingPlanCopy[] };
-  discount: string;
   everythingFrom: string;
   currentPlan: string;
   includedInPlan: string;
@@ -135,11 +133,10 @@ export const pricingCopy: Record<Locale, PricingCopy> = {
         },
         {
           name: 'Enterprise',
-          eyebrow: 'launch offer',
+          eyebrow: 'organization',
           description: 'Security at scale for large and growing organizations.',
-          price: '$99',
+          price: '$199',
           cadence: '/month',
-          originalPrice: '$199/month',
           includesFrom: 'Pro',
           features: [
             'Custom platform limits',
@@ -172,11 +169,10 @@ export const pricingCopy: Record<Locale, PricingCopy> = {
         },
         {
           name: 'Enterprise',
-          eyebrow: 'launch offer',
+          eyebrow: 'organization',
           description: 'Security at scale for large and growing organizations.',
-          price: '$99',
+          price: '$199',
           cadence: '/month',
-          originalPrice: '$199/month',
           includesFrom: 'Pro',
           features: [
             'Custom platform limits',
@@ -187,7 +183,6 @@ export const pricingCopy: Record<Locale, PricingCopy> = {
         },
       ],
     },
-    discount: '50% off until Jan 2027',
     everythingFrom: 'Everything from {plan}, plus:',
     currentPlan: 'Your current plan',
     includedInPlan: 'Included in your plan',
@@ -315,11 +310,10 @@ export const pricingCopy: Record<Locale, PricingCopy> = {
         },
         {
           name: 'Enterprise',
-          eyebrow: 'oferta de lançamento',
+          eyebrow: 'organização',
           description: 'Segurança em escala para organizações grandes e em crescimento.',
-          price: '$99',
+          price: '$199',
           cadence: '/mês',
-          originalPrice: '$199/mês',
           includesFrom: 'Pro',
           features: [
             'Limites personalizados da plataforma',
@@ -352,11 +346,10 @@ export const pricingCopy: Record<Locale, PricingCopy> = {
         },
         {
           name: 'Enterprise',
-          eyebrow: 'oferta de lançamento',
+          eyebrow: 'organização',
           description: 'Segurança em escala para organizações grandes e em crescimento.',
-          price: '$99',
+          price: '$199',
           cadence: '/mês',
-          originalPrice: '$199/mês',
           includesFrom: 'Pro',
           features: [
             'Limites personalizados da plataforma',
@@ -367,7 +360,6 @@ export const pricingCopy: Record<Locale, PricingCopy> = {
         },
       ],
     },
-    discount: '50% de desconto até jan. de 2027',
     everythingFrom: 'Tudo do plano {plan}, mais:',
     currentPlan: 'Seu plano atual',
     includedInPlan: 'Incluído no seu plano',
@@ -495,11 +487,10 @@ export const pricingCopy: Record<Locale, PricingCopy> = {
         },
         {
           name: 'Enterprise',
-          eyebrow: 'oferta de lanzamiento',
+          eyebrow: 'organización',
           description: 'Seguridad a escala para organizaciones grandes y en crecimiento.',
-          price: '$99',
+          price: '$199',
           cadence: '/mes',
-          originalPrice: '$199/mes',
           includesFrom: 'Pro',
           features: [
             'Límites personalizados de la plataforma',
@@ -532,11 +523,10 @@ export const pricingCopy: Record<Locale, PricingCopy> = {
         },
         {
           name: 'Enterprise',
-          eyebrow: 'oferta de lanzamiento',
+          eyebrow: 'organización',
           description: 'Seguridad a escala para organizaciones grandes y en crecimiento.',
-          price: '$99',
+          price: '$199',
           cadence: '/mes',
-          originalPrice: '$199/mes',
           includesFrom: 'Pro',
           features: [
             'Límites personalizados de la plataforma',
@@ -547,7 +537,6 @@ export const pricingCopy: Record<Locale, PricingCopy> = {
         },
       ],
     },
-    discount: '50% de descuento hasta ene. de 2027',
     everythingFrom: 'Todo lo del plan {plan}, más:',
     currentPlan: 'Tu plan actual',
     includedInPlan: 'Incluido en tu plan',
