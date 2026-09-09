@@ -79,6 +79,11 @@ export type LandingCopy = {
     primaryCta: string;
     playgroundCta: string;
   };
+  introVideo: {
+    playLabel: string;
+    youtubeLabel: string;
+    closeLabel: string;
+  };
   platform: {
     eyebrow: string;
     title: string;
@@ -153,6 +158,11 @@ export const landingCopy: Record<Locale, LandingCopy> = {
         'Everything developers need to keep code and environments secure end to end. Gain clear visibility across your stack, avoid exposure to known CVEs and already-fixed issues, and build more securely in the AI era.',
       primaryCta: 'Start for free',
       playgroundCta: 'Playground',
+    },
+    introVideo: {
+      playLabel: 'Watch the introduction',
+      youtubeLabel: 'Watch on YouTube',
+      closeLabel: 'Close video',
     },
     platform: {
       eyebrow: 'platform',
@@ -330,6 +340,11 @@ export const landingCopy: Record<Locale, LandingCopy> = {
       primaryCta: 'Comece grátis',
       playgroundCta: 'Playground',
     },
+    introVideo: {
+      playLabel: 'Assistir à apresentação',
+      youtubeLabel: 'Assistir no YouTube',
+      closeLabel: 'Fechar vídeo',
+    },
     platform: {
       eyebrow: 'plataforma',
       title: 'Visibilidade completa, do código ao ambiente.',
@@ -505,6 +520,11 @@ export const landingCopy: Record<Locale, LandingCopy> = {
         'Todo lo que tu equipo de desarrollo necesita para proteger el código y los entornos de principio a fin. Obtén una visión clara de toda tu stack, evita la exposición a CVE conocidas y problemas que ya tienen solución, y desarrolla con mayor seguridad en la era de la IA.',
       primaryCta: 'Comenzar gratis',
       playgroundCta: 'Playground',
+    },
+    introVideo: {
+      playLabel: 'Ver la presentación',
+      youtubeLabel: 'Ver en YouTube',
+      closeLabel: 'Cerrar video',
     },
     platform: {
       eyebrow: 'plataforma',
