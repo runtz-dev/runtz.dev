@@ -28,6 +28,7 @@ import {
 } from './_components/marketing';
 import { DeveloperWorkflow } from './_components/developer-workflow';
 import { InstallMethodTabs } from './_components/install-method-tabs';
+import { IntroVideo } from './_components/intro-video';
 import { HeroBackdrop, WarpField } from './_components/shaders';
 import { installOptions } from '@/lib/platform-content';
 import { landingCopy } from '@/lib/landing-copy';
@@ -138,6 +139,8 @@ export default async function HomePage({ params }: PageProps<'/[lang]'>) {
           </div>
         </div>
       </section>
+
+      <IntroVideo copy={copy.introVideo} locale={locale} />
 
       <section className="mx-auto w-full max-w-[1400px] px-6 py-10 md:px-12 md:py-12">
         <SectionIntro
