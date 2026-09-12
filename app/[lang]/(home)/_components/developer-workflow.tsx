@@ -75,11 +75,11 @@ function CliPanel({ copy }: { copy: LandingCopy['developerWorkflow'] }) {
 
           <div
             role="tabpanel"
-            className="mt-4 flex min-h-[142px] min-w-0 max-w-full items-start gap-4 rounded-xl border border-[#071222]/10 bg-black p-5 text-[#ece7cf] shadow-sm dark:border-[#1c2a3f] sm:p-6"
+            className="mt-4 flex min-h-[142px] min-w-0 max-w-full items-start gap-4 rounded-xl border border-[#071222]/10 bg-[#f7fbff]/95 p-5 text-[#071222] shadow-sm dark:border-[#1c2a3f] dark:bg-black dark:text-[#ece7cf] sm:p-6"
           >
             <pre className="min-w-0 flex-1 whitespace-pre-wrap break-all font-mono text-xs leading-7 sm:overflow-x-auto sm:whitespace-pre sm:break-normal sm:text-sm">
               <code>
-                <span className="select-none text-[#6db5ff]">$ </span>
+                <span className="select-none text-[#1d5fc7] dark:text-[#6db5ff]">$ </span>
                 {command}
               </code>
             </pre>
@@ -87,7 +87,7 @@ function CliPanel({ copy }: { copy: LandingCopy['developerWorkflow'] }) {
               value={command}
               label={copy.copyCommand}
               copiedLabel={copy.copied}
-              className="!text-[#9c9680] hover:!bg-[#6db5ff]/10 hover:!text-[#d9e9ff]"
+              className="!text-[#53657d] hover:!bg-[#2f7eff]/10 hover:!text-[#1d5fc7] dark:!text-[#9c9680] dark:hover:!bg-[#6db5ff]/10 dark:hover:!text-[#d9e9ff]"
             />
           </div>
         </div>
