@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ["wget"]
-      args: ["http://{{ include "runtz-landing.fullname" . }}:{{ .Values.service.port }}/home"]
+      args: ["http://{{ include "runtz-landing.fullname" . }}:{{ .Values.service.port }}/"]
   restartPolicy: Never

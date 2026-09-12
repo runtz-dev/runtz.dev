@@ -198,7 +198,7 @@ export const platformPages: PlatformPage[] = [
     summary:
       'runtz is built from straightforward parts: Go scanner CLI, Go backend, Next.js frontend, and MongoDB persistence.',
     status: 'Open source',
-    command: `curl -fsSL https://runtz.dev/home/docker-compose.yml -o docker-compose.yml
+    command: `curl -fsSL https://runtz.dev/docker-compose.yml -o docker-compose.yml
 docker compose up -d`,
     icon: HeartHandshake,
     highlights: ['local Docker Compose', 'documented API routes', 'clear extension points'],
@@ -446,7 +446,7 @@ export const installOptions: InstallOption[] = [
   {
     id: 'docker',
     label: 'Docker',
-    command: `curl -fsSL https://runtz.dev/home/docker-compose.yml -o docker-compose.yml
+    command: `curl -fsSL https://runtz.dev/docker-compose.yml -o docker-compose.yml
 docker compose up -d`,
   },
   {
