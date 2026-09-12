@@ -4,17 +4,19 @@ This is the runtz marketing/docs site (Next.js + Fumadocs), deployed as the
 `runtz-landing` service behind the platform's own ingress. Agents: read this
 before opening a PR.
 
-## Branch and release flow
+## Branch and deploy flow
 
 ```
-feature branch ──▶ dev ──▶ main ──▶ GitHub Release
-   (your work)     (dev env)         (prod deploy)
+feature branch ──▶ dev ──▶ main
+   (your work)     (dev env)   (prod deploy)
 ```
 
 Branch off `dev`, open pull requests **against `dev`**. `dev` auto-deploys to
-the dev environment. Releases promote `dev → main`; publishing a GitHub
-Release deploys prod. There is no version file or changelog ceremony here —
-any tag works, it's purely a deploy trigger.
+the dev environment. Promoting `dev → main` (PR + merge) deploys prod
+directly — every push to `main` triggers the prod pipeline, no release/tag
+step in between. There is no version file or changelog ceremony here: this
+is a marketing/docs site, not a versioned product. Only merge into `main`
+when you actually want prod to change right then.
 
 ## Checks to run before opening a PR
 

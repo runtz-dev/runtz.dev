@@ -1,9 +1,8 @@
 # Releasing runtz.dev
 
-Releases are driven by CI, deployed straight from this repo's checkout — this
-chart is never published anywhere (nobody self-hosts the marketing site).
-There's no version file or changelog ceremony; any tag works, it's purely a
-deploy trigger.
+Deploys are driven by CI, straight from a push — this is a marketing/docs
+site, not a versioned product, so there's no release, no version file and no
+changelog ceremony. Every push to `main` deploys prod.
 
 ## Prerequisites (one-time, on the runtz-dev org)
 
@@ -16,11 +15,11 @@ deploy trigger.
 
 1. Push to `dev` → `.github/workflows/runtz-landing-pipeline-dev-k8s.yml`
    builds the image and deploys it to the dev namespace automatically.
-2. Promote `dev → main` (PR + merge).
-3. Publish a GitHub Release for any tag on `main` (mark it however you like —
-   there's no semver contract to honor) →
+2. Promote `dev → main` (PR + merge) →
    `.github/workflows/runtz-landing-pipeline-prod-k8s.yml` builds the image
-   and deploys it to prod.
+   and deploys it to prod automatically, as soon as the merge lands. There is
+   no separate release/tag step — merging **is** the prod deploy trigger, so
+   only merge into `main` when you actually want prod to change right then.
 
 Both environments push the image to the in-cluster registry only
 (`registry-docker-registry.registry.svc.cluster.local:5000/runtz-landing`) —
