@@ -28,5 +28,5 @@ never Docker Hub, since this image has no external consumers.
 
 ## Verify
 
-- Dev: `https://runtz-dev.runtz.dev/home`
-- Prod: `https://runtz.dev/home`, `https://runtz.dev/install.sh` and `https://runtz.dev/install.ps1` (CLI installer redirects)
+- Dev: `https://runtz-dev.runtz.dev`
+- Prod: `https://runtz.dev`, `https://runtz.dev/install.sh` and `https://runtz.dev/install.ps1` (CLI installer redirects)

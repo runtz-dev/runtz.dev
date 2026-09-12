@@ -4,4 +4,4 @@ description: Helm chart for the runtz landing website
 type: application
 version: 0.1.0
 appVersion: "dev"
-icon: https://runtz.dev/home/brand/runtz-logo-light.svg
+icon: https://runtz.dev/brand/runtz-logo-light.svg

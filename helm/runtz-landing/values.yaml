@@ -36,7 +36,7 @@ service:
 env:
   PORT: "3000"
   HOSTNAME: "0.0.0.0"
-  NEXT_PUBLIC_BASE_PATH: "/home"
+  NEXT_PUBLIC_BASE_PATH: ""
   # What actually reaches the browser is baked into the client bundle at
   # Docker build time (see Dockerfile) — this runtime value just has to match
   # that build-time one so `kubectl exec ... env` isn't misleading. Set both
@@ -63,17 +63,17 @@ resources: {}
 
 livenessProbe:
   httpGet:
-    path: /home
+    path: /
     port: http
 
 readinessProbe:
   httpGet:
-    path: /home
+    path: /
     port: http
 
 startupProbe:
   httpGet:
-    path: /home
+    path: /
     port: http
   periodSeconds: 2
   failureThreshold: 30
