@@ -58,7 +58,7 @@ export function IntroVideo({
             unoptimized
             className="hidden object-contain dark:block"
           />
-          <span className="absolute inset-0 flex items-center justify-center bg-[#050912]/10 transition-colors group-hover:bg-transparent">
+          <span className="absolute inset-0 flex items-center justify-center">
             <span className="flex size-12 items-center justify-center rounded-full bg-[#6db5ff] text-[#071222] shadow-[0_8px_40px_rgba(0,0,0,0.45)] ring-4 ring-[#6db5ff]/15 transition group-hover:bg-[#9fd6ff] group-focus-visible:bg-[#9fd6ff] motion-safe:group-hover:scale-110 md:size-14">
               <Play aria-hidden="true" className="ml-0.5 size-5 fill-current md:size-6" />
             </span>
