@@ -6,7 +6,8 @@ import { Dialog } from '@base-ui/react/dialog';
 import { ArrowUpRight, Play, X } from 'lucide-react';
 import type { LandingCopy } from '@/lib/landing-copy';
 import type { Locale } from '@/lib/i18n';
-import poster from './intro-poster.png';
+import posterDark from './intro-poster.png';
+import posterLight from './intro-poster-light.png';
 
 const videoId = 'UBifJ-7UXkU';
 
@@ -30,14 +31,32 @@ export function IntroVideo({
       <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
         <Dialog.Trigger
           aria-label={copy.playLabel}
-          className="group relative block aspect-video w-full cursor-pointer overflow-hidden rounded-lg border border-[#2f7eff]/25 bg-[#050912] shadow-2xl shadow-[#071222]/15 transition-shadow hover:shadow-[#2f7eff]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6db5ff] dark:border-[#6db5ff]/20 dark:shadow-black/30"
+          className="group relative block aspect-video w-full cursor-pointer overflow-hidden rounded-lg border border-[#2f7eff]/25 bg-[#eef6ff] shadow-2xl shadow-[#071222]/15 transition-shadow hover:shadow-[#2f7eff]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6db5ff] dark:border-[#6db5ff]/20 dark:bg-[#050912] dark:shadow-black/30"
         >
+          {/*
+            Two posters, toggled by the `.dark` class rather than picked in
+            JS, so there's no light-poster flash on a dark-theme first paint
+            (or vice versa) before hydration.
+          */}
           <Image
-            src={poster}
+            src={posterLight}
             alt=""
             fill
-            sizes="(max-width: 639px) calc(100vw - 32px), (max-width: 767px) calc(100vw - 48px), (max-width: 1400px) 100vw, 1400px"
-            className="object-contain"
+            // The on-demand optimizer (`/_next/image`) is not reachable in
+            // prod: the Ingress routes every `/_next/*` request to the
+            // platform frontend, not this app, and there's no `sharp` here
+            // for it to serve the request even if it did land (see
+            // secrets-helm/ingress-*.yaml). This is the only next/image use
+            // in the app — skip optimization rather than fix the routing.
+            unoptimized
+            className="object-contain dark:hidden"
+          />
+          <Image
+            src={posterDark}
+            alt=""
+            fill
+            unoptimized
+            className="hidden object-contain dark:block"
           />
           <span className="absolute inset-0 flex items-center justify-center bg-[#050912]/10 transition-colors group-hover:bg-transparent">
             <span className="flex size-12 items-center justify-center rounded-full bg-[#6db5ff] text-[#071222] shadow-[0_8px_40px_rgba(0,0,0,0.45)] ring-4 ring-[#6db5ff]/15 transition group-hover:bg-[#9fd6ff] group-focus-visible:bg-[#9fd6ff] motion-safe:group-hover:scale-110 md:size-14">

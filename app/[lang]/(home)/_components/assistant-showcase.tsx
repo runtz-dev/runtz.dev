@@ -185,14 +185,14 @@ export function AssistantShowcase({
 
 function ConfigPanel({ assistant }: { assistant: Assistant }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-[#1c2a3f] bg-[#070f1c]">
-      <div className="flex items-center gap-2 border-b border-[#223149] bg-[#0d1420] px-4 py-3">
+    <div className="overflow-hidden rounded-2xl border border-[#071222]/10 bg-[#f7fbff]/95 dark:border-[#1c2a3f] dark:bg-[#070f1c]">
+      <div className="flex items-center gap-2 border-b border-[#071222]/10 bg-[#e5f0fb] px-4 py-3 dark:border-[#223149] dark:bg-[#0d1420]">
         <span className="h-2.5 w-2.5 rounded-full bg-[#ff6b6b]/70" />
         <span className="h-2.5 w-2.5 rounded-full bg-[#4f8dff]/60" />
         <span className="h-2.5 w-2.5 rounded-full bg-[#6db5ff]/70" />
-        <span className="ml-2 font-mono text-xs text-[#7f96b3]">{assistant.configFile}</span>
+        <span className="ml-2 font-mono text-xs text-[#53657d] dark:text-[#7f96b3]">{assistant.configFile}</span>
       </div>
-      <pre className="min-h-[220px] overflow-x-auto px-5 py-4 font-mono text-[13px] leading-6 text-[#cfe3ff]">
+      <pre className="min-h-[220px] overflow-x-auto px-5 py-4 font-mono text-[13px] leading-6 text-[#071222] dark:text-[#cfe3ff]">
         <code>{assistant.configCode}</code>
       </pre>
     </div>
