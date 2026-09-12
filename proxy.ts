@@ -29,12 +29,10 @@ const installScriptUrl =
 const installPs1ScriptUrl =
   'https://raw.githubusercontent.com/runtz-dev/runtz-cli/main/install.ps1';
 
-// Files that llmstxt.org expects at the domain root. The ingress routes these
-// exact paths to this app; they remain English/default-locale entry points.
-const rootLlmsFiles = new Set(['/llms.txt', '/llms-full.txt']);
-
 // `request.nextUrl.pathname` has the basePath stripped, and NextResponse.rewrite
-// does not add it back. Internal rewrites therefore restore `/home` manually.
+// does not add it back. Internal rewrites therefore restore it manually (a
+// no-op today, since basePath is empty — kept so this still works if the app
+// ever needs a basePath again, e.g. local dev under a proxy).
 function rewriteToApp(request: NextRequest, pathname: string) {
   return NextResponse.rewrite(new URL(`${basePath}${pathname}`, request.url));
 }
@@ -52,16 +50,6 @@ export default function proxy(request: NextRequest, event: NextFetchEvent) {
 
   if (pathname === '/install.ps1') {
     return NextResponse.redirect(installPs1ScriptUrl, 302);
-  }
-
-  // `/legal` is also exposed without the app basePath by the existing ingress.
-  // Keep that compatibility URL tied to the default English locale.
-  if (pathname === '/legal' || pathname.startsWith('/legal/')) {
-    return rewriteToApp(request, localizedInternalPath(pathname, 'en'));
-  }
-
-  if (rootLlmsFiles.has(pathname)) {
-    return rewriteToApp(request, pathname);
   }
 
   const localized = pathLocale(pathname);
@@ -86,10 +74,14 @@ export default function proxy(request: NextRequest, event: NextFetchEvent) {
   }
 
   // Public files, Next.js internals and route handlers do not belong to the
-  // locale tree and must never receive a language prefix.
+  // locale tree and must never receive a language prefix. The docs search API
+  // route lives outside /api (that namespace belongs to the platform
+  // frontend now that both apps share the domain root) but is the same kind
+  // of non-localized route handler.
   if (
     pathname.startsWith('/_next/') ||
     pathname.startsWith('/api/') ||
+    pathname === '/docs/search' ||
     /\.[^/]+$/.test(pathname)
   ) {
     return NextResponse.next();

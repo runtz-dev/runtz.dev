@@ -10,6 +10,7 @@ import {
   locales,
   parseLocale,
 } from '@/lib/i18n';
+import { platformBaseUrl, sitePath } from '@/lib/shared';
 
 // Google tag (gtag.js) for runtz.dev — Google Analytics 4 property.
 const GA_MEASUREMENT_ID = 'G-Y4FXTJ79MW';
@@ -53,7 +54,7 @@ export async function generateMetadata({
   const copy = metadataCopy[locale];
 
   return {
-    metadataBase: new URL('https://runtz.dev'),
+    metadataBase: new URL(platformBaseUrl),
     applicationName: 'runtz',
     title: {
       default: copy.title,
@@ -142,7 +143,10 @@ export default async function Layout({
             gtag('config', '${GA_MEASUREMENT_ID}');
           `}
         </Script>
-        <RootProvider i18n={i18nProvider(fumadocsTranslations, locale)}>
+        <RootProvider
+          i18n={i18nProvider(fumadocsTranslations, locale)}
+          search={{ options: { api: sitePath('/docs/search') } }}
+        >
           {children}
         </RootProvider>
       </body>

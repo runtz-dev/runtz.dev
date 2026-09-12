@@ -1,9 +1,9 @@
 ---
 name: runtz-landing CI/CD Prod
 on:
-  release:
-    types:
-      - published
+  push:
+    branches:
+      - main
 
 env:
   REGISTRY: registry-docker-registry.registry.svc.cluster.local:5000
@@ -27,7 +27,7 @@ jobs:
         run: |
           docker buildx build \
             --push \
-            --tag ${REGISTRY}/runtz-landing:${GITHUB_REF_NAME} \
+            --tag ${REGISTRY}/runtz-landing:prod$GITHUB_SHA \
             --build-arg NEXT_PUBLIC_RUNTZ_API_URL="https://engine.runtz.dev" \
             --build-arg NEXT_PUBLIC_PLATFORM_BASE_URL="https://runtz.dev" \
             .
@@ -50,4 +50,4 @@ jobs:
           helm upgrade --install runtz-landing ./helm/runtz-landing \
             -n prod \
             -f helm/environments/prod/values.yaml \
-            --set "image.tag=${GITHUB_REF_NAME}"
+            --set "image.tag=prod$GITHUB_SHA"

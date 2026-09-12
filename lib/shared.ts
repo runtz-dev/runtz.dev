@@ -2,13 +2,14 @@ export const appName = 'runtz';
 export const docsRoute = '/docs';
 export const docsImageRoute = '/og/docs';
 export const docsContentRoute = '/llms.mdx/docs';
-// The whole app is served under this basePath (see next.config.mjs). Next
-// prefixes it automatically for <Link>, <Image> and fetches it controls, but
-// NOT for URLs we hand out ourselves as plain strings — the "View as Markdown"
-// link, the copy-markdown fetch, the OG image in metadata, the links inside
-// llms.txt. Those must be built with `sitePath()` / `siteUrl()` below or they
-// 404 at the root of the domain, which the platform frontend owns.
-export const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '/home';
+// The whole app is served under this basePath (see next.config.mjs) — empty
+// by default now that the site lives at the domain root. Next prefixes it
+// automatically for <Link>, <Image> and fetches it controls, but NOT for URLs
+// we hand out ourselves as plain strings — the "View as Markdown" link, the
+// copy-markdown fetch, the OG image in metadata, the links inside llms.txt.
+// Those must be built with `sitePath()` / `siteUrl()` below, so they keep
+// working if this ever needs a basePath again (e.g. local dev under a proxy).
+export const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 // Host of the platform this build links to. The landing app is served under
 // /home on the same host as the platform, so dev must point at
 // runtz-dev.runtz.dev and prod at runtz.dev — otherwise "Login" on the dev site
@@ -20,7 +21,7 @@ export const platformBaseUrl = (
 export const platformUrl = `${platformBaseUrl}/login`;
 export const playgroundUrl = `${platformBaseUrl}/playground`;
 
-/** Absolute path on this host for an app route (`/docs` -> `/home/docs`). */
+/** Absolute path on this host for an app route (identity unless basePath is set). */
 export function sitePath(route: string) {
   return `${basePath}${route}`;
 }

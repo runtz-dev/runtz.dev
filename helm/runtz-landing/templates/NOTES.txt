@@ -2,7 +2,6 @@ runtz landing has been installed.
 
 Landing pages:
   https://runtz.dev
-  https://runtz.dev/home
 
 Internal service:
   {{ include "runtz-landing.fullname" . }}:{{ .Values.service.port }}
