@@ -38,7 +38,26 @@ RUNTZ_PUBLIC_URL=http://localhost:3000
 CORS_ALLOWED_ORIGINS=http://localhost:3000
 ```
 
-Todas opcionales — `docker compose up -d` funciona sin definir ninguna. La etiqueta de la imagen (`RUNTZ_VERSION`) ya viene fijada dentro de `docker-compose.yml`; defínela en `.env` solo para anular ese valor.
+Todas opcionales — `docker compose up -d` funciona sin definir ninguna. La etiqueta de la imagen usa `:rc` por defecto — el build más reciente publicado, rc o estable; define `RUNTZ_VERSION` en `.env` para fijar una versión específica, por ejemplo `RUNTZ_VERSION=1.0.0-rc25`.
+
+## Actualizar
+
+Descarga las imágenes más recientes y recrea los contenedores que cambiaron — MongoDB y sus datos quedan intactos:
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+Por defecto esto sigue la etiqueta `:rc`, así que ya toma el build más reciente publicado sin hacer nada más. Si el `.env` fija un `RUNTZ_VERSION` específico, actualiza ese valor primero — revisa el [changelog](https://github.com/runtz-dev/runtz/blob/main/CHANGELOG.md) para ver qué cambió — y ejecuta los mismos dos comandos.
+
+Confirma qué versión está corriendo en realidad:
+
+```bash
+curl http://localhost:8080/health
+```
+
+No existe una ruta de downgrade: trata `RUNTZ_VERSION` como algo que solo avanza hacia adelante.
 
 ## Activación self-hosted Pro y Enterprise
 
