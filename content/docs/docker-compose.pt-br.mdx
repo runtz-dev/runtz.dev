@@ -34,23 +34,11 @@ No primeiro acesso, informe `Admin username`, `Password` e `Workspace Name`. Dep
 PORT=8080
 MONGODB_URI=mongodb://mongodb:27017
 MONGODB_DATABASE=runtz
-RUNTZ_DEPLOYMENT_MODE=self-hosted
 RUNTZ_PUBLIC_URL=http://localhost:3000
 CORS_ALLOWED_ORIGINS=http://localhost:3000
-RUNTZ_VERSION=1.0.0-rc1
 ```
 
-Implantações centrais ou cloud também precisam das chaves da Stripe e da chave privada que assina licenças:
-
-```bash
-STRIPE_SECRET_KEY=sk_live_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-STRIPE_PRICE_PRO_CLOUD=price_...
-STRIPE_PRICE_ENTERPRISE_CLOUD=price_...
-STRIPE_PRICE_PRO_SELF_HOSTED=price_...
-STRIPE_PRICE_ENTERPRISE_SELF_HOSTED=price_...
-RUNTZ_LICENSE_PRIVATE_KEY=base64-ed25519-private-key
-```
+Todas opcionais — `docker compose up -d` funciona sem nenhuma delas definida. A tag da imagem (`RUNTZ_VERSION`) já vem fixada dentro do `docker-compose.yml`; defina-a no `.env` só para sobrescrever esse valor.
 
 ## Ativação self-hosted Pro e Enterprise
 
