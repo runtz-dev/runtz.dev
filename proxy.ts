@@ -29,6 +29,15 @@ const installScriptUrl =
 const installPs1ScriptUrl =
   'https://raw.githubusercontent.com/runtz-dev/runtz-cli/main/install.ps1';
 
+// runtz.dev/docker-compose.yml is the self-hosted install file (curl -fsSL
+// https://runtz.dev/docker-compose.yml -o docker-compose.yml — the -L in the
+// documented command follows this). The canonical file lives in the platform
+// repository and already tracks its own release (image tags bumped on every
+// version); redirecting straight there means this app never holds a second,
+// independently-stale copy.
+const dockerComposeUrl =
+  'https://raw.githubusercontent.com/runtz-dev/runtz/main/docker-compose.yml';
+
 // `request.nextUrl.pathname` has the basePath stripped, and NextResponse.rewrite
 // does not add it back. Internal rewrites therefore restore it manually (a
 // no-op today, since basePath is empty — kept so this still works if the app
@@ -50,6 +59,10 @@ export default function proxy(request: NextRequest, event: NextFetchEvent) {
 
   if (pathname === '/install.ps1') {
     return NextResponse.redirect(installPs1ScriptUrl, 302);
+  }
+
+  if (pathname === '/docker-compose.yml') {
+    return NextResponse.redirect(dockerComposeUrl, 302);
   }
 
   const localized = pathLocale(pathname);
