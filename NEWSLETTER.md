@@ -39,4 +39,4 @@ npm run types:check
 NEWSLETTER_INTERNAL_URL=http://127.0.0.1:9 npm run build
 ```
 
-Verificar páginas 1/2, filtro, voltar/avançar, permalink, imagem, teclado e modal. O cadastro não envia e-mails. Erros de Mongo precisam aparecer no formulário sem impedir leitura. Use somente Mongo local e endereços de teste na verificação.
+Verificar páginas 1/2, filtro, voltar/avançar, permalink, imagem e inscrição direta por teclado. A listagem termina na paginação; o campo de e-mail e o consentimento ficam na barra de filtros, sem popup. O cadastro não envia e-mails. Erros de Mongo precisam aparecer no formulário sem impedir leitura. Use somente Mongo local e endereços de teste na verificação.

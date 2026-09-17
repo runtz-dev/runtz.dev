@@ -1,7 +1,7 @@
 import type { Locale } from './i18n';
 
 const pt = {
-  eyebrow: 'IDEIAS PARA QUEM CONSTRÓI', title: 'Runtz Newsletter',
+  title: 'runtz Newsletter',
   description: 'Engenharia, segurança e infraestrutura na prática. Uma leitura de cada vez.',
   subscribe: 'Inscrever-se', all: 'Todos os artigos', filter: 'Filtrar por assunto',
   latest: 'Últimas publicações', articles: 'artigos', read: 'Ler artigo',
@@ -14,7 +14,7 @@ const pt = {
   signupBody: 'Cadastre seu e-mail para acompanhar as próximas edições da Runtz. O envio será disponibilizado em breve.',
   email: 'Seu e-mail', placeholder: 'voce@exemplo.com', submit: 'Quero acompanhar',
   consent: 'Quero receber as futuras edições da newsletter Runtz.',
-  privacy: 'Saiba como tratamos seus dados.', close: 'Fechar', sending: 'Salvando...',
+  privacy: 'Política de privacidade.', sending: 'Salvando...',
   success: 'Você está na lista.', successBody: 'Inscrição registrada. Avisaremos quando as edições estiverem disponíveis.',
   invalid: 'Confira o e-mail e confirme que deseja se inscrever.',
   error: 'Não foi possível salvar sua inscrição agora. Tente novamente.',
@@ -28,7 +28,7 @@ export type NewsletterCopy = typeof pt;
 export const newsletterCopy: Record<Locale, NewsletterCopy> = {
   'pt-br': pt,
   en: {
-    eyebrow: 'IDEAS FOR PEOPLE WHO BUILD', title: 'Runtz Newsletter',
+    title: 'runtz Newsletter',
     description: 'Engineering, security and infrastructure in practice. One good read at a time.',
     subscribe: 'Subscribe', all: 'All articles', filter: 'Filter by topic',
     latest: 'Latest articles', articles: 'articles', read: 'Read article',
@@ -41,7 +41,7 @@ export const newsletterCopy: Record<Locale, NewsletterCopy> = {
     signupBody: 'Leave your email to follow upcoming Runtz editions. Email delivery will be available soon.',
     email: 'Your email', placeholder: 'you@example.com', submit: 'Keep me posted',
     consent: 'I want to receive future editions of the Runtz newsletter.',
-    privacy: 'Learn how we handle your data.', close: 'Close', sending: 'Saving...',
+    privacy: 'Privacy policy.', sending: 'Saving...',
     success: 'You’re on the list.', successBody: 'Your subscription is registered. We’ll let you know when editions become available.',
     invalid: 'Check your email and confirm that you want to subscribe.',
     error: 'We could not save your subscription. Please try again.',
@@ -50,7 +50,7 @@ export const newsletterCopy: Record<Locale, NewsletterCopy> = {
     language: 'Português', footer: 'For people who develop, ship and secure software.',
   },
   es: {
-    eyebrow: 'IDEAS PARA QUIENES CONSTRUYEN', title: 'Runtz Newsletter',
+    title: 'runtz Newsletter',
     description: 'Ingeniería, seguridad e infraestructura en la práctica. Una lectura a la vez.',
     subscribe: 'Suscribirme', all: 'Todos los artículos', filter: 'Filtrar por tema',
     latest: 'Últimas publicaciones', articles: 'artículos', read: 'Leer artículo',
@@ -63,7 +63,7 @@ export const newsletterCopy: Record<Locale, NewsletterCopy> = {
     signupBody: 'Registra tu correo para seguir las próximas ediciones de Runtz. Los envíos estarán disponibles pronto.',
     email: 'Tu correo', placeholder: 'tu@ejemplo.com', submit: 'Quiero recibir novedades',
     consent: 'Quiero recibir las futuras ediciones de la newsletter Runtz.',
-    privacy: 'Conoce cómo tratamos tus datos.', close: 'Cerrar', sending: 'Guardando...',
+    privacy: 'Política de privacidad.', sending: 'Guardando...',
     success: 'Ya estás en la lista.', successBody: 'Registro recibido. Te avisaremos cuando las ediciones estén disponibles.',
     invalid: 'Revisa el correo y confirma que deseas suscribirte.',
     error: 'No pudimos guardar tu registro. Inténtalo de nuevo.',

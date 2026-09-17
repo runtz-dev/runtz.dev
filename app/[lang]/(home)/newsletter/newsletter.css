@@ -18,14 +18,12 @@
 }
 .nl-root :where(a, button, input, summary):focus-visible { outline: 2px solid var(--nl-blue); outline-offset: 5px; }
 .nl-container { width: 100%; max-width: 1232px; margin: 0 auto; padding: 0 48px 48px; }
-.nl-header { padding: 64px 0 44px; }
+.nl-header { padding: 56px 0 36px; }
 .nl-eyebrow { display: flex; align-items: center; gap: 10px; color: var(--nl-muted); font-family: ui-monospace, monospace; font-size: 11px; line-height: 1.5; }
-.nl-eyebrow > span { width: 6px; height: 6px; background: var(--nl-blue); border-radius: 50%; }
-.nl-header h1 { margin: 18px 0 14px; font-size: 48px; line-height: 1.15; font-weight: 600; letter-spacing: 0; }
+.nl-header h1 { margin: 0; font-size: 48px; line-height: 1.15; font-weight: 600; letter-spacing: 0; }
 .nl-header h1 > span:first-child { font-weight: 400; }
-.nl-title-period { color: var(--nl-blue); }
-.nl-lead { color: var(--nl-muted); max-width: 560px; font-size: 17px; line-height: 1.75; }
-.nl-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid var(--nl-line); border-bottom: 1px solid var(--nl-line); padding: 20px 0; }
+.nl-toolbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 32px; border-top: 1px solid var(--nl-line); border-bottom: 1px solid var(--nl-line); padding: 20px 0; }
+.nl-toolbar > .nl-filter { flex-shrink: 0; margin-top: 5px; }
 .nl-button { display: inline-flex; min-height: 44px; justify-content: center; align-items: center; gap: 10px; padding: 0 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .16s, border-color .16s, transform .16s; white-space: nowrap; }
 .nl-button-primary { background: #6db5ff; border: 1px solid #6db5ff; color: #071222; }
 .nl-button-primary:hover { background: #93c9ff; border-color: #93c9ff; }
@@ -69,38 +67,34 @@
 a.nl-page-link:hover { color: var(--nl-blue); }
 .nl-page-position { color: var(--nl-muted); font: 11px ui-monospace, monospace; }
 .nl-page-position strong { color: var(--nl-ink); font-weight: 500; }
-.nl-signup-panel { display: flex; align-items: center; gap: 24px; padding: 32px; margin-top: 56px; border: 1px solid var(--nl-line); border-radius: 8px; background: var(--nl-surface); }
+.nl-signup-panel { display: flex; align-items: center; flex-wrap: wrap; gap: 24px; padding: 32px; margin-top: 56px; border: 1px solid var(--nl-line); border-radius: 8px; background: var(--nl-surface); }
 .nl-signup-symbol { color: var(--nl-blue); flex-shrink: 0; }
-.nl-signup-copy { flex: 1; }
+.nl-signup-copy { flex: 1 1 260px; }
 .nl-signup-copy h2 { font-size: 19px; font-weight: 500; line-height: 1.4; }
 .nl-signup-copy p { max-width: 550px; font-size: 13px; line-height: 1.8; color: var(--nl-muted); margin-top: 8px; }
-.nl-footer { display: flex; justify-content: space-between; gap: 20px; padding-top: 30px; color: var(--nl-muted); font-size: 11px; line-height: 1.7; }
-.nl-footer a { display: inline-flex; gap: 8px; align-items: center; white-space: nowrap; }
-.nl-footer a:hover { color: var(--nl-blue); }
 .nl-empty { text-align: center; padding: 90px 24px; border: 1px dashed var(--nl-line); border-radius: 8px; }
 .nl-empty :is(h1, h2) { font-size: 25px; font-weight: 500; }
 .nl-empty p { color: var(--nl-muted); font-size: 15px; margin: 14px 0 24px; }
-.nl-dialog { width: min(500px, calc(100vw - 40px)); max-height: calc(100dvh - 48px); margin: auto; padding: 0; border: 1px solid var(--nl-line); border-radius: 10px; background: var(--nl-surface); color: var(--nl-ink); }
-.nl-dialog::backdrop { background: #030912b3; backdrop-filter: blur(4px); }
-.nl-dialog-content { padding: 38px; position: relative; }
-.nl-dialog-close { display: grid; place-items: center; position: absolute; right: 12px; top: 12px; width: 36px; height: 36px; border-radius: 5px; color: var(--nl-muted); cursor: pointer; }
-.nl-dialog-close:hover { background: #6db5ff15; }
-.nl-dialog h2 { font-size: 26px; font-weight: 600; line-height: 1.35; margin: 20px 0 12px; }
-.nl-dialog p { color: var(--nl-muted); font-size: 14px; line-height: 1.8; }
-.nl-accent { color: var(--nl-blue); }
-.nl-field-label { display: block; font-size: 12px; font-weight: 500; margin: 26px 0 9px; }
-.nl-input { display: block; width: 100%; min-height: 48px; border: 1px solid var(--nl-line); border-radius: 5px; background: transparent; padding: 12px; font-size: 15px; }
-.nl-input::placeholder { color: var(--nl-muted); opacity: .8; }
-.nl-consent { display: flex; align-items: flex-start; gap: 10px; margin: 18px 0 12px; color: var(--nl-muted); font-size: 12px; line-height: 1.6; cursor: pointer; }
-.nl-consent input { width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; accent-color: var(--nl-blue); }
-.nl-privacy { color: var(--nl-muted); font-size: 11px; text-decoration: underline; text-underline-offset: 3px; }
-.nl-submit { margin-top: 24px; width: 100%; }
-.nl-dialog .nl-form-error { margin-top: 14px; color: #c53535; font-size: 12px; }
-.dark .nl-dialog .nl-form-error { color: #ff9b9b; }
+.nl-signup-inline { width: 540px; max-width: 100%; min-width: 0; }
+.nl-signup-panel .nl-signup-inline { flex: 1 1 400px; }
+.nl-signup-entry { display: flex; align-items: center; gap: 8px; padding: 4px; min-height: 54px; border: 1px solid var(--nl-line); border-radius: 999px; background: var(--nl-surface); transition: border-color .16s, box-shadow .16s; }
+.nl-signup-entry:focus-within { border-color: var(--nl-blue); box-shadow: 0 0 0 3px #6db5ff18; }
+.nl-signup-input { flex: 1; width: 0; min-width: 0; min-height: 44px; padding: 10px 0 10px 16px; border: 0; border-radius: 999px; background: transparent; color: var(--nl-ink); font-size: 16px; }
+.nl-signup-input:focus-visible { outline: none; }
+.nl-signup-input::placeholder { color: var(--nl-muted); opacity: 1; }
+.nl-signup-submit { flex-shrink: 0; min-width: 140px; border-radius: 999px; }
+.nl-signup-consent { display: flex; align-items: flex-start; gap: 9px; margin: 10px 6px 0; color: var(--nl-muted); font-size: 11px; line-height: 1.7; }
+.nl-signup-consent input { width: 15px; height: 15px; margin-top: 2px; flex-shrink: 0; accent-color: var(--nl-blue); cursor: pointer; }
+.nl-signup-consent label { cursor: pointer; }
+.nl-privacy { text-decoration: underline; text-underline-offset: 3px; }
+.nl-privacy:hover { color: var(--nl-blue); }
+.nl-form-error { margin: 10px 6px 0; color: #c53535; font-size: 12px; line-height: 1.6; }
+.dark .nl-form-error { color: #ff9b9b; }
+.nl-signup-confirmation { display: flex; align-items: flex-start; gap: 12px; min-height: 84px; padding: 12px 0; }
+.nl-signup-confirmation > svg { flex-shrink: 0; color: var(--nl-blue); margin-top: 2px; }
+.nl-signup-confirmation strong { font-size: 15px; font-weight: 600; }
+.nl-signup-confirmation p { margin-top: 5px; color: var(--nl-muted); font-size: 12px; line-height: 1.7; }
 .nl-honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-.nl-success { padding: 10px 0; }
-.nl-success-mark { display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid var(--nl-line); border-radius: 50%; color: var(--nl-blue); }
-.nl-success button { margin-top: 24px; }
 .nl-breadcrumb { padding-top: 38px; }
 .nl-breadcrumb a { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--nl-muted); }
 .nl-breadcrumb a:hover { color: var(--nl-blue); }
@@ -148,8 +142,8 @@ a.nl-page-link:hover { color: var(--nl-blue); }
 .nl-related { margin-top: 36px; }
 .nl-loading { padding-top: 64px; }
 .nl-skeleton { background: #6db5ff12; border: 1px solid var(--nl-line); border-radius: 6px; }
-.nl-skeleton-title { width: 60%; height: 50px; margin-bottom: 20px; }
-.nl-skeleton-lead { width: 80%; height: 22px; margin-bottom: 80px; }
+.nl-skeleton-title { width: 60%; height: 50px; margin-bottom: 36px; }
+.nl-skeleton-toolbar { width: 100%; height: 120px; margin-bottom: 60px; }
 .nl-skeleton-card { height: 470px; }
 @media (max-width: 1023px) {
   .nl-reading-layout { grid-template-columns: 170px minmax(0, 1fr); gap: 32px; }
@@ -160,12 +154,14 @@ a.nl-page-link:hover { color: var(--nl-blue); }
 @media (max-width: 767px) {
   .nl-container { padding: 0 24px 32px; }
   .nl-header { padding: 42px 0 30px; }
-  .nl-header h1 { font-size: 34px; margin-top: 16px; }
-  .nl-lead { font-size: 15px; line-height: 1.8; }
+  .nl-header h1 { font-size: 34px; }
   .nl-eyebrow { font-size: 9px; }
-  .nl-toolbar { padding: 16px 0; gap: 12px; }
-  .nl-toolbar .nl-button { padding: 0 12px; font-size: 12px; }
-  .nl-toolbar .nl-button > svg:first-child { display: none; }
+  .nl-toolbar { flex-direction: column; align-items: stretch; padding: 20px 0; gap: 20px; }
+  .nl-toolbar > .nl-filter { align-self: flex-start; margin-top: 0; }
+  .nl-signup-inline { width: 100%; }
+  .nl-signup-submit { min-width: 116px; padding: 0 12px; font-size: 12px; gap: 6px; }
+  .nl-signup-entry { gap: 4px; }
+  .nl-signup-input { padding-left: 12px; }
   .nl-filter { font-size: 12px; }
   .nl-filter summary { padding: 0 11px; gap: 8px; }
   .nl-filter summary > svg:last-child { margin-left: 0; }
@@ -175,13 +171,10 @@ a.nl-page-link:hover { color: var(--nl-blue); }
   .nl-card-body > p { font-size: 13px; margin-bottom: 20px; }
   .nl-signup-panel { flex-direction: column; align-items: flex-start; padding: 24px; gap: 22px; margin-top: 38px; }
   .nl-signup-copy h2 { font-size: 21px; }
-  .nl-signup-panel > button { width: 100%; }
+  .nl-signup-copy, .nl-signup-panel .nl-signup-inline { flex: auto; width: 100%; }
   .nl-pagination { gap: 8px; padding-top: 22px; }
   .nl-page-link { font-size: 11px; gap: 5px; }
   .nl-page-position { font-size: 10px; }
-  .nl-footer { flex-direction: column; gap: 14px; }
-  .nl-dialog-content { padding: 30px 24px; }
-  .nl-dialog h2 { font-size: 24px; }
   .nl-breadcrumb { padding-top: 24px; }
   .nl-article-header { padding: 32px 0 28px; }
   .nl-article-header h1 { font-size: 34px; }
@@ -196,7 +189,6 @@ a.nl-page-link:hover { color: var(--nl-blue); }
   .nl-loading { padding-top: 42px; }
 }
 @media (max-width: 359px) {
-  .nl-toolbar { align-items: stretch; flex-direction: column; }
   .nl-filter summary { justify-content: space-between; }
   .nl-header h1 { font-size: 30px; }
 }

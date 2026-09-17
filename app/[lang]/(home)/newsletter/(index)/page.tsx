@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
-import { ArrowLeft, ArrowRight, Check, ChevronDown, Rss, SlidersHorizontal } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, ChevronDown, SlidersHorizontal } from 'lucide-react';
 import { parseLocale, localizedPath, localeAlternates } from '@/lib/i18n';
 import { sitePath } from '@/lib/shared';
 import { getNewsletterPosts, getNewsletterTags, newsletterRobots } from '@/lib/newsletter';
@@ -42,9 +42,7 @@ export default async function NewsletterIndex({ params, searchParams }: Props) {
 
   return <main className="nl-container">
     <header className="nl-header">
-      <p className="nl-eyebrow"><span />{copy.eyebrow}</p>
-      <h1>Runtz <span>Newsletter</span><span className="nl-title-period">.</span></h1>
-      <p className="nl-lead">{copy.description}</p>
+      <h1>runtz <span>Newsletter</span></h1>
     </header>
 
     <div className="nl-toolbar">
@@ -69,8 +67,5 @@ export default async function NewsletterIndex({ params, searchParams }: Props) {
       <span className="nl-page-position">{copy.page} <strong>{page}</strong> {copy.of} {posts.totalPages}</span>
       {page < posts.totalPages ? <Link className="nl-page-link" href={href(page + 1)} rel="next">{copy.next}<ArrowRight size={16} aria-hidden="true" /></Link> : <span className="nl-page-link" aria-disabled="true">{copy.next}<ArrowRight size={16} aria-hidden="true" /></span>}
     </nav>}
-
-    <NewsletterSignup locale={locale} panel />
-    <footer className="nl-footer"><p>{copy.footer}</p><a href={sitePath('/newsletter/feed.xml')}><Rss size={14} aria-hidden="true" />{copy.rss}</a></footer>
   </main>;
 }
