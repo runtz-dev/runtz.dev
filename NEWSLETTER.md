@@ -17,7 +17,11 @@ Se informar `--hostname` no desenvolvimento local, use `localhost`; a combinaç�
 
 Se a API usar `NEWSLETTER_SERVICE_TOKEN`, configure o mesmo valor no servidor Next.js. Não use `NEXT_PUBLIC_*` para conexão interna ou token. `NEWSLETTER_ENVIRONMENT=dev` desativa indexação das páginas da newsletter.
 
-As edições iniciais são PT-BR. `/newsletter` lista a biblioteca; o artigo é canônico em `/pt-br/newsletter/<slug>`. Artigos sem tradução redirecionam para o idioma disponível. O cadastro registra o idioma da interface.
+Os artigos têm uma única fonte em inglês (`locale: en`), incluindo título, resumo, texto alternativo e corpo. O servidor sempre consulta essa fonte, independentemente do idioma da interface. O canonical é `/newsletter/<slug>`; abrir um artigo em `/pt-br/newsletter/<slug>` ou `/es/newsletter/<slug>` preserva o idioma da navegação e mostra o mesmo conteúdo em inglês, sem redirecionamento.
+
+O seletor do site muda apenas a interface. A tradução dos artigos fica a cargo do navegador e das preferências do leitor; não há API, widget ou credencial do Google Translation. O artigo e os textos dos cards têm `lang="en"`, e o HTML sanitizado do backend marca blocos e trechos de código com `translate="no"`. RSS e sitemap apontam para a fonte canônica em inglês. O cadastro continua registrando o idioma da interface.
+
+O autor mantém apenas o Markdown em inglês, conforme `docs/AUTHORING.md` no repositório da API. Os slugs existentes foram preservados para manter os links; novos artigos devem usar slugs em inglês.
 
 ## Rotas públicas
 

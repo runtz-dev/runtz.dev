@@ -3,7 +3,7 @@ export type NewsletterPost = {
   slug: string;
   title: string;
   excerpt: string;
-  locale: 'en' | 'pt-br' | 'es';
+  locale: 'en';
   author: string;
   tags: string[];
   publishedAt: string;

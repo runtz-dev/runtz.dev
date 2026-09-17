@@ -12,7 +12,7 @@ export function ArticleBody({ html, locale }: { html: string; locale: Locale }) 
     const buttons: HTMLButtonElement[] = [];
     for (const pre of root.current?.querySelectorAll('pre') ?? []) {
       const button = document.createElement('button');
-      button.type = 'button'; button.className = 'nl-copy-code'; button.textContent = copy.copy;
+      button.type = 'button'; button.className = 'nl-copy-code'; button.textContent = copy.copy; button.lang = locale;
       button.onclick = async () => {
         try { await navigator.clipboard.writeText(pre.querySelector('code')?.textContent ?? ''); button.textContent = copy.copied; }
         catch { button.textContent = copy.copyFailed; }
@@ -21,7 +21,7 @@ export function ArticleBody({ html, locale }: { html: string; locale: Locale }) 
       pre.append(button); buttons.push(button);
     }
     return () => { timers.forEach(clearTimeout); buttons.forEach(button => button.remove()); };
-  }, [copy, html]);
+  }, [copy, html, locale]);
   // The Go service renders Markdown without raw HTML and sanitizes the result.
   return <div ref={root} className="nl-prose" dangerouslySetInnerHTML={{ __html: html }} />;
 }

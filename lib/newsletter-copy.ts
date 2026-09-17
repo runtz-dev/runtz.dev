@@ -75,5 +75,5 @@ export const newsletterCopy: Record<Locale, NewsletterCopy> = {
 
 export const topicLabels: Record<string, string> = {
   devsecops: 'DevSecOps', cicd: 'CI/CD', appsec: 'AppSec', kubernetes: 'Kubernetes',
-  infraestrutura: 'Infra', containers: 'Containers', vulnerabilidades: 'Vulnerabilidades',
+  infraestrutura: 'Infra', containers: 'Containers', vulnerabilidades: 'Vulnerabilities',
 };

@@ -11,8 +11,8 @@ export function dateLabel(date: string, locale: Locale) {
 
 export function NewsletterCard({ post, locale, priority = false }: { post: NewsletterPost; locale: Locale; priority?: boolean }) {
   const copy = newsletterCopy[locale];
-  return <article className="nl-card" lang={post.locale}>
-    <Link href={articlePath(post)} className="nl-card-link" aria-label={`${copy.read}: ${post.title}`}>
+  return <article className="nl-card">
+    <Link href={articlePath(post, locale)} className="nl-card-link" aria-label={`${copy.read}: ${post.title}`}>
       <div className="nl-card-image">
         {/* Pre-encoded variants are served by the same-origin, allowlisted media route. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -21,7 +21,7 @@ export function NewsletterCard({ post, locale, priority = false }: { post: Newsl
       </div>
       <div className="nl-card-body">
         <div className="nl-card-topline"><span>{topicLabels[post.tags[0]] ?? post.tags[0]}</span><span>{post.readingMinutes} min{locale !== post.locale ? ` · ${post.locale.toUpperCase()}` : ''}</span></div>
-        <h2>{post.title}</h2><p>{post.excerpt}</p>
+        <h2 lang={post.locale}>{post.title}</h2><p lang={post.locale}>{post.excerpt}</p>
         <div className="nl-card-bottom"><time dateTime={post.publishedAt}>{dateLabel(post.publishedAt, locale)}</time><span>{post.tags.slice(1).map(tag => topicLabels[tag] ?? tag).join(' · ')}</span></div>
       </div>
     </Link>
