@@ -42,7 +42,7 @@ export default async function NewsletterIndex({ params, searchParams }: Props) {
 
   return <main className="nl-container">
     <header className="nl-header">
-      <h1>runtz <span>Newsletter</span></h1>
+      <h1><span>Newsletter</span></h1>
     </header>
 
     <div className="nl-toolbar">

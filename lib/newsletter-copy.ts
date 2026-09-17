@@ -1,7 +1,7 @@
 import type { Locale } from './i18n';
 
 const pt = {
-  title: 'runtz Newsletter',
+  title: 'Newsletter',
   description: 'Engenharia, segurança e infraestrutura na prática. Uma leitura de cada vez.',
   subscribe: 'Inscrever-se', all: 'Todos os artigos', filter: 'Filtrar por assunto',
   latest: 'Últimas publicações', articles: 'artigos', read: 'Ler artigo',
@@ -28,7 +28,7 @@ export type NewsletterCopy = typeof pt;
 export const newsletterCopy: Record<Locale, NewsletterCopy> = {
   'pt-br': pt,
   en: {
-    title: 'runtz Newsletter',
+    title: 'Newsletter',
     description: 'Engineering, security and infrastructure in practice. One good read at a time.',
     subscribe: 'Subscribe', all: 'All articles', filter: 'Filter by topic',
     latest: 'Latest articles', articles: 'articles', read: 'Read article',
@@ -50,7 +50,7 @@ export const newsletterCopy: Record<Locale, NewsletterCopy> = {
     language: 'Português', footer: 'For people who develop, ship and secure software.',
   },
   es: {
-    title: 'runtz Newsletter',
+    title: 'Newsletter',
     description: 'Ingeniería, seguridad e infraestructura en la práctica. Una lectura a la vez.',
     subscribe: 'Suscribirme', all: 'Todos los artículos', filter: 'Filtrar por tema',
     latest: 'Últimas publicaciones', articles: 'artículos', read: 'Leer artículo',
