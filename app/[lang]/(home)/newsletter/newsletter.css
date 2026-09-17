@@ -22,8 +22,8 @@
 .nl-eyebrow { display: flex; align-items: center; gap: 10px; color: var(--nl-muted); font-family: ui-monospace, monospace; font-size: 11px; line-height: 1.5; }
 .nl-header h1 { margin: 0; font-size: 48px; line-height: 1.15; font-weight: 600; letter-spacing: 0; }
 .nl-header h1 > span:first-child { font-weight: 400; }
-.nl-toolbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 32px; border-top: 1px solid var(--nl-line); border-bottom: 1px solid var(--nl-line); padding: 20px 0; }
-.nl-toolbar > .nl-filter { flex-shrink: 0; margin-top: 5px; }
+.nl-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 32px; padding: 12px 0; }
+.nl-toolbar > .nl-filter { flex-shrink: 0; }
 .nl-button { display: inline-flex; min-height: 44px; justify-content: center; align-items: center; gap: 10px; padding: 0 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .16s, border-color .16s, transform .16s; white-space: nowrap; }
 .nl-button-primary { background: #6db5ff; border: 1px solid #6db5ff; color: #071222; }
 .nl-button-primary:hover { background: #93c9ff; border-color: #93c9ff; }
@@ -75,25 +75,22 @@ a.nl-page-link:hover { color: var(--nl-blue); }
 .nl-empty { text-align: center; padding: 90px 24px; border: 1px dashed var(--nl-line); border-radius: 8px; }
 .nl-empty :is(h1, h2) { font-size: 25px; font-weight: 500; }
 .nl-empty p { color: var(--nl-muted); font-size: 15px; margin: 14px 0 24px; }
-.nl-signup-inline { width: 540px; max-width: 100%; min-width: 0; }
-.nl-signup-panel .nl-signup-inline { flex: 1 1 400px; }
+.nl-signup-inline { width: 800px; max-width: 100%; min-width: 0; }
+.nl-signup-panel .nl-signup-inline { flex: 1 1 640px; }
 .nl-signup-entry { display: flex; align-items: center; gap: 8px; padding: 4px; min-height: 54px; border: 1px solid var(--nl-line); border-radius: 999px; background: var(--nl-surface); transition: border-color .16s, box-shadow .16s; }
 .nl-signup-entry:focus-within { border-color: var(--nl-blue); box-shadow: 0 0 0 3px #6db5ff18; }
 .nl-signup-input { flex: 1; width: 0; min-width: 0; min-height: 44px; padding: 10px 0 10px 16px; border: 0; border-radius: 999px; background: transparent; color: var(--nl-ink); font-size: 16px; }
 .nl-signup-input:focus-visible { outline: none; }
 .nl-signup-input::placeholder { color: var(--nl-muted); opacity: 1; }
 .nl-signup-submit { flex-shrink: 0; min-width: 140px; border-radius: 999px; }
-.nl-signup-consent { display: flex; align-items: flex-start; gap: 9px; margin: 10px 6px 0; color: var(--nl-muted); font-size: 11px; line-height: 1.7; }
-.nl-signup-consent input { width: 15px; height: 15px; margin-top: 2px; flex-shrink: 0; accent-color: var(--nl-blue); cursor: pointer; }
-.nl-signup-consent label { cursor: pointer; }
-.nl-privacy { text-decoration: underline; text-underline-offset: 3px; }
+.nl-signup-consent { flex: 0 0 34%; max-width: 240px; padding: 0 6px; color: var(--nl-muted); font-size: 11px; line-height: 1.5; }
+.nl-privacy { white-space: nowrap; text-decoration: underline; text-underline-offset: 3px; }
 .nl-privacy:hover { color: var(--nl-blue); }
 .nl-form-error { margin: 10px 6px 0; color: #c53535; font-size: 12px; line-height: 1.6; }
 .dark .nl-form-error { color: #ff9b9b; }
-.nl-signup-confirmation { display: flex; align-items: flex-start; gap: 12px; min-height: 84px; padding: 12px 0; }
-.nl-signup-confirmation > svg { flex-shrink: 0; color: var(--nl-blue); margin-top: 2px; }
+.nl-signup-confirmation { display: flex; align-items: center; gap: 10px; min-height: 54px; padding: 12px 16px; }
+.nl-signup-confirmation > svg { flex-shrink: 0; color: var(--nl-blue); }
 .nl-signup-confirmation strong { font-size: 15px; font-weight: 600; }
-.nl-signup-confirmation p { margin-top: 5px; color: var(--nl-muted); font-size: 12px; line-height: 1.7; }
 .nl-honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 .nl-breadcrumb { padding-top: 38px; }
 .nl-breadcrumb a { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--nl-muted); }
@@ -156,11 +153,14 @@ a.nl-page-link:hover { color: var(--nl-blue); }
   .nl-header { padding: 42px 0 30px; }
   .nl-header h1 { font-size: 34px; }
   .nl-eyebrow { font-size: 9px; }
-  .nl-toolbar { flex-direction: column; align-items: stretch; padding: 20px 0; gap: 20px; }
+  .nl-toolbar { flex-direction: column; align-items: stretch; padding: 8px 0; gap: 20px; }
   .nl-toolbar > .nl-filter { align-self: flex-start; margin-top: 0; }
   .nl-signup-inline { width: 100%; }
   .nl-signup-submit { min-width: 116px; padding: 0 12px; font-size: 12px; gap: 6px; }
-  .nl-signup-entry { gap: 4px; }
+  .nl-signup-entry { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px; border-radius: 24px; padding: 5px; }
+  .nl-signup-entry .nl-signup-input { width: 100%; grid-column: 1; grid-row: 1; }
+  .nl-signup-submit { grid-column: 2; grid-row: 1; }
+  .nl-signup-consent { grid-column: 1 / -1; grid-row: 2; max-width: none; padding: 4px 11px 8px; }
   .nl-signup-input { padding-left: 12px; }
   .nl-filter { font-size: 12px; }
   .nl-filter summary { padding: 0 11px; gap: 8px; }

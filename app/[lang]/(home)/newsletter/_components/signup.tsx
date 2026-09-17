@@ -30,7 +30,8 @@ export function NewsletterSignup({ locale, panel = false }: { locale: Locale; pa
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: data.get('email'),
-          consent: data.get('consent') === 'on',
+          consent: true,
+          consentVersion: 'newsletter-signup-v2',
           locale,
           website: data.get('website'),
         }),
@@ -53,7 +54,7 @@ export function NewsletterSignup({ locale, panel = false }: { locale: Locale; pa
       {state === 'success' ? (
         <div ref={confirmation} className="nl-signup-confirmation" role="status" tabIndex={-1}>
           <Check size={20} aria-hidden="true" />
-          <div><strong>{copy.success}</strong><p>{copy.successBody}</p></div>
+          <strong>{copy.success}</strong>
         </div>
       ) : (
         <form onSubmit={submit} aria-label={copy.subscribe} aria-busy={state === 'pending'}>
@@ -69,24 +70,21 @@ export function NewsletterSignup({ locale, panel = false }: { locale: Locale; pa
               maxLength={254}
               placeholder={copy.email}
               className="nl-signup-input"
-              aria-describedby={message ? `${id}-error` : undefined}
+              aria-describedby={`${id}-consent${message ? ` ${id}-error` : ''}`}
               aria-invalid={state === 'error' && message === copy.invalid ? true : undefined}
               disabled={state === 'pending'}
             />
-            <button type="submit" className="nl-button nl-button-primary nl-signup-submit" disabled={state === 'pending'}>
+            <p id={`${id}-consent`} className="nl-signup-consent">
+              {copy.consent}{' '}
+              <a className="nl-privacy" href={sitePath(localizedPath(locale, '/legal/privacypolicy'))}>{copy.privacy}</a>
+            </p>
+            <button type="submit" className="nl-button nl-button-primary nl-signup-submit" aria-describedby={`${id}-consent`} disabled={state === 'pending'}>
               {state === 'pending' ? <><LoaderCircle size={16} className="animate-spin" aria-hidden="true" />{copy.sending}</> : <>{copy.subscribe}<ArrowUpRight size={15} aria-hidden="true" /></>}
             </button>
           </div>
           <div className="nl-honeypot" aria-hidden="true">
             <label htmlFor={`${id}-website`}>Website</label>
             <input id={`${id}-website`} name="website" autoComplete="off" tabIndex={-1} />
-          </div>
-          <div className="nl-signup-consent">
-            <input id={`${id}-consent`} name="consent" type="checkbox" required disabled={state === 'pending'} />
-            <p>
-              <label htmlFor={`${id}-consent`}>{copy.consent}</label>{' '}
-              <a className="nl-privacy" href={sitePath(localizedPath(locale, '/legal/privacypolicy'))}>{copy.privacy}</a>
-            </p>
           </div>
           {message && <p id={`${id}-error`} className="nl-form-error" role="alert">{message}</p>}
         </form>
