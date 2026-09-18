@@ -74,14 +74,14 @@ export function NewsletterSignup({ locale, panel = false }: { locale: Locale; pa
               aria-invalid={state === 'error' && message === copy.invalid ? true : undefined}
               disabled={state === 'pending'}
             />
-            <p id={`${id}-consent`} className="nl-signup-consent">
-              {copy.consent}{' '}
-              <a className="nl-privacy" href={sitePath(localizedPath(locale, '/legal/privacypolicy'))}>{copy.privacy}</a>
-            </p>
             <button type="submit" className="nl-button nl-button-primary nl-signup-submit" aria-describedby={`${id}-consent`} disabled={state === 'pending'}>
               {state === 'pending' ? <><LoaderCircle size={16} className="animate-spin" aria-hidden="true" />{copy.sending}</> : <>{copy.subscribe}<ArrowUpRight size={15} aria-hidden="true" /></>}
             </button>
           </div>
+          <p id={`${id}-consent`} className="nl-signup-consent">
+            {copy.consent}{' '}
+            <a className="nl-privacy" href={sitePath(localizedPath(locale, '/legal/privacypolicy'))}>{copy.privacy}</a>
+          </p>
           <div className="nl-honeypot" aria-hidden="true">
             <label htmlFor={`${id}-website`}>Website</label>
             <input id={`${id}-website`} name="website" autoComplete="off" tabIndex={-1} />

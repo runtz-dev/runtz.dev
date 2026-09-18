@@ -43,6 +43,6 @@ npm run types:check
 NEWSLETTER_INTERNAL_URL=http://127.0.0.1:9 npm run build
 ```
 
-Verificar páginas 1/2, filtro, voltar/avançar, permalink, imagem e inscrição direta por teclado. A listagem termina na paginação. A barra de filtros não tem divisórias horizontais; o campo de e-mail, o aviso de concordância e o botão compartilham o mesmo controle visual. No celular, o aviso fica dentro do controle, abaixo do campo e do botão. Não há checkbox ou popup.
+Verificar páginas 1/2, filtro, voltar/avançar, permalink, imagem e inscrição direta por teclado. A listagem termina na paginação. A barra de filtros não tem divisórias horizontais. A inscrição tem largura máxima de 460px, com e-mail e botão no mesmo controle e aviso menor abaixo. No desktop, o filtro tem 224px de largura e acompanha a altura do formulário com o aviso. No celular, filtro e inscrição ocupam a largura disponível em linhas separadas. Não há checkbox ou popup.
 
 O envio explícito do formulário registra `consent: true` e `consentVersion: newsletter-signup-v2`. O input e o botão referenciam o aviso por `aria-describedby`. A confirmação mostra apenas “Thanks for subscribing!” (ou o equivalente da interface), após persistência confirmada. O cadastro não envia e-mails. Erros de Mongo precisam aparecer no formulário sem impedir leitura. Use somente Mongo local e endereços de teste na verificação. Publique primeiro a API com suporte à versão do consentimento.
