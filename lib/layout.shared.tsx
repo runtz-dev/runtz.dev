@@ -195,6 +195,12 @@ export function baseOptions(locale: Locale): BaseLayoutProps {
         active: 'nested-url',
       },
       {
+        type: 'main',
+        text: 'Newsletter',
+        url: localizedPath(locale, '/newsletter'),
+        active: 'nested-url',
+      },
+      {
         type: 'custom',
         secondary: true,
         children: (

@@ -18,7 +18,7 @@ ARG NEXT_PUBLIC_PLATFORM_BASE_URL="https://runtz.dev"
 ENV NEXT_PUBLIC_PLATFORM_BASE_URL=$NEXT_PUBLIC_PLATFORM_BASE_URL
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN mkdir -p public && npm run build
+RUN mkdir -p public && npm run types:check && npm run build
 
 FROM node:26-alpine AS runner
 

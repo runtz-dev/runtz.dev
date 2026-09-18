@@ -55,6 +55,17 @@ spec:
               value: {{ .Values.env.NEXT_PUBLIC_RUNTZ_API_URL | quote }}
             - name: NEXT_PUBLIC_PLATFORM_BASE_URL
               value: {{ .Values.env.NEXT_PUBLIC_PLATFORM_BASE_URL | quote }}
+            - name: NEWSLETTER_INTERNAL_URL
+              value: {{ .Values.env.NEWSLETTER_INTERNAL_URL | default "http://runtz-newsletter:8080" | quote }}
+            - name: NEWSLETTER_ENVIRONMENT
+              value: {{ .Values.env.NEWSLETTER_ENVIRONMENT | default "prod" | quote }}
+            {{- if .Values.newsletter.existingSecret }}
+            - name: NEWSLETTER_SERVICE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.newsletter.existingSecret }}
+                  key: {{ .Values.newsletter.tokenKey }}
+            {{- end }}
             {{- /*
               OpenTelemetry, only when an endpoint is configured: @vercel/otel
               registers no exporter without OTEL_EXPORTER_OTLP_ENDPOINT, so
