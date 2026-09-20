@@ -3,8 +3,7 @@ import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { ArrowLeft, ArrowRight, Check, ChevronDown, SlidersHorizontal } from 'lucide-react';
 import { parseLocale, localizedPath, localeAlternates } from '@/lib/i18n';
-import { sitePath } from '@/lib/shared';
-import { getNewsletterPosts, getNewsletterTags, newsletterRobots } from '@/lib/newsletter';
+import { getNewsletterPosts, getNewsletterTags, newsletterFeedPath, newsletterRobots } from '@/lib/newsletter';
 import { newsletterCopy, topicLabels } from '@/lib/newsletter-copy';
 import { NewsletterCard } from '../_components/card';
 import { NewsletterSignup } from '../_components/signup';
@@ -16,7 +15,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   const { tag, page } = await searchParams;
   return {
     title: newsletterCopy[locale].title, description: newsletterCopy[locale].description,
-    alternates: { ...localeAlternates(locale, '/newsletter'), types: { 'application/rss+xml': sitePath('/newsletter/feed.xml') } },
+    alternates: { ...localeAlternates(locale, '/newsletter'), types: { 'application/rss+xml': newsletterFeedPath(locale) } },
     robots: newsletterRobots.index && (tag || (page && page !== '1')) ? { index: false, follow: true } : newsletterRobots,
   };
 }
@@ -24,6 +23,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
 export default async function NewsletterIndex({ params, searchParams }: Props) {
   const locale = parseLocale((await params).lang);
   const copy = newsletterCopy[locale];
+  const topics = topicLabels[locale];
   const query = await searchParams;
   const page = Number(query.page ?? 1);
   const tag = typeof query.tag === 'string' && /^[a-z0-9-]{1,64}$/.test(query.tag) ? query.tag : '';
@@ -35,7 +35,7 @@ export default async function NewsletterIndex({ params, searchParams }: Props) {
     if (number > 1) query.set('page', String(number));
     return `${base}${query.size ? `?${query}` : ''}`;
   };
-  const [postsResult, tagsResult] = await Promise.allSettled([getNewsletterPosts(page, tag), getNewsletterTags()]);
+  const [postsResult, tagsResult] = await Promise.allSettled([getNewsletterPosts(locale, page, tag), getNewsletterTags(locale)]);
   const posts = postsResult.status === 'fulfilled' ? postsResult.value : null;
   const tags = tagsResult.status === 'fulfilled' ? tagsResult.value : [];
   if (posts && page > Math.max(1, posts.totalPages)) notFound();
@@ -47,10 +47,10 @@ export default async function NewsletterIndex({ params, searchParams }: Props) {
 
     <div className="nl-toolbar">
       <details className="nl-filter" key={tag}>
-        <summary aria-label={copy.filter}><SlidersHorizontal size={16} aria-hidden="true" /><span>{tag ? topicLabels[tag] ?? tag : copy.all}</span><ChevronDown size={15} aria-hidden="true" /></summary>
+        <summary aria-label={copy.filter}><SlidersHorizontal size={16} aria-hidden="true" /><span>{tag ? topics[tag] ?? tag : copy.all}</span><ChevronDown size={15} aria-hidden="true" /></summary>
         <nav className="nl-filter-menu" aria-label={copy.filter}>
           <Link href={href(1, '')} aria-current={!tag ? 'page' : undefined}>{copy.all}{!tag && <Check size={15} aria-hidden="true" />}</Link>
-          {tags.map(topic => <Link key={topic.slug} href={href(1, topic.slug)} aria-current={tag === topic.slug ? 'page' : undefined}><span>{topicLabels[topic.slug] ?? topic.slug}</span><span className="nl-topic-count">{topic.count}</span>{tag === topic.slug && <Check size={15} aria-hidden="true" />}</Link>)}
+          {tags.map(topic => <Link key={topic.slug} href={href(1, topic.slug)} aria-current={tag === topic.slug ? 'page' : undefined}><span>{topics[topic.slug] ?? topic.slug}</span><span className="nl-topic-count">{topic.count}</span>{tag === topic.slug && <Check size={15} aria-hidden="true" />}</Link>)}
         </nav>
       </details>
       <NewsletterSignup locale={locale} />

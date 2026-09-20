@@ -1,6 +1,6 @@
 import 'server-only';
 import { cache } from 'react';
-import { localizedPath, type Locale } from './i18n';
+import { localeDetails, localizedPath, type Locale } from './i18n';
 import { sitePath, siteUrl } from './shared';
 import type { NewsletterArticle, NewsletterPage, NewsletterPost, NewsletterTag } from './newsletter-types';
 
@@ -36,21 +36,20 @@ async function json<T>(path: string): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-export const getNewsletterPosts = cache((page = 1, tag = '', pageSize = 4) => {
-  const query = new URLSearchParams({ page: String(page), pageSize: String(pageSize), locale: 'en' });
+export const getNewsletterPosts = cache((locale: Locale, page = 1, tag = '', pageSize = 4) => {
+  const query = new URLSearchParams({ page: String(page), pageSize: String(pageSize), locale });
   if (tag) query.set('tag', tag);
   return json<NewsletterPage>(`/v1/posts?${query}`);
 });
 
-export const getNewsletterTags = cache(async () =>
-  (await json<{ items: NewsletterTag[] }>('/v1/tags?locale=en')).items,
+export const getNewsletterTags = cache(async (locale: Locale) =>
+  (await json<{ items: NewsletterTag[] }>(`/v1/tags?locale=${locale}`)).items,
 );
 
-export const getNewsletterArticle = cache(async (slug: string): Promise<NewsletterArticle | null> => {
+export const getNewsletterArticle = cache(async (slug: string, locale: Locale): Promise<NewsletterArticle | null> => {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return null;
   const path = `/v1/posts/${encodeURIComponent(slug)}`;
-  // Authors publish one English source; the browser handles reader translations.
-  const response = await newsletterFetch(`${path}?locale=en`);
+  const response = await newsletterFetch(`${path}?locale=${locale}`);
   if (response.status === 404) return null;
   if (!response.ok) throw new NewsletterUnavailable();
   return response.json() as Promise<NewsletterArticle>;
@@ -66,4 +65,19 @@ export function coverURL(filename: string) {
 
 export function articleURL(post: Pick<NewsletterPost, 'locale' | 'slug'>) {
   return siteUrl(articlePath(post));
+}
+
+export function newsletterFeedPath(locale: Locale) {
+  return sitePath(`/newsletter/feed.xml${locale === 'en' ? '' : `?locale=${locale}`}`);
+}
+
+export function articleAlternates(post: NewsletterArticle) {
+  const languages: Record<string, string> = {};
+  // Only advertise translations that are published and visible now.
+  const available = post.availableLocales ?? [post.locale];
+  for (const locale of available) {
+    languages[localeDetails[locale].htmlLang] = siteUrl(articlePath(post, locale));
+  }
+  if (available.includes('en')) languages['x-default'] = siteUrl(articlePath(post, 'en'));
+  return { canonical: articleURL(post), languages };
 }

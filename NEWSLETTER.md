@@ -17,18 +17,18 @@ Se informar `--hostname` no desenvolvimento local, use `localhost`; a combinaç�
 
 Se a API usar `NEWSLETTER_SERVICE_TOKEN`, configure o mesmo valor no servidor Next.js. Não use `NEXT_PUBLIC_*` para conexão interna ou token. `NEWSLETTER_ENVIRONMENT=dev` desativa indexação das páginas da newsletter.
 
-Os artigos têm uma única fonte em inglês (`locale: en`), incluindo título, resumo, texto alternativo e corpo. O servidor sempre consulta essa fonte, independentemente do idioma da interface. O canonical é `/newsletter/<slug>`; abrir um artigo em `/pt-br/newsletter/<slug>` ou `/es/newsletter/<slug>` preserva o idioma da navegação e mostra o mesmo conteúdo em inglês, sem redirecionamento.
+Os artigos têm versões em inglês, português brasileiro e espanhol, mantidas em `content/posts/en/`, `content/posts/pt-br/` e `content/posts/es/` no repositório da API. Cada tradução usa o mesmo `id`, `slug` e nome de arquivo, com título, resumo, texto alternativo e corpo próprios. O seletor existente mantém o artigo aberto e carrega a versão do idioma escolhido.
 
-O seletor do site muda apenas a interface. A tradução dos artigos fica a cargo do navegador e das preferências do leitor; não há API, widget ou credencial do Google Translation. O artigo e os textos dos cards têm `lang="en"`, e o HTML sanitizado do backend marca blocos e trechos de código com `translate="no"`. RSS e sitemap apontam para a fonte canônica em inglês. O cadastro continua registrando o idioma da interface.
+O servidor passa o idioma da rota à API para listagem, filtros, artigos e relacionados. Os canonicals são `/newsletter/<slug>` em inglês, `/pt-br/newsletter/<slug>` em português e `/es/newsletter/<slug>` em espanhol. `hreflang` anuncia somente traduções publicadas, usando `availableLocales` da API. JSON-LD, Open Graph, descrições das capas e sumário acompanham a tradução. O cadastro registra o idioma selecionado.
 
-O autor mantém apenas o Markdown em inglês, conforme `docs/AUTHORING.md` no repositório da API. Os slugs existentes foram preservados para manter os links; novos artigos devem usar slugs em inglês.
+Uma tradução ausente, em rascunho ou com publicação futura recebe 404; não é substituída silenciosamente pelo inglês. Cada edição pode ser revisada e publicada de forma independente, conforme `docs/AUTHORING.md` no repositório da API. Os slugs existentes permanecem estáveis. Blocos e trechos de código continuam com `translate="no"`.
 
 ## Rotas públicas
 
 - `POST /newsletter/actions/subscribe`: verifica origem, tipo e tamanho do corpo e encaminha ao Go.
 - `GET /newsletter/media/<arquivo>`: imagens permitidas do pacote editorial, com ETag; não é proxy de URLs arbitrárias.
-- `GET /newsletter/feed.xml`: RSS das 50 edições mais recentes.
-- `GET /newsletter/sitemap.xml`: URLs canônicas de artigos publicados.
+- `GET /newsletter/feed.xml`: RSS das 50 edições mais recentes em inglês; `?locale=pt-br` e `?locale=es` selecionam as outras línguas. O link RSS nos metadados acompanha o idioma da página.
+- `GET /newsletter/sitemap.xml`: listagens e URLs canônicas de todos os artigos publicados nos três idiomas, com referências às traduções disponíveis.
 
 `proxy.ts` exclui handlers da transformação de idioma. `/api` permanece pertencendo à plataforma. `/newletter` tem redirecionamento permanente.
 
@@ -36,7 +36,7 @@ O autor mantém apenas o Markdown em inglês, conforme `docs/AUTHORING.md` no re
 
 O Secret `runtz-newsletter-auth` deve existir no namespace antes do deploy do site. A pipeline do backend o cria sem imprimir seu conteúdo. O chart do site monta a chave `token` e usa `NEWSLETTER_INTERNAL_URL=http://runtz-newsletter:8080`.
 
-Backend → site → paths do Ingress privado, em dev primeiro. Os manifests `secrets-helm/ingress-*.yaml` não devem ser copiados para o repositório. Este chart continua sem Ingress próprio.
+Publique primeiro o backend com o catálogo em três idiomas e depois o site, em dev primeiro. Os paths existentes atendem às três versões; esta mudança não acrescenta um path de topo ao Ingress. Os manifests `secrets-helm/ingress-*.yaml` não devem ser copiados para o repositório. Este chart continua sem Ingress próprio.
 
 ```sh
 npm run types:check

@@ -1,9 +1,11 @@
+import type { Locale } from './i18n';
+
 export type NewsletterPost = {
   id: string;
   slug: string;
   title: string;
   excerpt: string;
-  locale: 'en';
+  locale: Locale;
   author: string;
   tags: string[];
   publishedAt: string;
@@ -14,6 +16,7 @@ export type NewsletterPost = {
 };
 
 export type NewsletterArticle = NewsletterPost & {
+  availableLocales: Locale[];
   html: string;
   headings: { id: string; text: string; level: number }[];
 };

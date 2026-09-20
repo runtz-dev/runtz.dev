@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft, ArrowUpRight, Clock3 } from 'lucide-react';
 import { localizedPath, parseLocale, localeDetails } from '@/lib/i18n';
 import { siteUrl } from '@/lib/shared';
-import { articleURL, coverURL, getNewsletterArticle, getNewsletterPosts, newsletterRobots } from '@/lib/newsletter';
+import { articleAlternates, articleURL, coverURL, getNewsletterArticle, getNewsletterPosts, newsletterRobots } from '@/lib/newsletter';
 import { newsletterCopy, topicLabels } from '@/lib/newsletter-copy';
 import { dateLabel, NewsletterCard } from '../_components/card';
 import { ArticleBody } from '../_components/article-body';
@@ -13,14 +13,15 @@ import { NewsletterSignup } from '../_components/signup';
 type Props = { params: Promise<{ lang: string; slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const post = await getNewsletterArticle(slug);
-  if (!post) return { title: 'Article not found', robots: { index: false } };
+  const { lang, slug } = await params;
+  const locale = parseLocale(lang);
+  const post = await getNewsletterArticle(slug, locale);
+  if (!post) return { title: newsletterCopy[locale].notFound, robots: { index: false } };
   const url = articleURL(post);
   const images = [{ url: siteUrl(`/newsletter/media/${post.cover}`), width: 1600, height: 900, alt: post.coverAlt }];
   return {
     title: post.title, description: post.excerpt, robots: newsletterRobots,
-    alternates: { canonical: url },
+    alternates: articleAlternates(post),
     openGraph: { type: 'article', title: post.title, description: post.excerpt, url, images, publishedTime: post.publishedAt, modifiedTime: post.updatedAt, authors: [post.author], locale: localeDetails[post.locale].ogLocale },
     twitter: { card: 'summary_large_image', title: post.title, description: post.excerpt, images },
   };
@@ -29,10 +30,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function NewsletterArticlePage({ params }: Props) {
   const { lang, slug } = await params;
   const locale = parseLocale(lang);
-  const post = await getNewsletterArticle(slug);
+  const post = await getNewsletterArticle(slug, locale);
   if (!post) notFound();
   const copy = newsletterCopy[locale];
-  const relatedResult = await getNewsletterPosts(1, '', 100).catch(() => null);
+  const relatedResult = await getNewsletterPosts(locale, 1, '', 100).catch(() => null);
   const related = (relatedResult?.items ?? []).filter(item => item.id !== post.id).sort((a, b) => Number(b.tags.some(tag => post.tags.includes(tag))) - Number(a.tags.some(tag => post.tags.includes(tag)))).slice(0, 2);
   const structuredData = {
     '@context': 'https://schema.org', '@type': 'Article', headline: post.title, description: post.excerpt,
@@ -43,10 +44,10 @@ export default async function NewsletterArticlePage({ params }: Props) {
 
   return <main className="nl-container nl-article-page">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, '\\u003c') }} />
-    <nav aria-label="Breadcrumb" className="nl-breadcrumb"><Link href={localizedPath(locale, '/newsletter')}><ArrowLeft size={15} aria-hidden="true" />{copy.back}</Link></nav>
+    <nav aria-label={copy.breadcrumb} className="nl-breadcrumb"><Link href={localizedPath(locale, '/newsletter')}><ArrowLeft size={15} aria-hidden="true" />{copy.back}</Link></nav>
     <article lang={post.locale}>
       <header className="nl-article-header">
-        <div className="nl-article-tags">{post.tags.map(tag => <Link key={tag} href={`${localizedPath(locale, '/newsletter')}?tag=${tag}`}>{topicLabels[tag] ?? tag}<ArrowUpRight size={12} aria-hidden="true" /></Link>)}</div>
+        <div className="nl-article-tags">{post.tags.map(tag => <Link key={tag} href={`${localizedPath(locale, '/newsletter')}?tag=${tag}`}>{topicLabels[locale][tag] ?? tag}<ArrowUpRight size={12} aria-hidden="true" /></Link>)}</div>
         <h1>{post.title}</h1><p className="nl-article-excerpt">{post.excerpt}</p>
         <div className="nl-author-line" lang={locale}><span className="nl-author-mark" aria-hidden="true">r.</span><span><strong>{post.author}</strong><time dateTime={post.publishedAt}>{dateLabel(post.publishedAt, locale)}</time></span><span className="nl-reading"><Clock3 size={14} aria-hidden="true" />{post.readingMinutes} min</span></div>
       </header>

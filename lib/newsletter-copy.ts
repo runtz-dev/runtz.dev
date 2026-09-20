@@ -20,7 +20,9 @@ const pt = {
   error: 'Não foi possível salvar sua inscrição agora. Tente novamente.',
   rateLimit: 'Muitas tentativas. Aguarde um pouco antes de tentar novamente.',
   copy: 'Copiar código', copied: 'Copiado', copyFailed: 'Não foi possível copiar',
-  language: 'Português', footer: 'Feito para quem desenvolve, entrega e protege software.',
+  notFound: 'Esta leitura não está por aqui.', notFoundBody: 'O artigo ou a página que você procura não foi encontrado.',
+  loading: 'Carregando newsletter', breadcrumb: 'Navegação estrutural',
+  footer: 'Feito para quem desenvolve, entrega e protege software.',
 };
 
 export type NewsletterCopy = typeof pt;
@@ -47,7 +49,9 @@ export const newsletterCopy: Record<Locale, NewsletterCopy> = {
     error: 'We could not save your subscription. Please try again.',
     rateLimit: 'Too many attempts. Please wait before trying again.',
     copy: 'Copy code', copied: 'Copied', copyFailed: 'Could not copy',
-    language: 'Português', footer: 'For people who develop, ship and secure software.',
+    notFound: 'This page is missing.', notFoundBody: 'We could not find the article or page you are looking for.',
+    loading: 'Loading newsletter', breadcrumb: 'Breadcrumb',
+    footer: 'For people who develop, ship and secure software.',
   },
   es: {
     title: 'Newsletter',
@@ -69,11 +73,18 @@ export const newsletterCopy: Record<Locale, NewsletterCopy> = {
     error: 'No pudimos guardar tu registro. Inténtalo de nuevo.',
     rateLimit: 'Demasiados intentos. Espera un poco antes de volver a intentarlo.',
     copy: 'Copiar código', copied: 'Copiado', copyFailed: 'No se pudo copiar',
-    language: 'Português', footer: 'Para quienes desarrollan, entregan y protegen software.',
+    notFound: 'Esta página no está disponible.', notFoundBody: 'No encontramos el artículo o la página que buscas.',
+    loading: 'Cargando newsletter', breadcrumb: 'Ruta de navegación',
+    footer: 'Para quienes desarrollan, entregan y protegen software.',
   },
 };
 
-export const topicLabels: Record<string, string> = {
+const sharedTopics = {
   devsecops: 'DevSecOps', cicd: 'CI/CD', appsec: 'AppSec', kubernetes: 'Kubernetes',
-  infraestrutura: 'Infra', containers: 'Containers', vulnerabilidades: 'Vulnerabilities',
+};
+
+export const topicLabels: Record<Locale, Record<string, string>> = {
+  en: { ...sharedTopics, infraestrutura: 'Infrastructure', containers: 'Containers', vulnerabilidades: 'Vulnerabilities' },
+  'pt-br': { ...sharedTopics, infraestrutura: 'Infraestrutura', containers: 'Containers', vulnerabilidades: 'Vulnerabilidades' },
+  es: { ...sharedTopics, infraestrutura: 'Infraestructura', containers: 'Contenedores', vulnerabilidades: 'Vulnerabilidades' },
 };

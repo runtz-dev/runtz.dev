@@ -20,7 +20,7 @@ export function NewsletterCard({ post, locale, priority = false }: { post: Newsl
         <span className="nl-card-arrow"><ArrowUpRight size={20} aria-hidden="true" /></span>
       </div>
       <div className="nl-card-body">
-        <div className="nl-card-topline"><span>{topicLabels[post.tags[0]] ?? post.tags[0]}</span><span>{post.readingMinutes} min{locale !== post.locale ? ` · ${post.locale.toUpperCase()}` : ''}</span></div>
+        <div className="nl-card-topline"><span>{topicLabels[locale][post.tags[0]] ?? post.tags[0]}</span><span>{post.readingMinutes} min{locale !== post.locale ? ` · ${post.locale.toUpperCase()}` : ''}</span></div>
         <h2 lang={post.locale}>{post.title}</h2><p lang={post.locale}>{post.excerpt}</p>
         <div className="nl-card-bottom"><time dateTime={post.publishedAt}>{dateLabel(post.publishedAt, locale)}</time></div>
       </div>
