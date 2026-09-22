@@ -34,6 +34,8 @@ service:
   targetPort: 3000
 
 env:
+  NEWSLETTER_INTERNAL_URL: "http://runtz-newsletter:8080"
+  NEWSLETTER_ENVIRONMENT: "prod"
   PORT: "3000"
   HOSTNAME: "0.0.0.0"
   NEXT_PUBLIC_BASE_PATH: ""
@@ -55,6 +57,9 @@ env:
   OTEL_RESOURCE_ATTRIBUTES: ""
 
 extraEnv: []
+newsletter:
+  existingSecret: ""
+  tokenKey: token
 podAnnotations: {}
 podLabels: {}
 podSecurityContext: {}

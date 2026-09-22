@@ -1,0 +1,90 @@
+import type { Locale } from './i18n';
+
+const pt = {
+  title: 'Newsletter',
+  description: 'Engenharia, segurança e infraestrutura na prática. Uma leitura de cada vez.',
+  subscribe: 'Inscrever-se', all: 'Todos os artigos', filter: 'Filtrar por assunto',
+  latest: 'Últimas publicações', articles: 'artigos', read: 'Ler artigo',
+  previous: 'Anterior', next: 'Próxima', page: 'Página', of: 'de',
+  empty: 'Nenhum artigo por aqui. Ainda.', emptyBody: 'Escolha outro assunto para continuar explorando.',
+  unavailable: 'Uma breve pausa na leitura.', unavailableBody: 'Não conseguimos carregar os artigos agora. Tente novamente em alguns instantes.',
+  retry: 'Tentar novamente', back: 'Voltar à newsletter', toc: 'Neste artigo',
+  related: 'Continue a leitura', updated: 'Atualizado em', rss: 'Acompanhar por RSS',
+  signupTitle: 'As próximas ideias, na sua caixa de entrada.',
+  signupBody: 'Cadastre seu e-mail para acompanhar as próximas edições da Runtz. O envio será disponibilizado em breve.',
+  email: 'Seu e-mail', placeholder: 'voce@exemplo.com', submit: 'Quero acompanhar',
+  consent: 'Ao se inscrever, você aceita receber nossa newsletter.',
+  privacy: 'Política de privacidade.', sending: 'Salvando...',
+  success: 'Obrigado por se inscrever!',
+  invalid: 'Confira seu e-mail e tente novamente.',
+  error: 'Não foi possível salvar sua inscrição agora. Tente novamente.',
+  rateLimit: 'Muitas tentativas. Aguarde um pouco antes de tentar novamente.',
+  copy: 'Copiar código', copied: 'Copiado', copyFailed: 'Não foi possível copiar',
+  notFound: 'Esta leitura não está por aqui.', notFoundBody: 'O artigo ou a página que você procura não foi encontrado.',
+  loading: 'Carregando newsletter', breadcrumb: 'Navegação estrutural',
+  footer: 'Feito para quem desenvolve, entrega e protege software.',
+};
+
+export type NewsletterCopy = typeof pt;
+
+export const newsletterCopy: Record<Locale, NewsletterCopy> = {
+  'pt-br': pt,
+  en: {
+    title: 'Newsletter',
+    description: 'Engineering, security and infrastructure in practice. One good read at a time.',
+    subscribe: 'Subscribe', all: 'All articles', filter: 'Filter by topic',
+    latest: 'Latest articles', articles: 'articles', read: 'Read article',
+    previous: 'Previous', next: 'Next', page: 'Page', of: 'of',
+    empty: 'No articles here. Yet.', emptyBody: 'Choose another topic to keep exploring.',
+    unavailable: 'A brief pause in your reading.', unavailableBody: 'We could not load the articles. Please try again in a moment.',
+    retry: 'Try again', back: 'Back to the newsletter', toc: 'On this page',
+    related: 'Keep reading', updated: 'Updated', rss: 'Follow via RSS',
+    signupTitle: 'The next ideas, in your inbox.',
+    signupBody: 'Leave your email to follow upcoming Runtz editions. Email delivery will be available soon.',
+    email: 'Your email', placeholder: 'you@example.com', submit: 'Keep me posted',
+    consent: 'By subscribing, you agree to receive our newsletter.',
+    privacy: 'Privacy policy.', sending: 'Saving...',
+    success: 'Thanks for subscribing!',
+    invalid: 'Check your email and try again.',
+    error: 'We could not save your subscription. Please try again.',
+    rateLimit: 'Too many attempts. Please wait before trying again.',
+    copy: 'Copy code', copied: 'Copied', copyFailed: 'Could not copy',
+    notFound: 'This page is missing.', notFoundBody: 'We could not find the article or page you are looking for.',
+    loading: 'Loading newsletter', breadcrumb: 'Breadcrumb',
+    footer: 'For people who develop, ship and secure software.',
+  },
+  es: {
+    title: 'Newsletter',
+    description: 'Ingeniería, seguridad e infraestructura en la práctica. Una lectura a la vez.',
+    subscribe: 'Suscribirme', all: 'Todos los artículos', filter: 'Filtrar por tema',
+    latest: 'Últimas publicaciones', articles: 'artículos', read: 'Leer artículo',
+    previous: 'Anterior', next: 'Siguiente', page: 'Página', of: 'de',
+    empty: 'Todavía no hay artículos aquí.', emptyBody: 'Elige otro tema para seguir explorando.',
+    unavailable: 'Una breve pausa en la lectura.', unavailableBody: 'No pudimos cargar los artículos. Inténtalo de nuevo en unos instantes.',
+    retry: 'Intentar de nuevo', back: 'Volver a la newsletter', toc: 'En este artículo',
+    related: 'Sigue leyendo', updated: 'Actualizado', rss: 'Seguir por RSS',
+    signupTitle: 'Las próximas ideas, en tu correo.',
+    signupBody: 'Registra tu correo para seguir las próximas ediciones de Runtz. Los envíos estarán disponibles pronto.',
+    email: 'Tu correo', placeholder: 'tu@ejemplo.com', submit: 'Quiero recibir novedades',
+    consent: 'Al suscribirte, aceptas recibir nuestra newsletter.',
+    privacy: 'Política de privacidad.', sending: 'Guardando...',
+    success: '¡Gracias por suscribirte!',
+    invalid: 'Revisa tu correo e inténtalo de nuevo.',
+    error: 'No pudimos guardar tu registro. Inténtalo de nuevo.',
+    rateLimit: 'Demasiados intentos. Espera un poco antes de volver a intentarlo.',
+    copy: 'Copiar código', copied: 'Copiado', copyFailed: 'No se pudo copiar',
+    notFound: 'Esta página no está disponible.', notFoundBody: 'No encontramos el artículo o la página que buscas.',
+    loading: 'Cargando newsletter', breadcrumb: 'Ruta de navegación',
+    footer: 'Para quienes desarrollan, entregan y protegen software.',
+  },
+};
+
+const sharedTopics = {
+  devsecops: 'DevSecOps', cicd: 'CI/CD', appsec: 'AppSec', kubernetes: 'Kubernetes',
+};
+
+export const topicLabels: Record<Locale, Record<string, string>> = {
+  en: { ...sharedTopics, infraestrutura: 'Infrastructure', containers: 'Containers', vulnerabilidades: 'Vulnerabilities' },
+  'pt-br': { ...sharedTopics, infraestrutura: 'Infraestrutura', containers: 'Containers', vulnerabilidades: 'Vulnerabilidades' },
+  es: { ...sharedTopics, infraestrutura: 'Infraestructura', containers: 'Contenedores', vulnerabilidades: 'Vulnerabilidades' },
+};

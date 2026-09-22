@@ -94,6 +94,8 @@ export default function proxy(request: NextRequest, event: NextFetchEvent) {
   if (
     pathname.startsWith('/_next/') ||
     pathname.startsWith('/api/') ||
+    pathname.startsWith('/newsletter/actions/') ||
+    pathname.startsWith('/newsletter/media/') ||
     pathname === '/docs/search' ||
     /\.[^/]+$/.test(pathname)
   ) {

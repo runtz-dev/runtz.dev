@@ -14,6 +14,9 @@ image:
   tag: ""
   pullPolicy: Always
 
+newsletter:
+  existingSecret: runtz-newsletter-auth
+
 autoscaling:
   enabled: true
   minReplicas: 3
@@ -30,6 +33,8 @@ resources:
     memory: 512Mi
 
 env:
+  NEWSLETTER_INTERNAL_URL: "http://runtz-newsletter:8080"
+  NEWSLETTER_ENVIRONMENT: "prod"
   NEXT_PUBLIC_RUNTZ_API_URL: "https://engine.runtz.dev"
   NEXT_PUBLIC_PLATFORM_BASE_URL: "https://runtz.dev"
   # Traces go to the in-cluster SigNoz collector. ClusterIP only, so this is

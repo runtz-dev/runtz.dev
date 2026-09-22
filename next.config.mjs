@@ -11,6 +11,7 @@ const assetPrefix = process.env.NEXT_PUBLIC_ASSET_PREFIX ?? '/_landing';
 
 /** @type {import('next').NextConfig} */
 const config = {
+  agentRules: false,
   reactStrictMode: true,
   output: 'standalone',
   ...(basePath ? { basePath } : {}),
@@ -20,6 +21,8 @@ const config = {
   // cheap, and the ingress still has to route /home* here for these to fire.
   async redirects() {
     return [
+      { source: '/newletter/:path*', destination: '/newsletter/:path*', permanent: true },
+      { source: '/:lang(pt-br|es)/newletter/:path*', destination: '/:lang/newsletter/:path*', permanent: true },
       { source: '/home', destination: '/', permanent: true },
       { source: '/home/:path*', destination: '/:path*', permanent: true },
     ];
