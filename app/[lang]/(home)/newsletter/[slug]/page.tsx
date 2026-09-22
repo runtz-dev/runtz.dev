@@ -4,10 +4,11 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft, ArrowUpRight, Clock3 } from 'lucide-react';
 import { localizedPath, parseLocale, localeDetails } from '@/lib/i18n';
 import { siteUrl } from '@/lib/shared';
-import { articleAlternates, articleURL, coverURL, getNewsletterArticle, getNewsletterPosts, newsletterRobots } from '@/lib/newsletter';
+import { articleAlternates, articleURL, getNewsletterArticle, getNewsletterPosts, newsletterRobots } from '@/lib/newsletter';
 import { newsletterCopy, topicLabels } from '@/lib/newsletter-copy';
 import { dateLabel, NewsletterCard } from '../_components/card';
 import { ArticleBody } from '../_components/article-body';
+import { NewsletterCover } from '../_components/cover';
 import { NewsletterSignup } from '../_components/signup';
 
 type Props = { params: Promise<{ lang: string; slug: string }> };
@@ -52,8 +53,7 @@ export default async function NewsletterArticlePage({ params }: Props) {
         <div className="nl-author-line" lang={locale}><span className="nl-author-mark" aria-hidden="true">r.</span><span><strong>{post.author}</strong><time dateTime={post.publishedAt}>{dateLabel(post.publishedAt, locale)}</time></span><span className="nl-reading"><Clock3 size={14} aria-hidden="true" />{post.readingMinutes} min</span></div>
       </header>
       <div className="nl-article-cover">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={coverURL(post.cover)} srcSet={`${coverURL(post.cover.replace('.webp', '-640.webp'))} 640w, ${coverURL(post.cover)} 1600w`} sizes="(max-width: 767px) calc(100vw - 48px), (max-width: 1279px) calc(100vw - 96px), 1136px" alt={post.coverAlt} width={1600} height={900} fetchPriority="high" />
+        <NewsletterCover post={post} sizes="(max-width: 767px) calc(100vw - 48px), (max-width: 1279px) calc(100vw - 96px), 1136px" priority />
       </div>
       <div className="nl-reading-layout">
         {post.headings.length >= 3 && <aside className="nl-toc"><nav aria-label={copy.toc}><p lang={locale}>{copy.toc}</p>{post.headings.map(heading => <a className={heading.level === 3 ? 'nl-toc-sub' : undefined} key={heading.id} href={`#${heading.id}`}>{heading.text}</a>)}</nav></aside>}

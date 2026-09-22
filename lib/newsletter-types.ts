@@ -11,6 +11,7 @@ export type NewsletterPost = {
   publishedAt: string;
   updatedAt: string;
   cover: string;
+  coverDark?: string;
   coverAlt: string;
   readingMinutes: number;
 };

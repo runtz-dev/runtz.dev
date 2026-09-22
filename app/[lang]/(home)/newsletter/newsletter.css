@@ -109,6 +109,9 @@ a.nl-page-link:hover { color: var(--nl-blue); }
 .nl-reading { display: flex; align-items: center; gap: 6px; margin-left: 12px; padding-left: 24px; border-left: 1px solid var(--nl-line); color: var(--nl-muted); font-size: 11px; }
 .nl-article-cover { border-radius: 8px; overflow: hidden; border: 1px solid var(--nl-line); background: #e8f3fe; }
 .nl-article-cover img { width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; }
+.nl-cover-dark, .dark .nl-cover-light { display: none; }
+.dark .nl-cover-dark { display: block; }
+.dark .nl-card-image, .dark .nl-article-cover { background: #050912; }
 .nl-reading-layout { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 60px; margin: 52px auto 0; }
 .nl-toc nav { position: sticky; top: 100px; padding-left: 16px; border-left: 1px solid var(--nl-line); }
 .nl-toc p { color: var(--nl-ink); font-size: 11px; font-weight: 600; margin-bottom: 16px; }
