@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getNewsletterArticle(slug, locale);
   if (!post) return { title: newsletterCopy[locale].notFound, robots: { index: false } };
   const url = articleURL(post);
-  const images = [{ url: siteUrl(`/newsletter/media/${post.cover}`), width: 1600, height: 900, alt: post.coverAlt }];
+  const images = [{ url: siteUrl(`/newsletter/media/${post.coverDark ?? post.cover}`), width: 1600, height: 900, alt: post.coverAlt }];
   return {
     title: post.title, description: post.excerpt, robots: newsletterRobots,
     alternates: articleAlternates(post),
@@ -38,7 +38,7 @@ export default async function NewsletterArticlePage({ params }: Props) {
   const related = (relatedResult?.items ?? []).filter(item => item.id !== post.id).sort((a, b) => Number(b.tags.some(tag => post.tags.includes(tag))) - Number(a.tags.some(tag => post.tags.includes(tag)))).slice(0, 2);
   const structuredData = {
     '@context': 'https://schema.org', '@type': 'Article', headline: post.title, description: post.excerpt,
-    image: siteUrl(`/newsletter/media/${post.cover}`), datePublished: post.publishedAt, dateModified: post.updatedAt,
+    image: siteUrl(`/newsletter/media/${post.coverDark ?? post.cover}`), datePublished: post.publishedAt, dateModified: post.updatedAt,
     inLanguage: post.locale, author: { '@type': 'Organization', name: post.author },
     publisher: { '@type': 'Organization', name: 'Runtz', url: siteUrl('') }, mainEntityOfPage: articleURL(post),
   };
