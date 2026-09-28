@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
 import type { Locale } from '@/lib/i18n';
 import type { NewsletterPost } from '@/lib/newsletter-types';
 import { articlePath } from '@/lib/newsletter';
@@ -16,7 +15,6 @@ export function NewsletterCard({ post, locale, priority = false }: { post: Newsl
     <Link href={articlePath(post, locale)} className="nl-card-link" aria-label={`${copy.read}: ${post.title}`}>
       <div className="nl-card-image">
         <NewsletterCover post={post} sizes="(max-width: 767px) calc(100vw - 48px), (max-width: 1279px) calc((100vw - 96px) / 2), 568px" priority={priority} lazy={!priority} />
-        <span className="nl-card-arrow"><ArrowUpRight size={20} aria-hidden="true" /></span>
       </div>
       <div className="nl-card-body">
         <div className="nl-card-topline"><span>{topicLabels[locale][post.tags[0]] ?? post.tags[0]}</span><span>{post.readingMinutes} min{locale !== post.locale ? ` · ${post.locale.toUpperCase()}` : ''}</span></div>
