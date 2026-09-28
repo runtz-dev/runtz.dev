@@ -55,8 +55,6 @@
 .nl-card-image { margin: 10px 10px 0; position: relative; border-radius: 4px; overflow: hidden; background: #e8f3fe; }
 .nl-card-image img { width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; transition: transform .4s; }
 .nl-card:hover .nl-card-image img { transform: scale(1.025); }
-.nl-card-arrow { position: absolute; right: 14px; bottom: 14px; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #f7fbffed; color: #071222; border: 1px solid #07122214; transition: background .2s; }
-.nl-card:hover .nl-card-arrow { background: #6db5ff; }
 .nl-card-body { display: flex; flex-direction: column; flex: 1; padding: 22px 24px 19px; }
 .nl-card-topline { display: flex; justify-content: space-between; gap: 12px; color: var(--nl-muted); font: 10px ui-monospace, monospace; }
 .nl-card-topline > span:first-child { color: var(--nl-blue); font-weight: 600; }
