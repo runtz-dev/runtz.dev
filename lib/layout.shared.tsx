@@ -164,17 +164,11 @@ export function baseOptions(locale: Locale): BaseLayoutProps {
     links: [
       ...(plannedTopNavMenusEnabled ? [platformNavMenu(locale)] : []),
       {
-        type: 'custom',
-        children: (
-          <Link
-            href={playgroundUrl}
-            className="group inline-flex h-9 items-center rounded-full px-2 text-sm font-semibold text-[#6db5ff] transition hover:text-[#9fd6ff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6db5ff]"
-          >
-            <span className="border-b border-[#6db5ff]/35 pb-0.5 transition group-hover:border-[#9fd6ff]">
-              {copy.playground}
-            </span>
-          </Link>
-        ),
+        type: 'main',
+        text: copy.playground,
+        url: playgroundUrl,
+        external: true,
+        active: 'url',
       },
       {
         type: 'main',

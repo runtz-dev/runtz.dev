@@ -15,7 +15,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/cn';
 import type { RoadmapCopy } from '@/lib/roadmap-copy';
 
-type MilestoneStatus = 'completed' | 'running' | 'pending';
+type MilestoneStatus = RoadmapCopy['milestones'][number]['status'];
 
 function StatusBadge({
   status,
@@ -35,11 +35,11 @@ function StatusBadge({
     );
   }
 
-  if (status === 'running') {
+  if (status === 'running' || status === 'testing') {
     return (
       <Badge variant="outline" className="rz-roadmap-badge rz-roadmap-badge-running">
         <Spinner data-icon="inline-start" className="motion-reduce:animate-none" />
-        {copy.running}
+        {copy[status]}
       </Badge>
     );
   }
@@ -60,7 +60,7 @@ function MilestoneIndicator({ status }: { status: MilestoneStatus }) {
     );
   }
 
-  if (status === 'running') {
+  if (status === 'running' || status === 'testing') {
     return (
       <TimelineIndicator className="rz-roadmap-indicator rz-roadmap-indicator-running">
         <Spinner className="motion-reduce:animate-none" />
@@ -110,7 +110,8 @@ export function RoadmapTimeline({ copy }: { copy: RoadmapCopy }) {
                 className={cn(
                   'flex items-start gap-2.5',
                   index % 2 === 1 && 'md:justify-end',
-                  milestone.status === 'running' && 'max-md:flex-col max-md:gap-1.5',
+                  (milestone.status === 'running' || milestone.status === 'testing') &&
+                    'max-md:flex-col max-md:gap-1.5',
                 )}
               >
                 <TimelineTitle className="text-base font-semibold leading-6 md:text-[17px]">
@@ -125,60 +126,6 @@ export function RoadmapTimeline({ copy }: { copy: RoadmapCopy }) {
             </TimelineHeader>
           </TimelineItem>
         ))}
-
-        <TimelineItem
-          step={milestones.length + 1}
-          render={<li />}
-          className={cn(
-            'rz-roadmap-item min-h-20 pb-9',
-            'md:even:me-auto md:even:group-data-[orientation=vertical]/timeline:ms-0 md:even:group-data-[orientation=vertical]/timeline:me-8',
-            'md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-indicator]:right-[-1.5rem] md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-indicator]:left-auto',
-            'md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-indicator]:translate-x-1/2 md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-separator]:right-[-1.5rem]',
-            'md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-separator]:left-auto md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-separator]:translate-x-1/2',
-          )}
-        >
-          <TimelineHeader>
-            <TimelineSeparator className="rz-roadmap-separator" />
-            <TimelineTitle className="sr-only">{copy.backlog}</TimelineTitle>
-            <TimelineIndicator className="rz-roadmap-indicator rz-roadmap-indicator-backlog">
-              <span>{copy.backlog}</span>
-            </TimelineIndicator>
-          </TimelineHeader>
-        </TimelineItem>
-
-        {copy.backlogItems.map((title, index) => {
-          const timelineIndex = milestones.length + index + 1;
-
-          return (
-            <TimelineItem
-              key={title}
-              step={timelineIndex + 1}
-              render={<li />}
-              className={cn(
-                'rz-roadmap-item min-h-18 pb-8 last:min-h-0 last:pb-0',
-                'md:odd:ms-auto md:even:me-auto md:even:text-right md:even:group-data-[orientation=vertical]/timeline:ms-0 md:even:group-data-[orientation=vertical]/timeline:me-8',
-                'md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-indicator]:right-[-1.5rem] md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-indicator]:left-auto',
-                'md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-indicator]:translate-x-1/2 md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-separator]:right-[-1.5rem]',
-                'md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-separator]:left-auto md:even:group-data-[orientation=vertical]/timeline:**:data-[slot=timeline-separator]:translate-x-1/2',
-              )}
-            >
-              <TimelineHeader>
-                <TimelineSeparator className="rz-roadmap-separator" />
-                <div
-                  className={cn(
-                    'flex items-start gap-2.5',
-                    timelineIndex % 2 === 1 && 'md:justify-end',
-                  )}
-                >
-                  <TimelineTitle className="text-base font-semibold leading-6 md:text-[17px]">
-                    {title}
-                  </TimelineTitle>
-                </div>
-                <MilestoneIndicator status="pending" />
-              </TimelineHeader>
-            </TimelineItem>
-          );
-        })}
       </Timeline>
     </div>
   );
