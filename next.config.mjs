@@ -21,6 +21,9 @@ const config = {
   // cheap, and the ingress still has to route /home* here for these to fire.
   async redirects() {
     return [
+      { source: '/docs/cloud/google-cloud', destination: '/docs/scans/google-cloud', permanent: true },
+      { source: '/:lang(pt-br|es)/docs/cloud/google-cloud', destination: '/:lang/docs/scans/google-cloud', permanent: true },
+      { source: '/en/docs/cloud/google-cloud', destination: '/docs/scans/google-cloud', permanent: true },
       { source: '/newletter/:path*', destination: '/newsletter/:path*', permanent: true },
       { source: '/:lang(pt-br|es)/newletter/:path*', destination: '/:lang/newsletter/:path*', permanent: true },
       { source: '/home', destination: '/', permanent: true },
