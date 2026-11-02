@@ -13,8 +13,6 @@ export type RoadmapCopy = {
     emphasizedTitle?: string;
     status: 'completed' | 'running' | 'pending';
   }[];
-  backlog: string;
-  backlogItems: string[];
 };
 
 export const roadmapCopy: Record<Locale, RoadmapCopy> = {
@@ -36,10 +34,8 @@ export const roadmapCopy: Record<Locale, RoadmapCopy> = {
       { title: 'First Client', status: 'completed' },
       { title: 'Keep building Release Candidate Version', status: 'running' },
       { date: 'Jan 2027', title: 'Launch', emphasizedTitle: '1.0.0 Version', status: 'pending' },
-      { date: 'Feb 2027', title: 'Launch DAST', status: 'pending' },
+      { date: 'Jan 2027', title: 'Launch DAST', status: 'pending' },
     ],
-    backlog: 'Backlog',
-    backlogItems: ['IAC Scanning', 'Cloud Scanning'],
   },
   'pt-br': {
     metadata: {
@@ -59,10 +55,8 @@ export const roadmapCopy: Record<Locale, RoadmapCopy> = {
       { title: 'Primeiro cliente', status: 'completed' },
       { title: 'Evolução contínua da Release Candidate', status: 'running' },
       { date: 'Jan. 2027', title: 'Lançamento', emphasizedTitle: 'da versão 1.0.0', status: 'pending' },
-      { date: 'Fev. 2027', title: 'Lançamento do DAST', status: 'pending' },
+      { date: 'Jan. 2027', title: 'Lançamento do DAST', status: 'pending' },
     ],
-    backlog: 'Backlog',
-    backlogItems: ['Scan de IaC', 'Scan de cloud'],
   },
   es: {
     metadata: {
@@ -82,9 +76,7 @@ export const roadmapCopy: Record<Locale, RoadmapCopy> = {
       { title: 'Primer cliente', status: 'completed' },
       { title: 'Evolución continua de la Release Candidate', status: 'running' },
       { date: 'Ene. 2027', title: 'Lanzamiento', emphasizedTitle: 'de la versión 1.0.0', status: 'pending' },
-      { date: 'Feb. 2027', title: 'Lanzamiento de DAST', status: 'pending' },
+      { date: 'Ene. 2027', title: 'Lanzamiento de DAST', status: 'pending' },
     ],
-    backlog: 'Backlog',
-    backlogItems: ['Análisis de IaC', 'Análisis de cloud'],
   },
 };
