@@ -15,7 +15,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/cn';
 import type { RoadmapCopy } from '@/lib/roadmap-copy';
 
-type MilestoneStatus = 'completed' | 'running' | 'pending';
+type MilestoneStatus = RoadmapCopy['milestones'][number]['status'];
 
 function StatusBadge({
   status,
@@ -35,11 +35,11 @@ function StatusBadge({
     );
   }
 
-  if (status === 'running') {
+  if (status === 'running' || status === 'testing') {
     return (
       <Badge variant="outline" className="rz-roadmap-badge rz-roadmap-badge-running">
         <Spinner data-icon="inline-start" className="motion-reduce:animate-none" />
-        {copy.running}
+        {copy[status]}
       </Badge>
     );
   }
@@ -60,7 +60,7 @@ function MilestoneIndicator({ status }: { status: MilestoneStatus }) {
     );
   }
 
-  if (status === 'running') {
+  if (status === 'running' || status === 'testing') {
     return (
       <TimelineIndicator className="rz-roadmap-indicator rz-roadmap-indicator-running">
         <Spinner className="motion-reduce:animate-none" />
@@ -110,7 +110,8 @@ export function RoadmapTimeline({ copy }: { copy: RoadmapCopy }) {
                 className={cn(
                   'flex items-start gap-2.5',
                   index % 2 === 1 && 'md:justify-end',
-                  milestone.status === 'running' && 'max-md:flex-col max-md:gap-1.5',
+                  (milestone.status === 'running' || milestone.status === 'testing') &&
+                    'max-md:flex-col max-md:gap-1.5',
                 )}
               >
                 <TimelineTitle className="text-base font-semibold leading-6 md:text-[17px]">
