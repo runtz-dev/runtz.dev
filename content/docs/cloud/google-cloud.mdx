@@ -1,0 +1,121 @@
+---
+title: Google Cloud scanning
+description: Connect a Google Cloud project, review partial coverage and configure read permissions for all supported checks.
+---
+
+# Google Cloud scanning
+
+Connect a project in **Cloud → Add cloud → Google Cloud**. The guided setup
+supports Google Cloud Console and gcloud CLI. Runtz runs 32 read-only
+configuration checks and groups findings by severity, with evidence and remediation.
+A Google Cloud organization and Security Command Center are not required.
+
+## Start with the resources you use
+
+You can connect without enabling every resource API. Runtz scans the resources
+available through enabled APIs and the service account's read permissions.
+Unavailable APIs and denied permissions appear as **skipped checks**, so a partial
+scan can still produce useful findings. An empty findings list only describes
+the checks that were evaluated; review **Checks** for coverage.
+
+For coverage across all supported resource types, a project administrator can
+optionally enable the following APIs. This setup command changes API enablement;
+the scanner itself only reads configuration.
+
+```bash
+gcloud services enable \
+  cloudresourcemanager.googleapis.com \
+  compute.googleapis.com sqladmin.googleapis.com \
+  dns.googleapis.com container.googleapis.com \
+  storage.googleapis.com cloudkms.googleapis.com \
+  bigquery.googleapis.com logging.googleapis.com \
+  monitoring.googleapis.com \
+  --project=YOUR_PROJECT_ID
+```
+
+## Create the service account
+
+In **IAM & Admin → Service Accounts**, choose **Create service account**, name it
+`runtz-security`, and grant **Security Reviewer** on the target project.
+Alternatively, run:
+
+```bash
+gcloud iam service-accounts create runtz-security \
+  --project=YOUR_PROJECT_ID --display-name="Runtz Security"
+
+gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
+  --member="serviceAccount:runtz-security@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/iam.securityReviewer"
+```
+
+Security Reviewer is a starting role. Check the permissions below and grant any
+missing reads through an appropriate read-only or custom role. Runtz does not
+require Owner, Editor or write permissions. A successful connection verifies
+project access; it does not imply every check has access.
+
+## Required read permissions
+
+The following list reflects the current scanner rule catalog and collection
+calls. Grant these on the target project and relevant resources for all supported
+checks. Resource-level policies and other access restrictions can still limit
+coverage. No resources of a given type may produce a **not applicable** result.
+
+| Resource / API | Permissions |
+| --- | --- |
+| Project access validation — Resource Manager | `resourcemanager.projects.get` |
+| Project IAM — Resource Manager | `resourcemanager.projects.getIamPolicy` |
+| Compute Engine instances and project metadata | `compute.instances.list`, `compute.projects.get` |
+| VPC firewall rules — Compute Engine | `compute.firewalls.list` |
+| Cloud SQL | `cloudsql.instances.list`, `cloudsql.users.list` |
+| Cloud DNS | `dns.managedZones.list` |
+| Google Kubernetes Engine | `container.clusters.list` |
+| Cloud KMS | `cloudkms.locations.list`, `cloudkms.keyRings.list`, `cloudkms.cryptoKeys.list`, `cloudkms.cryptoKeys.getIamPolicy` |
+| Cloud Storage | `storage.buckets.list`, `storage.buckets.get`, `storage.buckets.getIamPolicy` |
+| BigQuery | `bigquery.datasets.get` |
+| Cloud Logging | `logging.logMetrics.list` |
+| Cloud Monitoring | `monitoring.alertPolicies.list` |
+
+BigQuery dataset listing is filtered by `bigquery.datasets.get`; there is no
+`bigquery.datasets.list` permission. If Resource Manager cannot be read,
+connection validation can fall back to reading Logging metrics or Monitoring
+alert policies. IAM checks still need their own API and permission.
+
+The [Google Security Reviewer role definition](https://docs.cloud.google.com/iam/docs/roles-permissions/iam#iam.securityReviewer)
+is the reference for the role's current contents. Use skipped-check evidence to
+identify missing permissions by name and grant only the required reads.
+
+## Create and upload a key
+
+In the Console, open the service account and select **Keys → Add key → Create
+new key → JSON → Create**. Or use
+[gcloud to create a JSON key](https://docs.cloud.google.com/sdk/gcloud/reference/iam/service-accounts/keys/create):
+
+```bash
+gcloud iam service-accounts keys create runtz-security-key.json \
+  --iam-account="runtz-security@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
+  --project=YOUR_PROJECT_ID
+```
+
+Upload the JSON file in Runtz, verify access, name the connection and select
+**Connect & start scan**. Keep keys out of source control. Organizations that
+block service account key creation need an administrator-approved approach;
+this integration currently uses JSON keys.
+
+## Manage connections
+
+After connecting a project, **Settings → Cloud** lists the connections visible
+in your selected workspace. Workspace owners and self-hosted administrators can
+replace JSON credentials or disconnect projects. Members can inspect connection
+details and findings. Scans run automatically every 12 hours.
+
+Replacing a key verifies access before saving it. Revoke the previous key in
+Google Cloud after replacement. Disconnecting removes the Runtz connection,
+stored credentials and scan results; it does not delete the Google service account.
+
+To delete a dedicated service account, use **Manage service account** in
+**Settings → Cloud**, then select that account in the Console and choose
+**Delete**. The same screen offers the
+[gcloud deletion command](https://docs.cloud.google.com/sdk/gcloud/reference/iam/service-accounts/delete).
+Run it as an administrator only when that account is no longer needed: deletion
+affects every connection or workload using it, including projects outside the
+current workspace. Disconnect the Runtz connection separately.

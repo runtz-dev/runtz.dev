@@ -10,6 +10,8 @@
     "scans/host",
     "scans/container",
     "scans/kubernetes",
+    "---Cloud---",
+    "cloud/google-cloud",
     "---IA---",
     "mcp",
     "skills",
