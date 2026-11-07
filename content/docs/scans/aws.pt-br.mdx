@@ -1,0 +1,54 @@
+---
+title: Scanning AWS
+description: Conecte uma conta AWS com IAM Role e External ID e acompanhe findings e cobertura por região.
+---
+
+# Scanning AWS
+
+Conecte uma conta comercial AWS em **Cloud → Add cloud → Amazon Web Services**.
+A Runtz executa 18 checks de configuração somente de leitura em IAM, S3,
+EC2/EBS, RDS, CloudTrail e EKS. A conexão usa uma IAM Role e sessões temporárias
+STS. Você não precisa enviar access keys da AWS.
+
+## Conectar uma conta
+
+1. Selecione um workspace do qual você é proprietário e informe o Account ID AWS de 12 dígitos.
+2. Informe as regiões habilitadas que utiliza, separadas por vírgula: por exemplo, `us-east-1, sa-east-1`.
+3. Abra **AWS setup** ou baixe o JSON CloudFormation preenchido e envie-o em **CloudFormation → Create stack → With new resources**.
+4. Na conta de destino, revise o template, confirme a criação dos recursos IAM e crie a stack. Use uma identidade autorizada a criar roles e policies IAM.
+5. Aguarde **CREATE_COMPLETE**, copie **RoleArn** em Outputs e cole na Runtz.
+6. Valide o acesso, escolha um nome e selecione **Connect and start scan**.
+
+O template cria uma role com permissões de leitura para o catálogo da Runtz.
+A relação de confiança autoriza a role do scanner e exige um External ID gerado
+para seu workspace e conta. A validação confirma a conta AWS e rejeita roles
+que possam ser assumidas sem o External ID correto.
+
+## Cobertura
+
+Checks globais de IAM e da conta são executados uma vez. Checks de recursos
+avaliam as regiões selecionadas. Outras regiões ficam fora da cobertura.
+Permissões ausentes e campos não avaliados aparecem em **Checks**, sem contar
+como aprovações. Os scans repetem a cada 12 horas; uma falha preserva o resultado anterior.
+
+Checks de Block Public Access avaliam controles do S3, sem comprovar acesso
+público efetivo. Security Groups indicam regras permissivas, sem comprovar
+alcance pela internet. Backups geridos por clusters/réplicas RDS e trails de
+organização ou shadow do CloudTrail exigem revisão separada. Organizations,
+ECR e leitura do conteúdo de discos ficam fora desta integração inicial.
+
+## Gerenciar acesso
+
+Em **Settings → Cloud**, consulte conta, role IAM e regiões. Proprietários e
+administradores self-hosted podem iniciar scans e desconectar; membros podem
+ler resultados. Para alterar a role ou as regiões, desconecte e conecte novamente.
+Desconectar remove a autorização armazenada e os resultados da Runtz. Exclua
+a stack CloudFormation separadamente para remover os recursos IAM na AWS.
+
+## Configuração do operador
+
+Publique primeiro o Security com suporte AWS e depois o engine/frontend.
+Configure identidade do scanner, credenciais de runtime e URL S3 opcional pelo
+[guia operacional](https://github.com/runtz-dev/runtz-security/blob/dev/docs/aws-setup.md).
+O wizard permite baixar o template mesmo sem URL de criação rápida.
+Credenciais AWS ficam somente no runtime do Security, com identidades independentes em dev e prod.
