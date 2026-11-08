@@ -12,6 +12,7 @@
     "scans/kubernetes",
     "---Cloud---",
     "scans/google-cloud",
+    "scans/aws",
     "---IA---",
     "mcp",
     "skills",
