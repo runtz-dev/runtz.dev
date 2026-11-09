@@ -1,18 +1,18 @@
 ---
 title: Escaneo de AWS
-description: Conecta una cuenta AWS con un rol IAM y External ID y revisa los hallazgos y la cobertura regional.
+description: Conecta una cuenta AWS con rol IAM o access key y revisa los hallazgos y la cobertura regional.
 ---
 
 # Escaneo de AWS
 
 Conecta una cuenta comercial AWS desde **Cloud → Add cloud → Amazon Web Services**.
 Runtz ejecuta 18 comprobaciones de configuración de solo lectura en IAM, S3,
-EC2/EBS, RDS, CloudTrail y EKS. Usa un rol IAM y sesiones temporales STS;
-no necesitas compartir access keys de AWS.
+EC2/EBS, RDS, CloudTrail y EKS. Elige un rol IAM con sesiones temporales STS
+(recomendado) o la access key de un usuario IAM dedicado.
 
-## Conectar una cuenta
+## Conectar con un rol IAM
 
-1. Selecciona un workspace del que seas propietario e introduce el Account ID AWS de 12 dígitos.
+1. Selecciona **IAM role (recommended)**, un workspace del que seas propietario y el Account ID AWS de 12 dígitos.
 2. Introduce las regiones habilitadas que utilizas, separadas por comas: por ejemplo, `us-east-1, sa-east-1`.
 3. Abre **AWS setup** o descarga el JSON CloudFormation y súbelo desde **CloudFormation → Create stack → With new resources**.
 4. En la cuenta de destino, revisa la plantilla, acepta la creación de recursos IAM y crea el stack con una identidad autorizada para crear roles y políticas IAM.
@@ -23,6 +23,23 @@ El rol permite las lecturas necesarias para el catálogo de Runtz. La política 
 confianza autoriza al rol del escáner y exige un External ID generado para tu
 workspace y cuenta. La validación comprueba la cuenta y rechaza roles que puedan
 asumirse sin el External ID correcto.
+
+## Conectar con access key
+
+1. Selecciona **Access key**, tu workspace, Account ID y regiones habilitadas.
+2. Descarga la política de solo lectura del wizard. En tu cuenta AWS, crea un usuario IAM dedicado sin acceso a consola y adjunta esta política.
+3. En **Security credentials** del usuario, crea una access key para una aplicación ejecutada fuera de AWS.
+4. Introduce **Access key ID** y **Secret access key**, verifica el acceso, asigna un nombre y conecta.
+
+Runtz confirma que la clave pertenece a un usuario IAM de la cuenta indicada.
+Las credenciales root y las claves temporales de sesión se rechazan. Ambos valores
+se guardan cifrados en Security y no se devuelven en los metadatos. Este método
+funciona sin identidad AWS central de Runtz. Prefiere roles cuando sea posible
+para evitar compartir credenciales permanentes.
+
+Para rotar, crea una clave nueva, guárdala en **Settings → Cloud → Replace access
+key**, verifica un escaneo y revoca la anterior en AWS. Los resultados se conservan.
+Desconectar elimina claves y resultados de Runtz; revoca la clave por separado en AWS.
 
 ## Cobertura y administración
 
@@ -39,11 +56,12 @@ contenido de discos quedan fuera de esta integración inicial.
 
 En **Settings → Cloud**, consulta cuenta, rol y regiones. Los propietarios y
 administradores self-hosted pueden escanear o desconectar; los miembros pueden
-leer resultados. Para cambiar rol o regiones, desconecta y vuelve a conectar.
+leer resultados. Para cambiar autenticación, rol o regiones, desconecta y vuelve a conectar.
 Desconectar elimina la autorización y resultados en Runtz. Elimina el stack
 CloudFormation por separado para retirar sus recursos IAM.
 
 Los operadores deben publicar Security antes del engine/frontend y configurar
 su identidad AWS según la [guía operativa](https://github.com/runtz-dev/runtz-security/blob/dev/docs/aws-setup.md).
 La URL S3 de creación rápida es opcional: siempre se puede descargar la plantilla.
-Las credenciales AWS solo se configuran en el runtime de Security, separadas para dev y prod.
+Las credenciales de la plataforma se configuran en el runtime de Security, separadas para dev y prod.
+Las claves del cliente se guardan cifradas en Mongo de Security. Access key funciona sin identidad central de Runtz.
