@@ -1,18 +1,18 @@
 ---
 title: Scanning AWS
-description: Conecte uma conta AWS com IAM Role e External ID e acompanhe findings e cobertura por região.
+description: Conecte uma conta AWS com IAM role ou access key e acompanhe findings e cobertura por região.
 ---
 
 # Scanning AWS
 
 Conecte uma conta comercial AWS em **Cloud → Add cloud → Amazon Web Services**.
 A Runtz executa 18 checks de configuração somente de leitura em IAM, S3,
-EC2/EBS, RDS, CloudTrail e EKS. A conexão usa uma IAM Role e sessões temporárias
-STS. Você não precisa enviar access keys da AWS.
+EC2/EBS, RDS, CloudTrail e EKS. Escolha uma IAM Role com sessões temporárias
+STS (recomendado) ou a access key de um usuário IAM dedicado.
 
-## Conectar uma conta
+## Conectar com IAM role
 
-1. Selecione um workspace do qual você é proprietário e informe o Account ID AWS de 12 dígitos.
+1. Selecione **IAM role (recommended)**, um workspace do qual você é proprietário e o Account ID AWS de 12 dígitos.
 2. Informe as regiões habilitadas que utiliza, separadas por vírgula: por exemplo, `us-east-1, sa-east-1`.
 3. Abra **AWS setup** ou baixe o JSON CloudFormation preenchido e envie-o em **CloudFormation → Create stack → With new resources**.
 4. Na conta de destino, revise o template, confirme a criação dos recursos IAM e crie a stack. Use uma identidade autorizada a criar roles e policies IAM.
@@ -23,6 +23,24 @@ O template cria uma role com permissões de leitura para o catálogo da Runtz.
 A relação de confiança autoriza a role do scanner e exige um External ID gerado
 para seu workspace e conta. A validação confirma a conta AWS e rejeita roles
 que possam ser assumidas sem o External ID correto.
+
+## Conectar com access key
+
+1. Selecione **Access key**, seu workspace, o Account ID e as regiões habilitadas.
+2. Baixe a policy somente de leitura pelo wizard. Na sua conta AWS, crie um usuário IAM dedicado sem acesso ao console e associe essa policy.
+3. Em **Security credentials** do usuário, crie uma access key para uma aplicação executada fora da AWS.
+4. Informe **Access key ID** e **Secret access key**, valide o acesso, escolha um nome e conecte.
+
+A Runtz confirma que a chave pertence a um usuário IAM da conta informada.
+Credenciais root e chaves de sessão temporária são rejeitadas. Os dois valores
+ficam criptografados no banco do Security e não são retornados nos metadados da
+conexão. Esse método funciona sem uma identidade AWS central da Runtz. Prefira
+roles quando possível para evitar compartilhar credenciais permanentes.
+
+Para rotacionar, gere uma nova chave, salve em **Settings → Cloud → Replace access
+key**, valide um scan e revogue a chave antiga na AWS. Os resultados são
+preservados. Desconectar remove as chaves armazenadas e os resultados da Runtz;
+revogue a chave separadamente na AWS.
 
 ## Cobertura
 
@@ -41,7 +59,7 @@ ECR e leitura do conteúdo de discos ficam fora desta integração inicial.
 
 Em **Settings → Cloud**, consulte conta, role IAM e regiões. Proprietários e
 administradores self-hosted podem iniciar scans e desconectar; membros podem
-ler resultados. Para alterar a role ou as regiões, desconecte e conecte novamente.
+ler resultados. Para alterar o método de autenticação, a role ou as regiões, desconecte e conecte novamente.
 Desconectar remove a autorização armazenada e os resultados da Runtz. Exclua
 a stack CloudFormation separadamente para remover os recursos IAM na AWS.
 
@@ -51,4 +69,6 @@ Publique primeiro o Security com suporte AWS e depois o engine/frontend.
 Configure identidade do scanner, credenciais de runtime e URL S3 opcional pelo
 [guia operacional](https://github.com/runtz-dev/runtz-security/blob/dev/docs/aws-setup.md).
 O wizard permite baixar o template mesmo sem URL de criação rápida.
-Credenciais AWS ficam somente no runtime do Security, com identidades independentes em dev e prod.
+Credenciais da plataforma ficam no runtime do Security, separadas entre dev e prod.
+Chaves dos clientes ficam criptografadas no Mongo do Security. A opção Access key funciona sem identidade AWS central da Runtz.
+Para preparar a conta central, siga o [passo a passo do operador](https://github.com/runtz-dev/runtz-security/blob/dev/docs/aws-central-account.pt-br.md).
