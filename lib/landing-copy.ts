@@ -171,7 +171,7 @@ export const landingCopy: Record<Locale, LandingCopy> = {
         'Run security scans across your applications, infrastructure, and runtime surface from one open source workspace.',
       cards: [
         {
-          title: 'SCA',
+          title: 'SCA scanning',
           body: 'Track vulnerable dependencies and keep package risk visible across every project.',
         },
         {
@@ -183,16 +183,20 @@ export const landingCopy: Record<Locale, LandingCopy> = {
           body: 'Audit Linux hosts and root filesystems so infrastructure risk stays in view.',
         },
         {
-          title: 'SAST',
+          title: 'SAST scanning',
           body: 'Find security issues in source code and route findings into one triage workflow.',
         },
         {
-          title: 'DAST',
+          title: 'DAST scanning',
           body: 'Test running applications for exposed behavior before attackers can rely on it.',
         },
         {
           title: 'Kubernetes scanning',
           body: 'Review clusters, workloads, exposure, and RBAC posture from the same workspace.',
+        },
+        {
+          title: 'Cloud scanning',
+          body: 'Review cloud configuration across Google Cloud (GCP), Amazon Web Services (AWS), and Microsoft Azure. Run scans from the site or your own terminal.',
         },
       ],
     },
@@ -352,28 +356,32 @@ export const landingCopy: Record<Locale, LandingCopy> = {
         'Execute análises de segurança em aplicações, infraestrutura e ambientes em execução a partir de um único workspace open source.',
       cards: [
         {
-          title: 'SCA',
+          title: 'SCA scanning',
           body: 'Monitore dependências vulneráveis e mantenha o risco dos pacotes visível em todos os projetos.',
         },
         {
-          title: 'Análise de contêineres',
+          title: 'Container scanning',
           body: 'Inspecione imagens antes da publicação e identifique os pacotes vulneráveis dentro dos contêineres.',
         },
         {
-          title: 'Análise de hosts',
+          title: 'Host scanning',
           body: 'Audite hosts Linux e sistemas de arquivos raiz para manter os riscos da infraestrutura sempre visíveis.',
         },
         {
-          title: 'SAST',
+          title: 'SAST scanning',
           body: 'Encontre falhas de segurança no código-fonte e centralize os achados em um único fluxo de triagem.',
         },
         {
-          title: 'DAST',
+          title: 'DAST scanning',
           body: 'Teste aplicações em execução e encontre comportamentos expostos antes que sejam explorados.',
         },
         {
-          title: 'Análise de Kubernetes',
+          title: 'Kubernetes scanning',
           body: 'Revise clusters, workloads, exposição e postura de RBAC no mesmo workspace.',
+        },
+        {
+          title: 'Cloud scanning',
+          body: 'Revise configurações de Google Cloud (GCP), Amazon Web Services (AWS) e Microsoft Azure. Execute scans pelo site ou pelo seu terminal.',
         },
       ],
     },
@@ -533,28 +541,32 @@ export const landingCopy: Record<Locale, LandingCopy> = {
         'Ejecuta análisis de seguridad en aplicaciones, infraestructura y entornos en ejecución desde un único espacio de trabajo de código abierto.',
       cards: [
         {
-          title: 'SCA',
+          title: 'SCA scanning',
           body: 'Supervisa las dependencias vulnerables y mantén visible el riesgo de los paquetes en todos tus proyectos.',
         },
         {
-          title: 'Análisis de contenedores',
+          title: 'Container scanning',
           body: 'Inspecciona las imágenes antes de publicarlas e identifica los paquetes vulnerables dentro de los contenedores.',
         },
         {
-          title: 'Análisis de hosts',
+          title: 'Host scanning',
           body: 'Audita hosts Linux y sistemas de archivos raíz para mantener visibles los riesgos de la infraestructura.',
         },
         {
-          title: 'SAST',
+          title: 'SAST scanning',
           body: 'Encuentra problemas de seguridad en el código fuente y centraliza los hallazgos en un solo flujo de priorización.',
         },
         {
-          title: 'DAST',
+          title: 'DAST scanning',
           body: 'Prueba aplicaciones en ejecución y detecta comportamientos expuestos antes de que puedan ser aprovechados.',
         },
         {
-          title: 'Análisis de Kubernetes',
+          title: 'Kubernetes scanning',
           body: 'Revisa clústeres, cargas de trabajo, exposición y postura de RBAC desde el mismo espacio de trabajo.',
+        },
+        {
+          title: 'Cloud scanning',
+          body: 'Revisa configuraciones de Google Cloud (GCP), Amazon Web Services (AWS) y Microsoft Azure. Ejecuta scans desde el sitio o tu terminal.',
         },
       ],
     },

@@ -5,7 +5,7 @@ description: Connect a Google Cloud project, review partial coverage and configu
 
 # Google Cloud scanning
 
-Connect a project in **Cloud → Add cloud → Google Cloud**. The guided setup
+Connect a project in **Cloud → Add cloud → Google Cloud → Connect through the site**. The guided setup
 supports Google Cloud Console and gcloud CLI. Runtz runs 32 read-only
 configuration checks and groups findings by severity, with evidence and remediation.
 A Google Cloud organization and Security Command Center are not required.
@@ -100,6 +100,61 @@ Upload the JSON file in Runtz, verify access, name the connection and select
 **Connect & start scan**. Keep keys out of source control. Organizations that
 block service account key creation need an administrator-approved approach;
 this integration currently uses JSON keys.
+
+## Scan with Runtz CLI
+
+Start the private read-only checks on Runtz Security from your terminal. The CLI
+reads your local service account key and sends it over HTTPS for validation and
+scanning. This CLI API uses the key only for the request without saving it;
+evaluated checks, findings and coverage are then uploaded to your workspace.
+
+1. Create the service account and JSON key using either setup method above.
+2. Install or update [Runtz CLI](/docs/install-cli), then sign in with a token
+   generated for the workspace that should receive the scan.
+3. Configure your project and run the scan:
+
+```bash
+runtz login
+runtz gcp config
+runtz gcp
+```
+
+The configuration prompt asks for the **project ID**, **local JSON file path**
+and a connection name. Paths with spaces work without shell escaping at the
+prompt. The file stays where you keep it; the config stores its absolute path.
+Avoid moving or deleting the key while it is in use. Run `runtz gcp config` to
+update the path or replace the key.
+
+Running `runtz gcp` for the first time in an interactive terminal opens setup
+automatically, then continues to the scan. The `config` command by itself only
+validates and saves; it does not send a scan.
+
+On Linux, settings are stored in `~/.config/runtz/config.json` (directory `0700`,
+file `0600`). macOS and Windows use their native user config directories.
+`RUNTZ_CONFIG_DIR` overrides the directory. Login and cloud configurations coexist;
+logging out removes the Runtz token and keeps cloud configuration.
+
+For noninteractive configuration, supply the project and local key path:
+
+```bash
+runtz gcp config --project-id YOUR_PROJECT_ID --credentials-file ./runtz-security-key.json
+```
+
+In CI, use `RUNTZ_TOKEN` and a key file supplied by your secrets manager. Cloud
+CLIs are needed only for the optional setup commands, not to run Runtz scans.
+All cloud commands support the standard severity gate flags:
+
+```bash
+runtz gcp --high-threshold 1
+```
+
+The result is sent before a severity gate returns exit code `3`. Execution
+errors return `1`. Check **Cloud → Google Cloud → your project** or follow the
+result link in the terminal. The setup screen can wait for your scan to arrive.
+CLI connections have no server-side schedule: rerun the command or schedule it
+in CI. A scope already connected through the site must be disconnected before
+switching to CLI scanning. Invalid or failed scans preserve the last published
+result; missing API access appears as incomplete coverage.
 
 ## Manage connections
 

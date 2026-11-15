@@ -3,29 +3,23 @@ import type { Metadata } from 'next';
 import {
   ArrowRight,
   BookOpen,
-  Boxes,
-  Code,
-  Container,
   CreditCard,
   FileText,
   HeartHandshake,
   LogIn,
   Milestone,
   Play,
-  ScanLine,
   Scale,
-  Server,
-  ShipWheel,
 } from 'lucide-react';
 import {
   AccentPill,
-  FeatureCard,
   MarketingPage,
   PrimaryLink,
   ProductConsole,
   SecondaryLink,
   SectionIntro,
 } from './_components/marketing';
+import { ScanShowcase } from './_components/scan-showcase';
 import { DeveloperWorkflow } from './_components/developer-workflow';
 import { InstallMethodTabs } from './_components/install-method-tabs';
 import { IntroVideo } from './_components/intro-video';
@@ -39,7 +33,7 @@ import {
 } from '@/lib/i18n';
 import { docsRoute, platformUrl, playgroundUrl, siteUrl } from '@/lib/shared';
 
-const platformCardIcons = [Boxes, Container, Server, Code, ScanLine, ShipWheel];
+
 
 const githubUrl = 'https://github.com/runtz-dev/runtz';
 const githubPath =
@@ -148,16 +142,7 @@ export default async function HomePage({ params }: PageProps<'/[lang]'>) {
           title={copy.platform.title}
           body={copy.platform.body}
         />
-        <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {copy.platform.cards.map((card, index) => (
-            <FeatureCard
-              key={card.title}
-              index={index}
-              icon={platformCardIcons[index]}
-              {...card}
-            />
-          ))}
-        </div>
+        <ScanShowcase cards={copy.platform.cards} locale={locale} />
       </section>
 
       <section className="mx-auto w-full max-w-[1400px] px-6 py-10 md:px-12 md:py-12">

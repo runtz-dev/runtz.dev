@@ -1,73 +1,116 @@
 ---
 title: AWS scanning
-description: Connect an AWS account with an IAM role or access key and review findings and regional coverage.
+description: Scan an AWS account through the site or from Runtz CLI using a dedicated read-only IAM user.
 ---
 
 # AWS scanning
 
-Connect one AWS commercial account in **Cloud → Add cloud → Amazon Web Services**.
-Runtz runs 18 read-only configuration checks across IAM, S3, EC2/EBS, RDS,
-CloudTrail and EKS. Choose an IAM role with temporary STS sessions (recommended)
-or a dedicated IAM user access key.
+Runtz runs **18 read-only configuration checks** across IAM, S3, EC2/EBS, RDS,
+CloudTrail and EKS. In **Cloud → Add cloud → Amazon Web Services**, choose
+**Connect through the site** or **Scan with Runtz CLI**. New connections use a
+**dedicated IAM user access key**. IAM role onboarding is deferred to a later release.
 
-## Connect with an IAM role
+## Prepare read-only access
 
-1. Choose **IAM role (recommended)**, a Runtz workspace that you own and the 12-digit AWS account ID.
-2. Enter the enabled regions you use, separated by commas, such as `us-east-1, sa-east-1`.
-3. Open **AWS setup**, or download the prefilled CloudFormation JSON and upload it through **CloudFormation → Create stack → With new resources**.
-4. In the target account, review the template, acknowledge its named IAM resources and create the stack. Use an administrator identity authorized to create IAM roles and policies.
-5. Wait for **CREATE_COMPLETE**, copy **RoleArn** from Outputs and paste it into Runtz.
-6. Verify access, name the connection and choose **Connect and start scan**.
+Use a dedicated IAM user, without console access, in the account you want to
+scan. Download the [Runtz read-only policy](/docs/assets/runtz-aws-readonly-policy.json).
+It contains the configuration-read permissions used by the current catalog.
 
-The template creates a role with a configuration-read policy scoped to Runtz's
-catalog. Its trust policy authorizes the operator's scanner role and requires
-an External ID generated for your workspace/account. Validation checks the exact
-AWS account and rejects roles that can be assumed without the correct External ID.
+### Via AWS console
 
-## Connect with an access key
+1. Open **IAM → Users → Create user** and create a dedicated `runtz-security` user.
+2. Under **Permissions → Add permissions → Create inline policy → JSON**, paste
+   the downloaded policy. Name it `RuntzReadOnly` and save.
+3. Open **Security credentials → Create access key**. Choose the use case that
+   matches where you run Runtz. Record the **access key ID** and **secret access key**.
+   The secret value is only shown when it is created.
+4. Copy your 12-digit account ID and decide which enabled regions to scan.
 
-1. Choose **Access key**, your owned workspace, account ID and enabled regions.
-2. Download the read-only policy from the wizard. In your AWS account, create a dedicated IAM user without console access and attach this policy.
-3. In the user's **Security credentials**, create an access key for an application running outside AWS.
-4. Enter **Access key ID** and **Secret access key**, verify access, name the connection and connect.
+### Via AWS CLI
 
-Runtz verifies that the keys belong to an IAM user in the selected account; root
-credentials and temporary session keys are rejected. Both key values are encrypted
-in Security's database and are never returned in connection metadata. This method
-works without a central Runtz AWS identity. Prefer roles when available to avoid
-sharing long-term credentials.
+Run these commands using an administrator identity authorized to create IAM users
+and policies. First confirm the returned account is your intended target. Save
+the downloaded policy as `runtz-readonly-policy.json` in the current directory.
+If the user name already exists, choose a unique dedicated name consistently.
 
-To rotate, create a replacement key, save it under **Settings → Cloud → Replace
-access key**, verify a scan and revoke the old key in AWS. Existing results are
-preserved. Disconnecting removes stored keys and results from Runtz; revoke the
-key separately in AWS.
+```bash
+aws sts get-caller-identity
+aws iam create-user --user-name runtz-security
+aws iam put-user-policy --user-name runtz-security --policy-name RuntzReadOnly --policy-document file://runtz-readonly-policy.json
+aws iam create-access-key --user-name runtz-security
+```
+
+These are setup operations performed by the administrator. The scanner only
+reads configuration. See the [AWS access key command reference](https://docs.aws.amazon.com/cli/latest/reference/iam/create-access-key.html).
+
+## Connect through the site
+
+1. Choose your workspace, account ID and enabled regions, such as `us-east-1, sa-east-1`.
+2. Follow either setup method, then enter the access key ID and secret.
+3. Verify access, name the connection and choose **Connect and start scan**.
+
+Runtz verifies the account and IAM user identity. Root keys and temporary session
+credentials are rejected. Key values are encrypted in the Security database and
+are never returned in connection metadata. Site connections repeat every 12 hours.
+To rotate a key, use **Settings → Cloud → Replace access key**, verify a new scan,
+then revoke the old key in AWS. Existing IAM role connections remain readable.
+
+## Scan with Runtz CLI
+
+Install or update [Runtz CLI](/docs/install-cli). Sign in using a token for the
+workspace that should receive your results, configure AWS, then scan:
+
+```bash
+runtz login
+runtz aws config
+runtz aws
+```
+
+The prompt asks for **account ID**, **access key ID**, **secret access key**,
+**regions** and a display name. The secret is hidden while typing. Configuration
+is validated before it is saved. On Linux the file is `~/.config/runtz/config.json`
+with owner-only permissions; macOS and Windows use their native config directory.
+`RUNTZ_CONFIG_DIR` overrides the directory.
+
+Configuration is saved locally. The CLI sends cloud credentials over HTTPS to
+Runtz Security for validation and scanning. Private checks run there and this
+CLI API does not save credentials. The CLI then uploads evaluated checks, findings
+and coverage to your workspace. `runtz aws` opens setup automatically
+if AWS is missing in an interactive terminal; `runtz aws config` only configures.
+
+For CI, supply `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `RUNTZ_TOKEN`
+through your secret manager. Provide account and regions explicitly:
+
+```bash
+runtz aws --account-id YOUR_ACCOUNT_ID --regions us-east-1,sa-east-1 --high-threshold 1
+```
+
+The terminal prints progress and a link to **Cloud → Amazon Web Services**.
+Results are sent before an enabled severity gate returns exit code `3`.
+Update local keys with `runtz aws config`. CLI scans run when you execute or
+schedule the command; they have no automatic Runtz server schedule.
+A scope connected through the site must be disconnected before switching to CLI.
 
 ## Coverage
 
-IAM and account checks run once. Resource checks run in selected regions; other
-regions remain outside coverage. Missing permissions and unevaluated fields are
-shown in **Checks**, not counted as passes. Scans repeat every 12 hours; a failed
-scan preserves the previous result.
+Global IAM/account checks run once. Regional checks evaluate the selected regions;
+other regions remain outside coverage. Missing permissions and unevaluated fields
+appear under **Checks**, not as passes. A failed scan preserves previous results.
 
-Public-access-block checks evaluate S3 controls, not proof of public bucket access.
-Security-group checks evaluate configuration, not effective network reachability.
-RDS cluster/replica-managed backups and organization/shadow CloudTrail trails
-require separate review. AWS Organizations, ECR and disk-content scanning are
-outside this initial integration.
+S3 public-access-block checks evaluate controls, not proof of public bucket access.
+Security-group checks evaluate configuration, not effective reachability. RDS
+cluster/replica-managed backups and organization/shadow CloudTrail trails require
+separate review. AWS Organizations, ECR and disk-content scanning are outside scope.
 
-## Manage access
+## Remove a connection
 
-In **Settings → Cloud**, inspect the account, IAM role and selected regions.
-Workspace owners and self-hosted administrators can start scans or disconnect;
-members can read results. To change authentication method, role or regions, disconnect and reconnect.
-Disconnect removes Runtz's stored authorization and results. Delete the AWS
-CloudFormation stack separately to remove its IAM resources.
+In **Settings → Cloud**, remove the connection or CLI results. This does not delete
+the AWS IAM user or revoke its keys. Revoke unused keys in AWS separately.
 
 ## Operator setup
 
-Deploy the AWS-capable Runtz Security service before the engine/frontend. Configure
-its scanner role, runtime AWS identity and optional S3 template URL using the
-[operator setup guide](https://github.com/runtz-dev/runtz-security/blob/dev/docs/aws-setup.md).
-The wizard supports a downloadable template even when no quick-create URL is configured.
-Platform credentials belong in the Security runtime, with independent dev/prod identities.
-Customer access keys are stored encrypted in Security Mongo. Direct-key connections work without a central scanner identity.
+Deploy the AWS-capable Runtz Security service before using site connections.
+Direct-key connections do not require a central Runtz AWS identity. See the
+[operator guide](https://github.com/runtz-dev/runtz-security/blob/dev/docs/aws-setup.md).
+CLI scanning requires the public Security API, authenticated with your workspace
+token, and uploads evaluated results through the engine.
