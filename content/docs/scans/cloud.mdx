@@ -1,0 +1,55 @@
+---
+title: Cloud scanning
+description: Read-only security checks across Google Cloud, Amazon Web Services and Microsoft Azure.
+---
+
+# Cloud scanning
+
+Scan **Google Cloud (GCP), Amazon Web Services (AWS) and Microsoft Azure** from one
+Runtz workspace. Choose automatic site connections or run the same read-only
+checks on Runtz Security from your terminal with Runtz CLI.
+
+| Cloud | Scope | Setup guide |
+| --- | --- | --- |
+| Google Cloud | Project | [GCP setup](/docs/scans/google-cloud) |
+| AWS | Account and selected regions | [AWS setup](/docs/scans/aws) |
+| Microsoft Azure | Subscription | [Azure setup](/docs/scans/azure) |
+
+## Run from your terminal
+
+[Install the CLI](/docs/install-cli), sign in with a token for your destination
+workspace and configure the provider you want to scan:
+
+```bash
+runtz login
+runtz gcp config
+runtz gcp
+```
+
+Use `runtz aws config` / `runtz aws` or `runtz azure config` / `runtz azure` for the
+other clouds. The provider guides cover console and provider-CLI setup, required
+credentials, permissions and CI usage.
+
+CLI configuration is saved on your machine. Validation and scans send cloud
+credentials over HTTPS to Runtz Security, where the private checks run. This CLI
+API uses credentials only for the request without saving them. The CLI then
+uploads evaluated checks, findings and coverage to your workspace. New checks
+arrive through Security updates without needing a CLI update.
+
+Site connections store encrypted cloud authorization and scan
+automatically every 12 hours. CLI scans run when you execute or schedule the
+command. A cloud scope uses one connection method per workspace; disconnect
+before switching methods.
+
+Review findings with evidence, remediation and severity, then inspect **Checks**
+for skipped permissions and incomplete coverage. Missing access never counts as
+a pass. DAST is a separate planned scan family and is not part of cloud scanning.
+
+## Public Security endpoint
+
+Hosted CLI scans call `https://security.runtz.dev`, authenticated with the same
+workspace token as the engine. Development uses `security-dev.runtz.dev` with
+`engine-dev.runtz.dev`. Self-hosted installations set `RUNTZ_SECURITY_ENDPOINT`
+or pass `--security-endpoint` during configuration. The Security operator must
+configure its matching `RUNTZ_SECURITY_ENGINE_URL`. HTTPS is required, except
+loopback HTTP for local development.

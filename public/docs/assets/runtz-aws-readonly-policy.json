@@ -1,0 +1,29 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "cloudtrail:DescribeTrails",
+        "cloudtrail:GetTrailStatus",
+        "ec2:DescribeInstances",
+        "ec2:DescribeRegions",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeVolumes",
+        "eks:DescribeCluster",
+        "eks:ListClusters",
+        "iam:GetAccountSummary",
+        "iam:GetLoginProfile",
+        "iam:ListMFADevices",
+        "iam:ListUsers",
+        "rds:DescribeDBInstances",
+        "s3:GetAccountPublicAccessBlock",
+        "s3:GetBucketLocation",
+        "s3:GetBucketPublicAccessBlock",
+        "s3:GetBucketVersioning",
+        "s3:ListAllMyBuckets"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

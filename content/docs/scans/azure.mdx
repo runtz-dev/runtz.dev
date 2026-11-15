@@ -1,0 +1,102 @@
+---
+title: Azure scanning
+description: Scan Microsoft Azure subscription configuration from the site or your own terminal with Runtz CLI.
+---
+
+# Azure scanning
+
+Runtz runs **14 read-only configuration checks** against Azure Resource Manager
+at subscription scope. In **Cloud → Add cloud → Microsoft Azure**, choose
+**Connect through the site** or **Scan with Runtz CLI**.
+
+## Prepare application access
+
+You need a **subscription ID**, **directory (tenant) ID**, **application (client)
+ID** and a **client secret value**. Give the service principal the **Reader** role
+on the target subscription. No Contributor/Owner role or Defender for Cloud is
+required for scanning. Missing reads appear as incomplete coverage.
+
+### Via Azure Portal
+
+1. Open **Microsoft Entra ID → App registrations → New registration**. Register
+   a dedicated application and copy its application ID and directory ID.
+2. Open **Subscriptions → your subscription → Access control (IAM)**. An
+   administrator authorized to assign roles grants **Reader** to the application's
+   service principal at this subscription scope.
+3. Under the application's **Certificates & secrets**, create a client secret
+   and copy its **value**, rather than the secret ID. Set an expiry and retain the
+   value securely; it is only displayed when created.
+4. Copy the subscription ID from **Subscriptions → Overview**.
+
+### Via Azure CLI
+
+Use an identity authorized to register the application and grant subscription
+access. Choose a unique name for a new application; reusing a display name may
+modify an existing principal.
+
+```bash
+az login
+az account set --subscription YOUR_SUBSCRIPTION_ID
+az ad sp create-for-rbac --name runtz-security --role Reader --scopes /subscriptions/YOUR_SUBSCRIPTION_ID
+```
+
+Map the output to the configuration prompt: `appId` → client ID, `tenant` →
+tenant ID, `password` → client secret value. The subscription ID is the one you
+selected. See [Microsoft's service principal guide](https://learn.microsoft.com/en-us/cli/azure/azure-cli-sp-tutorial-1?view=azure-cli-latest).
+The administrator performs these setup changes; Runtz never creates applications,
+assigns roles or registers resource providers while scanning.
+
+## Connect through the site
+
+Select your workspace and subscription, follow either setup method, enter the
+application credentials and verify access. Name the connection and start the
+first scan. The Security service encrypts the stored secret. Scans repeat every
+12 hours. Replace expired credentials under **Settings → Cloud**.
+
+## Scan with Runtz CLI
+
+Install or update [Runtz CLI](/docs/install-cli), then run:
+
+```bash
+runtz login
+runtz azure config
+runtz azure
+```
+
+Use a Runtz token for the workspace that should receive the results. The setup
+prompt asks for subscription ID, tenant ID, client ID, client secret value and a
+connection name. The secret is hidden. Access is verified before saving.
+
+On Linux, settings are stored in `~/.config/runtz/config.json` (directory `0700`,
+file `0600`). macOS and Windows use their native config directories.
+`RUNTZ_CONFIG_DIR` overrides the directory. The CLI sends cloud credentials over
+HTTPS to Runtz Security for validation and scanning. Private checks run there;
+this CLI API does not save credentials. Only evaluated checks, findings and
+coverage are then uploaded to your workspace.
+
+`runtz azure` starts setup automatically when configuration is missing in an
+interactive terminal, then continues to scan. `runtz azure config` only saves
+configuration and can also update an expired secret.
+
+For noninteractive use, supply `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`,
+`AZURE_CLIENT_SECRET` and `RUNTZ_TOKEN` through your secret manager:
+
+```bash
+runtz azure --subscription-id YOUR_SUBSCRIPTION_ID --high-threshold 1
+```
+
+Runtz prints progress and the result link. Findings appear in **Cloud → Microsoft
+Azure** with their CLI source. Severity gates run after upload and return exit
+code `3` when breached. Execution errors return `1`. CLI scans have no server-side
+schedule: run the command again or schedule it in CI. A subscription already
+connected through the site must be disconnected before switching to CLI scanning.
+
+## Coverage and removal
+
+Review the Checks tab for skipped, failed and not-applicable results. An empty
+findings list does not imply every resource was evaluated. Subscription reads
+may be restricted by policy or unavailable resource providers. A failed scan
+preserves previous results.
+
+Removing the connection under **Settings → Cloud** does not delete the Entra
+application or revoke its secret. Manage those in Azure separately.
