@@ -78,9 +78,6 @@ export type AiAssistantDemoCopy = {
   question: string;
   answer: string;
   label: string;
-  pause: string;
-  play: string;
-  replay: string;
 };
 
 export const aiAssistantDemoCopy: Record<Locale, AiAssistantDemoCopy> = {
@@ -88,24 +85,15 @@ export const aiAssistantDemoCopy: Record<Locale, AiAssistantDemoCopy> = {
     question: 'Any critical CVEs in payments-api right now?',
     answer: 'payments-api has 1 critical: axios 1.7.4 (CVE-2025-27152). Bumping to 1.8.2 clears it. Want the PR?',
     label: 'Illustrative conversation from the runtz product demo.',
-    pause: 'Pause conversation animation',
-    play: 'Resume conversation animation',
-    replay: 'Replay conversation',
   },
   'pt-br': {
     question: 'Existe alguma CVE crítica em payments-api agora?',
     answer: 'payments-api tem 1 crítica: axios 1.7.4 (CVE-2025-27152). Atualizar para 1.8.2 corrige a falha. Quer o PR?',
     label: 'Conversa ilustrativa do vídeo de demonstração do runtz.',
-    pause: 'Pausar animação da conversa',
-    play: 'Retomar animação da conversa',
-    replay: 'Repetir conversa',
   },
   es: {
     question: '¿Hay alguna CVE crítica en payments-api ahora?',
     answer: 'payments-api tiene 1 crítica: axios 1.7.4 (CVE-2025-27152). Actualizar a 1.8.2 lo resuelve. ¿Quieres el PR?',
     label: 'Conversación ilustrativa del vídeo de demostración de runtz.',
-    pause: 'Pausar animación de la conversación',
-    play: 'Reanudar animación de la conversación',
-    replay: 'Repetir conversación',
   },
 };
