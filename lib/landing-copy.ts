@@ -226,7 +226,7 @@ export const landingCopy: Record<Locale, LandingCopy> = {
     },
     deployment: {
       eyebrow: 'cloud or self-hosted',
-      title: 'Start now in the cloud, or run it in your own infrastructure.',
+      title: 'Start now in the cloud, or run the platform in your own infrastructure.',
       body:
         'Get started with a managed workspace and bring security visibility to your team in minutes. For stricter data requirements, self-host the platform and keep every scan, finding, and environment detail inside your own infrastructure.',
       installMethodLabel: 'Install method',
