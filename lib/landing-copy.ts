@@ -103,6 +103,7 @@ export type LandingCopy = {
     copied: string;
     vscodeTitle: string;
     vscodeBody: string;
+    scanSent: string;
     explorerLabel: string;
     contextMenu: {
       open: string;
@@ -209,7 +210,8 @@ export const landingCopy: Record<Locale, LandingCopy> = {
       windowsLabel: 'Windows (PowerShell)',
       copyCommand: 'Copy command',
       copied: 'Copied',
-      vscodeTitle: 'Scan easily with the Runtz VS Code Extension',
+      vscodeTitle: 'Scan easily with the runtz VS Code Extension',
+      scanSent: 'Scan sent',
       vscodeBody:
         'Right-click a supported manifest and run an SCA scan directly from the Explorer.',
       explorerLabel: 'Explorer',
@@ -394,7 +396,8 @@ export const landingCopy: Record<Locale, LandingCopy> = {
       windowsLabel: 'Windows (PowerShell)',
       copyCommand: 'Copiar comando',
       copied: 'Copiado',
-      vscodeTitle: 'Analise facilmente com a extensão Runtz para VS Code',
+      vscodeTitle: 'Analise facilmente com a extensão runtz para VS Code',
+      scanSent: 'Scan enviado',
       vscodeBody:
         'Clique com o botão direito em um manifest compatível e execute um scan SCA direto pelo Explorer.',
       explorerLabel: 'Explorer',
@@ -579,7 +582,8 @@ export const landingCopy: Record<Locale, LandingCopy> = {
       windowsLabel: 'Windows (PowerShell)',
       copyCommand: 'Copiar comando',
       copied: 'Copiado',
-      vscodeTitle: 'Analiza fácilmente con la extensión Runtz para VS Code',
+      vscodeTitle: 'Analiza fácilmente con la extensión runtz para VS Code',
+      scanSent: 'Análisis enviado',
       vscodeBody:
         'Haz clic derecho en un manifiesto compatible y ejecuta un análisis SCA directamente desde el Explorador.',
       explorerLabel: 'Explorador',
