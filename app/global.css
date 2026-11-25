@@ -817,6 +817,147 @@ html > body[data-scroll-locked] {
   46%, 100% { opacity: 0; }
 }
 .rz-terminal-cursor { animation: rz-terminal-cursor 1s step-end infinite; }
+
+@keyframes rz-workflow-signal {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(650%); }
+}
+
+.rz-scan-receipt-sending::before {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 20%;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, #6db5ff 0 3px, transparent 3px 6px);
+  content: '';
+  animation: rz-workflow-signal 650ms linear infinite;
+}
+
+.rz-scan-receipt[data-playing='false']::before {
+  animation-play-state: paused;
+}
+
+.rz-vscode-canvas {
+  --rz-vscode-duration: 4800ms;
+}
+
+.rz-vscode-pointer {
+  animation: rz-vscode-pointer var(--rz-vscode-duration) ease-in-out both;
+}
+
+.rz-vscode-manifest {
+  animation: rz-vscode-select var(--rz-vscode-duration) linear both;
+}
+
+.rz-vscode-menu {
+  left: var(--rz-vscode-menu-x, 24%);
+  top: var(--rz-vscode-menu-y, 38%);
+  animation: rz-vscode-menu var(--rz-vscode-duration) linear both;
+}
+
+.rz-vscode-scan-action {
+  animation: rz-vscode-action var(--rz-vscode-duration) linear both;
+}
+
+.rz-vscode-file-click {
+  left: var(--rz-vscode-file-x);
+  top: var(--rz-vscode-file-y);
+  animation: rz-vscode-file-click var(--rz-vscode-duration) ease-out both;
+}
+
+.rz-vscode-scan-click {
+  left: var(--rz-vscode-scan-x);
+  top: var(--rz-vscode-scan-y);
+  animation: rz-vscode-scan-click var(--rz-vscode-duration) ease-out both;
+}
+
+.rz-vscode-notification {
+  animation: rz-vscode-notification var(--rz-vscode-duration) ease-out both;
+}
+
+.rz-vscode-demo .rz-vscode-canvas * {
+  animation-play-state: paused;
+}
+
+.rz-vscode-demo[data-playing='true'] .rz-vscode-canvas * {
+  animation-play-state: running;
+}
+
+@keyframes rz-vscode-pointer {
+  0%, 8% {
+    opacity: 0;
+    transform: translate(var(--rz-vscode-start-x), var(--rz-vscode-start-y));
+  }
+  12% {
+    opacity: 1;
+    transform: translate(var(--rz-vscode-start-x), var(--rz-vscode-start-y));
+  }
+  26%, 41% {
+    opacity: 1;
+    transform: translate(var(--rz-vscode-file-x), var(--rz-vscode-file-y));
+  }
+  62%, 67% {
+    opacity: 1;
+    transform: translate(var(--rz-vscode-scan-x), var(--rz-vscode-scan-y));
+  }
+  75%, 100% {
+    opacity: 0;
+    transform: translate(var(--rz-vscode-scan-x), var(--rz-vscode-scan-y));
+  }
+}
+
+@keyframes rz-vscode-select {
+  0%, 25% { background-color: transparent; }
+  27%, 100% { background-color: #37373d; }
+}
+
+@keyframes rz-vscode-menu {
+  0%, 32%, 71%, 100% { opacity: 0; }
+  35%, 67% { opacity: 1; }
+}
+
+@keyframes rz-vscode-action {
+  0%, 53% { background-color: transparent; }
+  60%, 64% { background-color: #094771; }
+  66%, 68% { background-color: #0e639c; }
+  71%, 100% { background-color: #094771; }
+}
+
+@keyframes rz-vscode-file-click {
+  0%, 25% { opacity: 0; transform: translate(-50%, -50%) scale(0.35); }
+  27% { opacity: 0.9; transform: translate(-50%, -50%) scale(0.55); }
+  35%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.7); }
+}
+
+@keyframes rz-vscode-scan-click {
+  0%, 63% { opacity: 0; transform: translate(-50%, -50%) scale(0.35); }
+  65% { opacity: 0.9; transform: translate(-50%, -50%) scale(0.55); }
+  74%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.7); }
+}
+
+@keyframes rz-vscode-notification {
+  0%, 71% { opacity: 0; transform: translateY(6px); }
+  77%, 100% { opacity: 1; transform: translateY(0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .rz-terminal-cursor { animation: none; }
+  .rz-terminal-cursor,
+  .rz-scan-receipt-sending::before { animation: none; }
+
+  .rz-ai-panel *,
+  .rz-install-journey *,
+  .rz-scan-receipt * { transition: none; }
+
+  .rz-vscode-card,
+  .rz-vscode-demo { transition: none; }
+
+  .rz-vscode-demo .rz-vscode-canvas * { animation: none; }
+
+  .rz-vscode-pointer,
+  .rz-vscode-click,
+  .rz-vscode-notification { display: none; }
+
+  .rz-vscode-menu { opacity: 1; }
+  .rz-vscode-manifest { background-color: #37373d; }
+  .rz-vscode-scan-action { background-color: #094771; }
 }

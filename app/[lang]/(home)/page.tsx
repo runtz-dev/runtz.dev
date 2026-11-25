@@ -142,7 +142,7 @@ export default async function HomePage({ params }: PageProps<'/[lang]'>) {
           title={copy.platform.title}
           body={copy.platform.body}
         />
-        <ScanShowcase cards={copy.platform.cards} locale={locale} />
+        <ScanShowcase cards={copy.platform.cards} installCopy={copy.developerWorkflow} locale={locale} />
       </section>
 
       <section className="mx-auto w-full max-w-[1400px] px-6 py-10 md:px-12 md:py-12">
@@ -165,7 +165,7 @@ export default async function HomePage({ params }: PageProps<'/[lang]'>) {
         </div>
       </section>
 
-      <DeveloperWorkflow copy={copy.developerWorkflow} />
+      <DeveloperWorkflow copy={copy.developerWorkflow} locale={locale} />
 
       <section className="mx-auto w-full max-w-[1400px] px-6 py-10 md:px-12 md:py-12">
         <h2 className="text-center text-3xl font-semibold text-[#2f7eff] dark:text-[#6db5ff] md:text-4xl">

@@ -1,7 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Locale } from '@/lib/i18n';
+import { useDemoClock } from './use-demo-clock';
+
+export type ScanPhase = 'scanning' | 'sending' | 'received';
 
 type OutputLine = {
   text: string;
@@ -122,39 +125,31 @@ export function ScanTerminal({
   locale,
   playing,
   reducedMotion,
+  onPhaseChange,
 }: {
   demo: TerminalDemo;
   locale: Locale;
   playing: boolean;
   reducedMotion: boolean;
+  onPhaseChange?: (phase: ScanPhase) => void;
 }) {
-  const [elapsed, setElapsed] = useState(0);
-  const elapsedRef = useRef(0);
   const typingStart = 250;
   const typingEnd = typingStart + demo.command.length * 35;
   const completeAt = typingEnd + demo.output.at(-1)!.after;
-  const time = reducedMotion ? completeAt : elapsed;
+  const time = useDemoClock({ duration: completeAt, playing, reducedMotion });
   const complete = time >= completeAt;
   const characters = Math.max(0, Math.floor((time - typingStart) / 35));
   const copy = terminalCopy[locale];
+  const phase: ScanPhase = complete ? 'received' : time >= completeAt - 650 ? 'sending' : 'scanning';
+  const output = demo.output.some(line => line.text.startsWith('Sending')) ? demo.output : [
+    ...demo.output.slice(0, -1),
+    { text: 'Sending results to runtz...', tone: 'muted' as const, after: demo.output.at(-1)!.after - 650 },
+    demo.output.at(-1)!,
+  ];
 
   useEffect(() => {
-    if (!playing || reducedMotion || elapsedRef.current >= completeAt) return;
-    let previous = performance.now();
-    let lastPaint = elapsedRef.current;
-    let frame: number;
-    function tick(now: number) {
-      elapsedRef.current = Math.min(completeAt, elapsedRef.current + now - previous);
-      previous = now;
-      if (elapsedRef.current - lastPaint >= 32 || elapsedRef.current === completeAt) {
-        lastPaint = elapsedRef.current;
-        setElapsed(lastPaint);
-      }
-      if (elapsedRef.current < completeAt) frame = requestAnimationFrame(tick);
-    }
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [playing, reducedMotion, completeAt]);
+    onPhaseChange?.(phase);
+  }, [phase, onPhaseChange]);
 
   return (
     <figure className="rz-scan-terminal rz-scan-content min-w-0 w-full overflow-hidden rounded-xl border border-[#33445d] bg-[#0b111c] text-[#eaf4ff] shadow-[0_16px_48px_-24px_rgba(0,0,0,0.65)]">
@@ -168,8 +163,8 @@ export function ScanTerminal({
         <span className="ml-auto shrink-0 text-[10px] text-[#9db0cc]">{copy.demo}</span>
       </figcaption>
       {/* Static equivalent avoids announcing every typed character and output line. */}
-      <pre className="sr-only">{copy.description}{'\n$ '}{demo.command}{'\n'}{demo.output.map(line => line.text).join('\n')}</pre>
-      <div aria-hidden="true" className="h-[352px] overflow-y-auto px-4 py-5 font-mono text-xs leading-[22px] sm:h-[300px] sm:px-5 lg:h-[244px] lg:px-6 lg:py-4 lg:leading-5">
+      <pre className="sr-only">{copy.description}{'\n$ '}{demo.command}{'\n'}{output.map(line => line.text).join('\n')}</pre>
+      <div aria-hidden="true" className="h-[352px] overflow-y-auto px-4 py-5 font-mono text-xs leading-[22px] sm:h-[300px] sm:px-5 lg:h-[268px] lg:px-6 lg:py-4 lg:leading-5">
         <div className="mb-4 flex items-start gap-2 text-[#f3f7ff] lg:mb-3">
           <span className="select-none text-[#73dfac]">$</span>
           <div className="min-w-0 flex-1 break-words [overflow-wrap:anywhere]">
@@ -178,7 +173,7 @@ export function ScanTerminal({
           </div>
         </div>
         <div className="space-y-1.5 lg:space-y-1">
-          {demo.output.map(line => {
+          {output.map(line => {
             const shown = time >= typingEnd + line.after;
             return (
               <p key={line.text} className={`${line.tone ? tones[line.tone] : 'text-[#d3deee]'} break-words transition-[opacity,transform] duration-200 motion-reduce:transition-none ${shown ? 'translate-y-0 opacity-100' : 'translate-y-1 opacity-0'}`}>
@@ -203,11 +198,13 @@ export function CloudScanTerminal({
   playing,
   reducedMotion,
   onCycleComplete,
+  onPhaseChange,
 }: {
   locale: Locale;
   playing: boolean;
   reducedMotion: boolean;
   onCycleComplete: () => boolean;
+  onPhaseChange?: (phase: ScanPhase) => void;
 }) {
   const [providerIndex, setProviderIndex] = useState(0);
 
@@ -220,5 +217,5 @@ export function CloudScanTerminal({
     return () => clearTimeout(timer);
   }, [providerIndex, playing, reducedMotion, onCycleComplete]);
 
-  return <ScanTerminal key={providerIndex} demo={cloudDemos[providerIndex]} locale={locale} playing={playing} reducedMotion={reducedMotion} />;
+  return <ScanTerminal key={providerIndex} demo={cloudDemos[providerIndex]} locale={locale} playing={playing} reducedMotion={reducedMotion} onPhaseChange={onPhaseChange} />;
 }
