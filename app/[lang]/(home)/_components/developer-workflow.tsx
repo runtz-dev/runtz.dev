@@ -19,6 +19,12 @@ import { sitePath } from '@/lib/shared';
 import { AiWorkflowPanel } from './ai-workflow-panel';
 import { WarpField } from './shaders';
 
+const packageJsonLines = JSON.stringify({
+  name: 'acme-api',
+  scripts: { dev: 'next dev' },
+  dependencies: { next: '16.2.6', axios: '1.7.4' },
+}, null, 2).split('\n');
+
 function VsCodeMockup({ copy, enabled }: { copy: LandingCopy['developerWorkflow']; enabled: boolean }) {
   const root = useRef<HTMLDivElement>(null);
   const manifest = useRef<HTMLDivElement>(null);
@@ -142,16 +148,18 @@ function VsCodeMockup({ copy, enabled }: { copy: LandingCopy['developerWorkflow'
               package.json
             </div>
             <div className="space-y-1 px-4 py-4 text-[#d4d4d4]">
-              <div><span className="mr-3 text-[#858585]">1</span>{'{'}</div>
-              <div><span className="mr-3 text-[#858585]">2</span><span className="text-[#9cdcfe]">&quot;name&quot;</span>: <span className="text-[#ce9178]">&quot;acme-api&quot;</span>,</div>
-              <div><span className="mr-3 text-[#858585]">3</span><span className="text-[#9cdcfe]">&quot;scripts&quot;</span>: {'{'}</div>
-              <div className="pl-3"><span className="mr-3 text-[#858585]">4</span><span className="text-[#9cdcfe]">&quot;dev&quot;</span>: <span className="text-[#ce9178]">&quot;next dev&quot;</span></div>
-              <div><span className="mr-3 text-[#858585]">5</span>{'}'},</div>
-              <div><span className="mr-3 text-[#858585]">6</span><span className="text-[#9cdcfe]">&quot;dependencies&quot;</span>: {'{'}</div>
-              <div className="pl-3"><span className="mr-3 text-[#858585]">7</span><span className="text-[#9cdcfe]">&quot;next&quot;</span>: <span className="text-[#ce9178]">&quot;16.2.6&quot;</span>,</div>
-              <div className="pl-3"><span className="mr-3 text-[#858585]">8</span><span className="text-[#9cdcfe]">&quot;axios&quot;</span>: <span className="text-[#ce9178]">&quot;1.7.4&quot;</span></div>
-              <div><span className="mr-3 text-[#858585]">9</span>{'}'}</div>
-              <div><span className="mr-3 text-[#858585]">10</span>{'}'}</div>
+              {packageJsonLines.map((line, lineIndex) => (
+                <div key={lineIndex} className="grid grid-cols-[2ch_minmax(0,1fr)] gap-x-3">
+                  <span className="text-right text-[#858585]">{lineIndex + 1}</span>
+                  <code className="whitespace-pre">
+                    {line.split(/("(?:\\.|[^"\\])*")/g).map((token, tokenIndex, tokens) => (
+                      token.startsWith('"')
+                        ? <span key={tokenIndex} className={tokens[tokenIndex + 1]?.startsWith(':') ? 'text-[#9cdcfe]' : 'text-[#ce9178]'}>{token}</span>
+                        : token
+                    ))}
+                  </code>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -191,28 +199,35 @@ function VsCodePanel({ copy, autoStart }: { copy: LandingCopy['developerWorkflow
   }
 
   return (
-    <a
-      href="https://marketplace.visualstudio.com/items?itemName=Runtz.runtz-security"
-      target="_blank"
-      rel="noreferrer noopener"
+    <article
       onPointerEnter={event => { if (event.pointerType === 'mouse') replay(); }}
-      onFocus={replay}
-      className="rz-vscode-card relative flex min-h-[430px] min-w-0 cursor-pointer flex-col overflow-hidden rounded-[24px] border border-[#071222]/10 bg-[#f7fbff]/88 p-6 text-[#071222] rz-soft-shadow transition-[border-color,box-shadow] duration-300 hover:border-[#2f7eff]/45 hover:shadow-[0_18px_48px_-24px_rgba(47,126,255,0.35)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2f7eff] dark:border-[#213047] dark:bg-[#0d1420]/90 dark:text-[#eaf4ff] dark:hover:border-[#6db5ff]/45 dark:focus-visible:outline-[#6db5ff] sm:p-8"
+      className="rz-vscode-card relative flex min-h-[430px] min-w-0 flex-col overflow-hidden rounded-[24px] border border-[#071222]/10 bg-[#f7fbff]/88 p-6 text-[#071222] rz-soft-shadow transition-[border-color,box-shadow] duration-300 hover:border-[#2f7eff]/45 hover:shadow-[0_18px_48px_-24px_rgba(47,126,255,0.35)] motion-reduce:transition-none dark:border-[#213047] dark:bg-[#0d1420]/90 dark:text-[#eaf4ff] dark:hover:border-[#6db5ff]/45 sm:p-8"
     >
       <WarpField
         speed={0.5}
         className="mask-[radial-gradient(120%_120%_at_92%_0%,#000,transparent_72%)]"
       />
       <div className="relative z-10 flex flex-1 flex-col">
-        <h2 className="max-w-xl text-2xl font-semibold">
-          {copy.vscodeTitle}
+        <h2 className="max-w-xl text-3xl font-semibold leading-[1.15] xl:text-[34px]">
+          <a
+            href="https://marketplace.visualstudio.com/items?itemName=Runtz.runtz-security"
+            target="_blank"
+            rel="noreferrer noopener"
+            onFocus={replay}
+            className="group/title inline-block max-w-full rounded-sm no-underline transition-colors duration-300 hover:text-[#245f9d] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2f7eff] motion-reduce:transition-none dark:hover:text-[#c9e3ff] dark:focus-visible:outline-[#6db5ff]"
+          >
+            {copy.vscodeTitle}{' '}
+            <span className="block text-[#63758e] transition-colors duration-300 group-hover/title:text-[#3978ba] motion-reduce:transition-none dark:text-[#8da7c8] dark:group-hover/title:text-[#b8d9ff]">
+              {copy.vscodeTitleAccent}
+            </span>
+          </a>
         </h2>
         <p className="mt-4 max-w-xl text-sm leading-6 text-[#53657d] dark:text-[#b8cbe4] sm:text-base sm:leading-7">
           {copy.vscodeBody}
         </p>
         <VsCodeMockup key={replayKey} copy={copy} enabled={autoStart || manualStart} />
       </div>
-    </a>
+    </article>
   );
 }
 

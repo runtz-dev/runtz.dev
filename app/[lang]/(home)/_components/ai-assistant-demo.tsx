@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Check, LoaderCircle, Pause, Play, RotateCcw } from 'lucide-react';
+import { Check, LoaderCircle } from 'lucide-react';
 import type { AiAssistantDemoCopy } from '@/lib/landing-workflow-copy';
 import { useDemoClock } from './use-demo-clock';
 
@@ -11,20 +11,17 @@ const steps = [
   { name: 'runtz_suggest_fix', detail: 'axios 1.7.4 → 1.8.2', start: 2500, done: 3150 },
 ];
 
-export function AiAssistantDemo({ copy, paused, onPauseChange, onComplete }: {
+export function AiAssistantDemo({ copy, onComplete }: {
   copy: AiAssistantDemoCopy;
-  paused: boolean;
-  onPauseChange: (paused: boolean) => void;
   onComplete: () => void;
 }) {
   const root = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [reduced, setReduced] = useState(false);
-  const [cycle, setCycle] = useState(0);
   const duration = ANSWER_START + copy.answer.length * 18 + 700;
-  const playing = visible && !hidden && !paused;
-  const time = useDemoClock({ duration, playing, reducedMotion: reduced, resetKey: cycle });
+  const playing = visible && !hidden;
+  const time = useDemoClock({ duration, playing, reducedMotion: reduced });
   const finished = time >= duration;
   const question = copy.question.slice(0, Math.max(0, Math.floor((time - 180) / 23)));
   const answer = copy.answer.slice(0, Math.max(0, Math.floor((time - ANSWER_START) / 18)));
@@ -52,33 +49,16 @@ export function AiAssistantDemo({ copy, paused, onPauseChange, onComplete }: {
     if (finished) onComplete();
   }, [finished, onComplete]);
 
-  function control() {
-    if (finished) {
-      onPauseChange(false);
-      setCycle(value => value + 1);
-    } else {
-      onPauseChange(!paused);
-    }
-  }
-
   return (
     <figure ref={root} className="rz-ai-conversation mt-auto min-w-0 pt-6">
       <figcaption className="sr-only">{copy.label} {copy.question} {copy.answer}</figcaption>
       <div className="relative overflow-hidden rounded-xl border border-[#33445d] bg-[#0b111c] text-[#d9e5f6] shadow-[0_12px_32px_-24px_rgba(0,0,0,0.6)]">
-        <div className="rz-ai-window-bar flex min-h-9 items-center justify-between gap-3 border-b border-white/7 bg-white/[0.025] px-3">
+        <div className="rz-ai-window-bar flex min-h-9 items-center border-b border-white/7 bg-white/[0.025] px-3">
           <span aria-hidden="true" className="flex gap-1.5">
             <span className="size-1.5 rounded-full bg-[#b56665]" />
             <span className="size-1.5 rounded-full bg-[#5d8ab9]" />
             <span className="size-1.5 rounded-full bg-[#55a58c]" />
           </span>
-          {!reduced && <button
-            type="button"
-            onClick={control}
-            aria-label={finished ? copy.replay : paused ? copy.play : copy.pause}
-            aria-pressed={finished ? undefined : paused}
-            title={finished ? copy.replay : paused ? copy.play : copy.pause}
-            className="flex size-7 cursor-pointer items-center justify-center rounded-md text-[#9fb8d7] transition-colors hover:bg-white/8 hover:text-white focus-visible:outline-2 focus-visible:outline-[#6db5ff]"
-          >{finished ? <RotateCcw className="size-3.5" /> : paused ? <Play className="size-3.5" /> : <Pause className="size-3.5" />}</button>}
         </div>
 
         {/* Fixed text reserves the final layout; only the overlay is typed. */}
