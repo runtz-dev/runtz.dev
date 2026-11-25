@@ -146,7 +146,7 @@ export default async function HomePage({ params }: PageProps<'/[lang]'>) {
       </section>
 
       <section className="mx-auto w-full max-w-[1400px] px-6 py-10 md:px-12 md:py-12">
-        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-stretch">
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-stretch">
           <div>
             <AccentPill>{copy.deployment.eyebrow}</AccentPill>
             <h2 className="mt-6 text-3xl font-semibold leading-tight md:text-4xl">

@@ -444,12 +444,6 @@ export type InstallOption = {
 
 export const installOptions: InstallOption[] = [
   {
-    id: 'docker',
-    label: 'Docker',
-    command: `curl -fsSL https://runtz.dev/docker-compose.yml -o docker-compose.yml
-docker compose up -d`,
-  },
-  {
     id: 'helm',
     label: 'Helm',
     command: `helm repo add runtz https://helm.runtz.dev
@@ -457,6 +451,12 @@ helm repo update
 helm upgrade --install runtz runtz/runtz \\
   --namespace runtz \\
   --create-namespace`,
+  },
+  {
+    id: 'docker',
+    label: 'Docker',
+    command: `curl -fsSL https://runtz.dev/docker-compose.yml -o docker-compose.yml
+docker compose up -d`,
   },
 ];
 
