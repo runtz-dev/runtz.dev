@@ -5,6 +5,7 @@ import { Boxes, ChevronRight, Cloud, Code, Container, Pause, Play, ScanLine, Ser
 import type { LandingCopy } from '@/lib/landing-copy';
 import type { Locale } from '@/lib/i18n';
 import { WarpField } from './shaders';
+import { AWSIcon, AzureIcon, GCPIcon } from './cloud-provider-icons';
 import { CloudScanTerminal, SCAN_ROTATION_MS, ScanTerminal, scanDemos } from './scan-terminal';
 
 const icons = [Boxes, Container, Server, Code, ScanLine, ShipWheel, Cloud];
@@ -78,7 +79,14 @@ export function ScanShowcase({ cards, locale }: { cards: LandingCopy['platform']
       <div className="relative min-w-0 p-6 sm:p-8 md:min-h-[560px] lg:p-9">
         <div role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-tab-${active}`} tabIndex={0} className="flex min-w-0 flex-col gap-6 outline-none focus-visible:rounded-lg focus-visible:ring-2 focus-visible:ring-[#2f7eff] sm:gap-7">
           <div className="min-w-0">
-            <div className="flex size-12 items-center justify-center rounded-xl border border-[#071222]/15 bg-[#071222] dark:border-white/15 dark:bg-white/5"><Icon className="size-6 text-white" strokeWidth={1.5} /></div>
+            <div className="flex items-center gap-4">
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-[#071222]/15 bg-[#071222] dark:border-white/15 dark:bg-white/5"><Icon className="size-6 text-white" strokeWidth={1.5} /></div>
+              {active === CLOUD_SCAN_INDEX && <div className="flex items-center gap-4 text-white">
+                <span role="img" aria-label="Google Cloud" title="Google Cloud" className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-[#071222]/15 bg-[#071222] dark:border-white/15 dark:bg-white/5"><GCPIcon colored className="size-7" /></span>
+                <span role="img" aria-label="Amazon Web Services" title="Amazon Web Services" className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-[#071222]/15 bg-[#071222] dark:border-white/15 dark:bg-white/5"><AWSIcon colored className="h-7 w-9" /></span>
+                <span role="img" aria-label="Microsoft Azure" title="Microsoft Azure" className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-[#071222]/15 bg-[#071222] dark:border-white/15 dark:bg-white/5"><AzureIcon colored className="size-7" /></span>
+              </div>}
+            </div>
             <div className="grid">
               {cards.map((card, index) => (
                 <div key={card.title} aria-hidden={index !== active} inert={index !== active} className={`min-w-0 [grid-area:1/1] ${index === active ? 'rz-scan-content' : 'invisible'}`}>
