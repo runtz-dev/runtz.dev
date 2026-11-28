@@ -1,134 +1,208 @@
 'use client';
 
+import Link from 'next/link';
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
-import { Boxes, Check, ChevronRight, Cloud, Code, Container, Pause, Play, ScanLine, Server, ShipWheel, Upload } from 'lucide-react';
+import { Boxes, Cloud, Code, Container, ScanLine, Server, ShipWheel } from 'lucide-react';
 import type { LandingCopy } from '@/lib/landing-copy';
-import type { Locale } from '@/lib/i18n';
-import { landingWorkflowCopy } from '@/lib/landing-workflow-copy';
-import { sitePath } from '@/lib/shared';
-import { WarpField } from './shaders';
+import { localizedPath, type Locale } from '@/lib/i18n';
 import { AWSIcon, AzureIcon, GCPIcon } from './cloud-provider-icons';
-import { CloudScanTerminal, SCAN_ROTATION_MS, ScanTerminal, scanDemos, type ScanPhase } from './scan-terminal';
-import { InstallJourney, INSTALL_INTRO_MS } from './install-journey';
+import { SCAN_ROTATION_MS, ScanTerminal, cloudDemos, scanDemos } from './scan-terminal';
 import { useDemoClock } from './use-demo-clock';
 
 const icons = [Boxes, Container, Server, Code, ScanLine, ShipWheel, Cloud];
 const CLOUD_SCAN_INDEX = icons.length - 1;
+const providers = [
+  { name: 'Google Cloud', shortName: 'GCP', Icon: GCPIcon },
+  { name: 'Amazon Web Services', shortName: 'AWS', Icon: AWSIcon },
+  { name: 'Microsoft Azure', shortName: 'Azure', Icon: AzureIcon },
+];
+
 const words = {
-  en: { modules: 'scanning modules', pause: 'Pause workflow animation', play: 'Resume workflow animation', soon: 'Coming soon', headlines: ["Know what’s in your code.", 'See inside every image.', 'Bring host risk into view.', 'Catch issues at the source.', 'Test your running surface.', 'Understand your cluster posture.', 'One view across your clouds.'] },
-  'pt-br': { modules: 'módulos de scanning', pause: 'Pausar animação do fluxo', play: 'Retomar animação do fluxo', soon: 'Em breve', headlines: ['Saiba o que existe no seu código.', 'Enxergue dentro de cada imagem.', 'Veja os riscos dos seus hosts.', 'Encontre falhas na origem.', 'Teste suas aplicações em execução.', 'Entenda a postura do seu cluster.', 'Uma visão de todas as suas clouds.'] },
-  es: { modules: 'módulos de scanning', pause: 'Pausar animación del flujo', play: 'Reanudar animación del flujo', soon: 'Próximamente', headlines: ['Conoce lo que hay en tu código.', 'Mira dentro de cada imagen.', 'Visualiza el riesgo de tus hosts.', 'Encuentra problemas en el origen.', 'Prueba tus aplicaciones en ejecución.', 'Entiende la postura de tu clúster.', 'Una vista de todas tus nubes.'] },
+  en: {
+    title: 'Every scan you need. All in one place.',
+    body: 'Scan code, dependencies, containers, hosts, Kubernetes, and cloud configuration. Bring every finding into one workspace.',
+    modules: 'Security scan types', providers: 'Cloud providers',
+    next: 'Next example in {seconds}s', paused: 'Automatic transition paused',
+    soon: 'Coming soon', roadmap: 'View the roadmap',
+    labels: ['SCA', 'Images', 'Hosts', 'SAST', 'DAST', 'Kubernetes', 'Cloud'],
+    headlines: ['Know what your code depends on.', 'Look inside every image.', 'Bring host risk into view.', 'Catch issues at the source.', 'A new angle on runtime risk.', 'See your cluster’s security posture.', 'One view across your clouds.'],
+    dastPreview: 'Runtime scanning is up next.',
+  },
+  'pt-br': {
+    title: 'Todos os scans de que você precisa. Em um só lugar.',
+    body: 'Analise código, dependências, containers, hosts, Kubernetes e configurações de cloud. Reúna todos os achados em um só workspace.',
+    modules: 'Tipos de scan de segurança', providers: 'Provedores de cloud',
+    next: 'Próximo exemplo em {seconds}s', paused: 'Transição automática pausada',
+    soon: 'Em breve', roadmap: 'Ver o roadmap',
+    labels: ['SCA', 'Imagens', 'Hosts', 'SAST', 'DAST', 'Kubernetes', 'Cloud'],
+    headlines: ['Saiba do que seu código depende.', 'Enxergue dentro de cada imagem.', 'Veja os riscos dos seus hosts.', 'Encontre falhas na origem.', 'Um novo olhar sobre riscos em runtime.', 'Veja a postura de segurança do cluster.', 'Uma visão de todas as suas clouds.'],
+    dastPreview: 'Scans de runtime vêm a seguir.',
+  },
+  es: {
+    title: 'Todos los análisis que necesitas. En un solo lugar.',
+    body: 'Analiza código, dependencias, contenedores, hosts, Kubernetes y configuraciones cloud. Reúne todos los hallazgos en un solo espacio.',
+    modules: 'Tipos de análisis de seguridad', providers: 'Proveedores cloud',
+    next: 'Próximo ejemplo en {seconds}s', paused: 'Transición automática en pausa',
+    soon: 'Próximamente', roadmap: 'Ver el roadmap',
+    labels: ['SCA', 'Imágenes', 'Hosts', 'SAST', 'DAST', 'Kubernetes', 'Cloud'],
+    headlines: ['Conoce de qué depende tu código.', 'Mira dentro de cada imagen.', 'Visualiza el riesgo de tus hosts.', 'Encuentra problemas en el origen.', 'Una nueva visión del riesgo en runtime.', 'Conoce la postura de seguridad del clúster.', 'Una vista de todas tus nubes.'],
+    dastPreview: 'El análisis de runtime es lo siguiente.',
+  },
 };
 
-export function ScanShowcase({ cards, installCopy, locale }: { cards: LandingCopy['platform']['cards']; installCopy: LandingCopy['developerWorkflow']; locale: Locale }) {
+function ScanAutoTransition({ playing, reducedMotion, locale, onComplete }: {
+  playing: boolean;
+  reducedMotion: boolean;
+  locale: Locale;
+  onComplete: () => void;
+}) {
+  const elapsed = useDemoClock({ duration: SCAN_ROTATION_MS, playing, reducedMotion });
+  const completed = useRef(false);
+  const copy = words[locale];
+  const remaining = Math.max(0, Math.ceil((SCAN_ROTATION_MS - elapsed) / 1000));
+
+  useEffect(() => {
+    if (!playing || reducedMotion || elapsed < SCAN_ROTATION_MS || completed.current) return;
+    completed.current = true;
+    onComplete();
+  }, [playing, reducedMotion, elapsed, onComplete]);
+
+  if (reducedMotion) return null;
+  const label = playing ? copy.next.replace('{seconds}', String(remaining)) : copy.paused;
+  return <span role="timer" aria-live="off" aria-label={label} title={label} className="flex shrink-0 items-center gap-2 font-mono text-xs tabular-nums text-[#8f969f]">
+    <span aria-hidden="true" className="h-px w-10 overflow-hidden bg-white/15"><span className="block h-full origin-left bg-[#a1a1aa]" style={{ transform: `scaleX(${Math.max(0, 1 - elapsed / SCAN_ROTATION_MS)})` }} /></span>
+    <span aria-hidden="true" className="w-5 text-right">{remaining}s</span>
+  </span>;
+}
+
+export function ScanShowcase({ cards, locale }: { cards: LandingCopy['platform']['cards']; locale: Locale }) {
   const [active, setActive] = useState(0);
-  const [manualPause, setManualPause] = useState(false);
-  const [hover, setHover] = useState(false);
   const [focused, setFocused] = useState(false);
   const [reduced, setReduced] = useState(false);
   const [visible, setVisible] = useState(false);
   const [hidden, setHidden] = useState(false);
-  const [phase, setPhase] = useState<ScanPhase>('scanning');
-  const [skipIntro, setSkipIntro] = useState(false);
   const [scanCycle, setScanCycle] = useState(0);
-  const root = useRef<HTMLDivElement>(null);
+  const [provider, setProvider] = useState(0);
+  const terminal = useRef<HTMLDivElement>(null);
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
+  const providerButtons = useRef<(HTMLButtonElement | null)[]>([]);
+  const providerToFocus = useRef<number | null>(null);
   const id = useId();
   const copy = words[locale];
-  const journey = landingWorkflowCopy[locale].install;
-  const playing = visible && !hidden && !manualPause;
-  const introTime = useDemoClock({ duration: INSTALL_INTRO_MS, playing, reducedMotion: reduced });
-  const introElapsed = skipIntro ? INSTALL_INTRO_MS : introTime;
-  const connected = introElapsed >= INSTALL_INTRO_MS;
-  const paused = manualPause || hover || focused || reduced || hidden || !visible;
+  const playing = visible && !hidden;
   const selectActive = useCallback((index: number) => {
-    setPhase('scanning');
+    setProvider(0);
     setActive(index);
     setScanCycle(value => value + 1);
   }, []);
+  const advance = useCallback(() => {
+    if (active === CLOUD_SCAN_INDEX && provider < cloudDemos.length - 1) {
+      setProvider(value => value + 1);
+      setScanCycle(value => value + 1);
+    } else {
+      selectActive((active + 1) % cards.length);
+    }
+  }, [active, provider, cards.length, selectActive]);
+
+  useEffect(() => {
+    if (providerToFocus.current === null) return;
+    const index = providerToFocus.current;
+    providerToFocus.current = null;
+    providerButtons.current[index]?.focus();
+  }, [scanCycle]);
+
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
     const updateMotion = () => setReduced(media.matches);
     const updateVisibility = () => setHidden(document.hidden);
-    updateMotion(); updateVisibility();
+    updateMotion();
+    updateVisibility();
     media.addEventListener('change', updateMotion);
     document.addEventListener('visibilitychange', updateVisibility);
-    const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: 0.2 });
-    if (root.current) observer.observe(root.current);
-    return () => { media.removeEventListener('change', updateMotion); document.removeEventListener('visibilitychange', updateVisibility); observer.disconnect(); };
+    const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: 0.25 });
+    if (terminal.current) observer.observe(terminal.current);
+    return () => {
+      media.removeEventListener('change', updateMotion);
+      document.removeEventListener('visibilitychange', updateVisibility);
+      observer.disconnect();
+    };
   }, []);
-  useEffect(() => {
-    if (paused || !connected || active === CLOUD_SCAN_INDEX) return;
-    const timer = setTimeout(() => selectActive((active + 1) % cards.length), SCAN_ROTATION_MS);
-    return () => clearTimeout(timer);
-  }, [active, paused, connected, cards.length, selectActive]);
-  const advanceFromCloud = useCallback(() => {
-    if (paused) return false;
-    selectActive((active + 1) % cards.length);
-    return true;
-  }, [paused, active, cards.length, selectActive]);
+
   function navigate(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
-    if (event.key === 'ArrowDown' || event.key === 'ArrowRight') next = (index + 1) % cards.length;
-    else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') next = (index - 1 + cards.length) % cards.length;
+    if (event.key === 'ArrowRight') next = (index + 1) % cards.length;
+    else if (event.key === 'ArrowLeft') next = (index - 1 + cards.length) % cards.length;
     else if (event.key === 'Home') next = 0;
     else if (event.key === 'End') next = cards.length - 1;
     else return;
-    event.preventDefault(); setSkipIntro(true); selectActive(next); buttons.current[next]?.focus();
+    event.preventDefault();
+    selectActive(next);
+    buttons.current[next]?.focus();
   }
-  const Icon = icons[active];
-  const demo = scanDemos[active];
-  return <div ref={root} onPointerEnter={e => { if (e.pointerType === 'mouse') setHover(true); }} onPointerLeave={() => setHover(false)} onFocusCapture={() => setFocused(true)} onBlurCapture={e => { if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false); }} className="relative isolate mt-10 overflow-hidden rounded-[24px] border border-[#071222]/15 bg-[#f1f7fe] text-[#071222] rz-soft-shadow dark:border-[#2c415c] dark:bg-[#0d1420] dark:text-[#eaf4ff]">
-    <WarpField speed={manualPause ? 0 : 0.3} size={2} className="opacity-25 dark:opacity-35" />
-    <InstallJourney copy={journey} labels={installCopy} locale={locale} elapsed={introElapsed} phase={phase} playing={playing} />
-    <div className="relative grid bg-[#f7fbff]/65 dark:bg-[#0d1420]/60 md:grid-cols-[260px_minmax(0,1fr)] lg:grid-cols-[310px_minmax(0,1fr)]">
-      <div className="flex min-w-0 flex-col border-b border-[#071222]/10 dark:border-[#2c415c] md:border-r md:border-b-0">
-        <div role="tablist" aria-label={copy.modules} className="flex min-w-0 gap-1 overflow-x-auto p-3 md:flex-col md:gap-0 md:p-0 md:py-4 xl:flex-1">
-          {cards.map((card, index) => {
-            const ItemIcon = icons[index];
-            return <button ref={node => { buttons.current[index] = node; }} key={card.title} role="tab" type="button" id={`${id}-tab-${index}`} aria-selected={active === index} aria-controls={`${id}-panel`} tabIndex={active === index ? 0 : -1} onClick={() => { setSkipIntro(true); selectActive(index); }} onKeyDown={event => navigate(event, index)} className={`group relative flex shrink-0 items-center gap-3 overflow-hidden rounded-lg border px-4 py-4 text-left text-sm font-medium transition-colors focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-[#2f7eff] md:min-h-[65px] md:rounded-none md:border-x-0 md:px-6 lg:gap-4 lg:px-7 xl:flex-1 ${active === index ? 'border-[#2f7eff]/20 bg-[#2f7eff]/10 text-[#1456b8] dark:border-[#6db5ff]/20 dark:bg-[#6db5ff]/10 dark:text-[#d9edff]' : 'border-transparent text-[#53657d] hover:bg-[#2f7eff]/5 hover:text-[#071222] dark:text-[#b8cbe4] dark:hover:text-white'}`}>
-              {active === index && <span className="absolute inset-y-3 left-0 w-[3px] rounded-r bg-[#2f7eff] dark:bg-[#6db5ff]" />}
-              <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-[#071222] dark:bg-transparent"><ItemIcon className="size-5 text-white" strokeWidth={1.6} /></span><span>{card.title}</span><ChevronRight className={`ml-auto hidden size-4 shrink-0 text-[#071222] dark:text-white md:block ${active === index ? 'opacity-100' : 'opacity-0 group-hover:opacity-60'}`} />
-            </button>;
-          })}
-        </div>
+
+  const demo = active === CLOUD_SCAN_INDEX ? cloudDemos[provider] : scanDemos[active];
+  const timer = <ScanAutoTransition key={scanCycle} locale={locale} playing={playing && !focused && !reduced} reducedMotion={reduced} onComplete={advance} />;
+  const providerSelector = <div role="group" aria-label={copy.providers} className="flex min-w-0 items-center gap-0.5">
+    {providers.map(({ name, shortName, Icon }, index) => <button
+      key={name} ref={node => { providerButtons.current[index] = node; }} type="button" aria-label={name} aria-pressed={provider === index}
+      onClick={event => {
+        if (event.detail > 0) setFocused(false);
+        else providerToFocus.current = index;
+        setProvider(index);
+        setScanCycle(value => value + 1);
+      }}
+      className={`inline-flex min-h-8 items-center gap-2 rounded-md px-2 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6db5ff] sm:text-sm ${provider === index ? 'bg-white/10 text-white' : 'text-[#a1a1aa] hover:bg-white/5 hover:text-white'}`}
+    ><Icon colored className="hidden size-4 sm:block" /><span>{shortName}</span></button>)}
+  </div>;
+
+  return <div
+    onFocusCapture={event => setFocused(event.target.matches(':focus-visible'))}
+    onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}
+    className="text-[#071222] dark:text-[#f4f4f5]"
+  >
+    <div className="mx-auto max-w-4xl text-center">
+      <h2 className="text-3xl leading-tight font-semibold sm:text-4xl lg:text-[42px]">{copy.title}</h2>
+      <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#53657d] dark:text-[#a1a9b7]">{copy.body}</p>
+    </div>
+
+    <div role="tablist" aria-label={copy.modules} className="mx-auto mt-9 flex max-w-4xl flex-wrap justify-center gap-x-4 gap-y-5 sm:mt-10 sm:gap-x-3 lg:gap-x-5">
+      {cards.map((card, index) => {
+        const ItemIcon = icons[index];
+        const selected = active === index;
+        return <button
+          ref={node => { buttons.current[index] = node; }} key={card.title}
+          role="tab" type="button" id={`${id}-tab-${index}`} aria-label={card.title}
+          aria-selected={selected} aria-controls={`${id}-panel`} tabIndex={selected ? 0 : -1}
+          onClick={event => { if (event.detail > 0) setFocused(false); selectActive(index); }} onKeyDown={event => navigate(event, index)}
+          className={`group flex w-16 flex-col items-center gap-3 rounded-lg py-1 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2f7eff] sm:w-20 lg:w-24 ${selected ? 'text-[#071222] dark:text-white' : 'text-[#617085] hover:text-[#071222] dark:text-[#939baa] dark:hover:text-white'}`}
+        >
+          <span className={`flex size-14 items-center justify-center rounded-xl border transition-colors sm:size-16 ${selected ? 'border-[#071222]/40 bg-[#071222]/5 dark:border-white/45 dark:bg-white/6' : 'border-[#071222]/12 group-hover:border-[#071222]/30 dark:border-white/12 dark:group-hover:border-white/30'}`}>
+            <ItemIcon aria-hidden="true" className="size-6" strokeWidth={1.5} />
+          </span>
+          <span className="whitespace-nowrap">{index === 5 ? <><span className="sm:hidden">K8s</span><span className="hidden sm:inline">{copy.labels[index]}</span></> : copy.labels[index]}</span>
+        </button>;
+      })}
+    </div>
+
+    <div role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-tab-${active}`} tabIndex={0} className="mx-auto mt-9 max-w-5xl rounded-xl outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2f7eff] sm:mt-10">
+      <div className="mx-auto grid max-w-2xl text-center">
+        {cards.map((card, index) => <div key={card.title} aria-hidden={index !== active} inert={index !== active} className={`min-w-0 [grid-area:1/1] ${index === active ? 'rz-scan-content' : 'invisible'}`}>
+          <h3 className="text-xl leading-7 font-medium">{copy.headlines[index]}</h3>
+        </div>)}
       </div>
-      <div className="relative min-w-0 p-6 sm:p-8 md:min-h-[560px] lg:p-9">
-        <div role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-tab-${active}`} tabIndex={0} className="flex min-w-0 flex-col gap-6 outline-none focus-visible:rounded-lg focus-visible:ring-2 focus-visible:ring-[#2f7eff] sm:gap-7">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-              <div className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-[#071222]/15 bg-[#071222] dark:border-white/15 dark:bg-white/5"><Icon className="size-6 text-white" strokeWidth={1.5} /></div>
-              {active === CLOUD_SCAN_INDEX && <div className="flex items-center gap-2 text-white sm:gap-4">
-                <span role="img" aria-label="Google Cloud" title="Google Cloud" className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-[#071222]/15 bg-[#071222] dark:border-white/15 dark:bg-white/5 sm:size-12"><GCPIcon colored className="size-7" /></span>
-                <span role="img" aria-label="Amazon Web Services" title="Amazon Web Services" className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-[#071222]/15 bg-[#071222] dark:border-white/15 dark:bg-white/5 sm:size-12"><AWSIcon colored className="h-6 w-8 sm:h-7 sm:w-9" /></span>
-                <span role="img" aria-label="Microsoft Azure" title="Microsoft Azure" className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-[#071222]/15 bg-[#071222] dark:border-white/15 dark:bg-white/5 sm:size-12"><AzureIcon colored className="size-7" /></span>
-              </div>}
-              <button type="button" onClick={() => setManualPause(value => !value)} aria-pressed={manualPause} aria-label={manualPause ? copy.play : copy.pause} title={manualPause ? copy.play : copy.pause} className="ml-auto flex size-10 shrink-0 items-center justify-center rounded-lg border border-[#071222]/10 bg-white/30 text-[#53657d] transition hover:bg-[#2f7eff]/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2f7eff] dark:border-[#6db5ff]/15 dark:bg-white/3 dark:text-[#b8cbe4] dark:hover:bg-[#6db5ff]/10">{manualPause ? <Play className="size-4" /> : <Pause className="size-4" />}</button>
+
+      <div ref={terminal} className="mt-6 overflow-hidden rounded-xl border border-black/20 bg-black dark:border-white/12 sm:mt-7">
+        {demo
+          ? <ScanTerminal key={`${active}-${provider}-${scanCycle}`} demo={demo} locale={locale} playing={playing} reducedMotion={reduced} header={active === CLOUD_SCAN_INDEX ? providerSelector : undefined} timer={timer} />
+          : <div>
+            <div className="flex min-h-12 items-center justify-between gap-3 border-b border-white/10 px-5 sm:px-6"><span className="font-mono text-[13px] text-[#aeb5c0]">DAST</span>{timer}</div>
+            <div className="flex h-[340px] flex-col items-center justify-center px-6 py-10 text-center sm:h-[320px]">
+              <ScanLine aria-hidden="true" className="size-8 text-[#71717a]" strokeWidth={1.25} />
+              <p className="mt-5 text-base font-medium text-[#f4f4f5]">{copy.dastPreview}</p>
+              <p className="mt-2 text-sm text-[#a1a1aa]">{copy.soon}</p>
+              <Link href={localizedPath(locale, '/roadmap')} className="mt-5 rounded-sm text-sm text-[#a1a1aa] underline decoration-white/20 underline-offset-4 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6db5ff]">{copy.roadmap}</Link>
             </div>
-            <div className="grid">
-              {cards.map((card, index) => (
-                <div key={card.title} aria-hidden={index !== active} inert={index !== active} className={`min-w-0 [grid-area:1/1] ${index === active ? 'rz-scan-content' : 'invisible'}`}>
-                  <div className="mt-5 flex flex-wrap items-center gap-3">
-                    <p className="text-xs font-semibold text-[#2f7eff] dark:text-[#6db5ff]">{card.title}</p>
-                    {index === 4 && <span className="rounded-full border border-[#2f7eff]/20 px-2 py-0.5 text-[10px] text-[#53657d] dark:text-[#b8cbe4]">{copy.soon}</span>}
-                  </div>
-                  <h3 className="mt-2.5 max-w-3xl text-3xl leading-[1.15] font-semibold sm:text-4xl xl:text-[40px]">{copy.headlines[index]}</h3>
-                  <p className="mt-3 max-w-3xl text-sm leading-7 text-[#435b78] dark:text-[#c2d5ed] sm:text-base">{card.body}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="min-h-[394px] min-w-0 sm:min-h-[342px] lg:min-h-[310px]" aria-hidden={demo ? undefined : true}>
-            {active === CLOUD_SCAN_INDEX
-              ? <CloudScanTerminal key={`${active}-${scanCycle}`} locale={locale} playing={playing && connected} reducedMotion={reduced} onCycleComplete={advanceFromCloud} onPhaseChange={setPhase} />
-              : demo && <ScanTerminal key={`${active}-${scanCycle}`} demo={demo} locale={locale} playing={playing && connected} reducedMotion={reduced} onPhaseChange={setPhase} />}
-          </div>
-          <div aria-hidden={!demo || undefined} className={`rz-scan-receipt relative flex min-h-[78px] items-center gap-3 overflow-hidden border-t border-[#071222]/10 pt-5 dark:border-[#6db5ff]/12 ${!demo ? 'invisible' : ''} ${phase === 'sending' ? 'rz-scan-receipt-sending' : ''}`} data-playing={playing}>
-            <span aria-hidden="true" className={`relative flex size-10 shrink-0 items-center justify-center rounded-xl border transition-colors duration-500 ${phase === 'received' ? 'border-[#2ca577]/35 bg-[#2ca577]/8 dark:border-[#73dfac]/30 dark:bg-[#73dfac]/8' : 'border-[#2f7eff]/20 bg-[#2f7eff]/5 dark:border-[#6db5ff]/20 dark:bg-[#6db5ff]/5'}`}><span className={`size-6 transition-colors ${phase === 'received' ? 'bg-[#16724e] dark:bg-[#73dfac]' : 'bg-[#2f7eff] dark:bg-[#6db5ff]'}`} style={{ mask: `url(${sitePath('/brand/runtz-activitybar.svg')}) center / contain no-repeat` }} /></span>
-            <div className="min-w-0 flex-1"><p className={`min-h-10 text-sm font-semibold transition-colors sm:min-h-5 ${phase === 'received' ? 'text-[#16724e] dark:text-[#73dfac]' : 'text-[#53657d] dark:text-[#b8cbe4]'}`}>{!connected ? journey.waiting : phase === 'received' ? journey.receipt : phase === 'sending' ? journey.sending : journey.scanning}</p><p className={`mt-1 text-xs leading-5 text-[#53657d] transition-opacity dark:text-[#9fb8d7] ${phase === 'received' ? 'opacity-100' : 'opacity-0'}`}>{journey.receiptBody}</p></div>
-            <span aria-hidden="true" className="shrink-0 text-[#16724e] dark:text-[#73dfac]">{phase === 'received' ? <Check className="size-5" /> : <Upload className="size-4 text-[#7f96b3]" />}</span>
-          </div>
-        </div>
+          </div>}
       </div>
     </div>
   </div>;
