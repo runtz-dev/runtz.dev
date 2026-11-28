@@ -17,9 +17,9 @@ import {
   PrimaryLink,
   ProductConsole,
   SecondaryLink,
-  SectionIntro,
 } from './_components/marketing';
 import { ScanShowcase } from './_components/scan-showcase';
+import { InstallJourney } from './_components/install-journey';
 import { DeveloperWorkflow } from './_components/developer-workflow';
 import { InstallMethodTabs } from './_components/install-method-tabs';
 import { IntroVideo } from './_components/intro-video';
@@ -137,12 +137,11 @@ export default async function HomePage({ params }: PageProps<'/[lang]'>) {
       <IntroVideo copy={copy.introVideo} locale={locale} />
 
       <section className="mx-auto w-full max-w-[1400px] px-6 py-10 md:px-12 md:py-12">
-        <SectionIntro
-          eyebrow={copy.platform.eyebrow}
-          title={copy.platform.title}
-          body={copy.platform.body}
-        />
-        <ScanShowcase cards={copy.platform.cards} installCopy={copy.developerWorkflow} locale={locale} />
+        <ScanShowcase cards={copy.platform.cards} locale={locale} />
+      </section>
+
+      <section className="mx-auto w-full max-w-[1400px] px-6 py-10 md:px-12 md:py-12">
+        <InstallJourney labels={copy.developerWorkflow} locale={locale} />
       </section>
 
       <section className="mx-auto w-full max-w-[1400px] px-6 py-10 md:px-12 md:py-12">

@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import type { Locale } from '@/lib/i18n';
 import { useDemoClock } from './use-demo-clock';
-
-export type ScanPhase = 'scanning' | 'sending' | 'received';
 
 type OutputLine = {
   text: string;
@@ -106,16 +104,16 @@ export const scanDemos: (TerminalDemo | null)[] = [
   cloudDemos[0],
 ];
 
-export const SCAN_ROTATION_MS = 8500;
+export const SCAN_ROTATION_MS = 8000;
 
 const terminalCopy = {
-  en: { demo: 'CLI example', description: 'Illustrative command and scan results' },
-  'pt-br': { demo: 'Exemplo CLI', description: 'Exemplo de comando e resultados de um scan' },
-  es: { demo: 'Ejemplo CLI', description: 'Ejemplo de comando y resultados de un scan' },
+  en: { description: 'Illustrative command and scan results' },
+  'pt-br': { description: 'Exemplo de comando e resultados de um scan' },
+  es: { description: 'Ejemplo de comando y resultados de un scan' },
 };
 
 const tones = {
-  muted: 'text-[#93a4bc]',
+  muted: 'text-[#8f969f]',
   warning: 'text-[#f5c76c]',
   success: 'text-[#73dfac]',
 };
@@ -125,13 +123,15 @@ export function ScanTerminal({
   locale,
   playing,
   reducedMotion,
-  onPhaseChange,
+  header,
+  timer,
 }: {
   demo: TerminalDemo;
   locale: Locale;
   playing: boolean;
   reducedMotion: boolean;
-  onPhaseChange?: (phase: ScanPhase) => void;
+  header?: ReactNode;
+  timer?: ReactNode;
 }) {
   const typingStart = 250;
   const typingEnd = typingStart + demo.command.length * 35;
@@ -140,82 +140,48 @@ export function ScanTerminal({
   const complete = time >= completeAt;
   const characters = Math.max(0, Math.floor((time - typingStart) / 35));
   const copy = terminalCopy[locale];
-  const phase: ScanPhase = complete ? 'received' : time >= completeAt - 650 ? 'sending' : 'scanning';
   const output = demo.output.some(line => line.text.startsWith('Sending')) ? demo.output : [
     ...demo.output.slice(0, -1),
     { text: 'Sending results to runtz...', tone: 'muted' as const, after: demo.output.at(-1)!.after - 650 },
     demo.output.at(-1)!,
   ];
 
-  useEffect(() => {
-    onPhaseChange?.(phase);
-  }, [phase, onPhaseChange]);
-
   return (
-    <figure className="rz-scan-terminal rz-scan-content min-w-0 w-full overflow-hidden rounded-xl border border-[#33445d] bg-[#0b111c] text-[#eaf4ff] shadow-[0_16px_48px_-24px_rgba(0,0,0,0.65)]">
-      <figcaption className="flex min-h-10 items-center gap-3 border-b border-white/8 bg-white/[0.035] px-4">
-        <span aria-hidden="true" className="flex shrink-0 gap-1.5">
-          <span className="size-1.5 rounded-full bg-[#526178]" />
-          <span className="size-1.5 rounded-full bg-[#526178]" />
-          <span className="size-1.5 rounded-full bg-[#526178]" />
+    <figure className="rz-scan-terminal rz-scan-content min-w-0 w-full overflow-hidden bg-black text-[#eaf4ff]">
+      <figcaption className="flex min-h-12 items-center gap-3 border-b border-white/10 px-5 sm:px-6">
+        <span aria-hidden="true" className="hidden shrink-0 gap-1.5 sm:flex">
+          <span className="size-1.5 rounded-full bg-[#42464d]" />
+          <span className="size-1.5 rounded-full bg-[#42464d]" />
+          <span className="size-1.5 rounded-full bg-[#42464d]" />
         </span>
-        <span className="truncate font-mono text-[10px] text-[#9db0cc]">{demo.title}</span>
-        <span className="ml-auto shrink-0 text-[10px] text-[#9db0cc]">{copy.demo}</span>
+        <div className="min-w-0 flex-1">{header ?? <span className="block truncate font-mono text-[13px] text-[#aeb5c0]">{demo.title}</span>}</div>
+        {timer && <div className="flex shrink-0 items-center">{timer}</div>}
       </figcaption>
       {/* Static equivalent avoids announcing every typed character and output line. */}
       <pre className="sr-only">{copy.description}{'\n$ '}{demo.command}{'\n'}{output.map(line => line.text).join('\n')}</pre>
-      <div aria-hidden="true" className="h-[352px] overflow-y-auto px-4 py-5 font-mono text-xs leading-[22px] sm:h-[300px] sm:px-5 lg:h-[268px] lg:px-6 lg:py-4 lg:leading-5">
-        <div className="mb-4 flex items-start gap-2 text-[#f3f7ff] lg:mb-3">
+      <div aria-hidden="true" className="h-[340px] overflow-y-auto px-5 py-5 font-mono text-[13px] leading-6 sm:h-[320px] sm:px-6 sm:text-sm">
+        <div className="mb-4 flex items-start gap-2 text-[#f4f4f5]">
           <span className="select-none text-[#73dfac]">$</span>
           <div className="min-w-0 flex-1 break-words [overflow-wrap:anywhere]">
             <span>{demo.command.slice(0, characters)}</span>
             {time < typingEnd && <span className="rz-terminal-cursor ml-0.5 inline-block h-[1em] w-[0.5em] translate-y-0.5 bg-[#d8e7fa]" style={{ animationPlayState: playing ? 'running' : 'paused' }} />}
           </div>
         </div>
-        <div className="space-y-1.5 lg:space-y-1">
+        <div className="space-y-1">
           {output.map(line => {
             const shown = time >= typingEnd + line.after;
             return (
-              <p key={line.text} className={`${line.tone ? tones[line.tone] : 'text-[#d3deee]'} break-words transition-[opacity,transform] duration-200 motion-reduce:transition-none ${shown ? 'translate-y-0 opacity-100' : 'translate-y-1 opacity-0'}`}>
+              <p key={line.text} className={`${line.tone ? tones[line.tone] : 'text-[#d4d4d8]'} break-words transition-[opacity,transform] duration-200 motion-reduce:transition-none ${shown ? 'translate-y-0 opacity-100' : 'translate-y-1 opacity-0'}`}>
                 {line.text}
               </p>
             );
           })}
         </div>
-        <div className={`mt-4 flex items-center gap-2 transition-opacity duration-200 motion-reduce:transition-none lg:mt-3 ${complete ? 'opacity-100' : 'opacity-0'}`}>
+        <div className={`mt-4 flex items-center gap-2 transition-opacity duration-200 motion-reduce:transition-none ${complete ? 'opacity-100' : 'opacity-0'}`}>
           <span className="text-[#73dfac]">$</span>
           <span className="inline-block h-[1em] w-[0.5em] bg-[#d8e7fa]" />
         </div>
       </div>
     </figure>
   );
-}
-
-// Keep cloud examples moving while the visitor hovers or reads the panel.
-// Advance the main selector only after Azure finishes and rotation is allowed.
-export function CloudScanTerminal({
-  locale,
-  playing,
-  reducedMotion,
-  onCycleComplete,
-  onPhaseChange,
-}: {
-  locale: Locale;
-  playing: boolean;
-  reducedMotion: boolean;
-  onCycleComplete: () => boolean;
-  onPhaseChange?: (phase: ScanPhase) => void;
-}) {
-  const [providerIndex, setProviderIndex] = useState(0);
-
-  useEffect(() => {
-    if (!playing || reducedMotion) return;
-    const timer = setTimeout(() => {
-      if (providerIndex === cloudDemos.length - 1 && onCycleComplete()) return;
-      setProviderIndex(index => (index + 1) % cloudDemos.length);
-    }, SCAN_ROTATION_MS);
-    return () => clearTimeout(timer);
-  }, [providerIndex, playing, reducedMotion, onCycleComplete]);
-
-  return <ScanTerminal key={providerIndex} demo={cloudDemos[providerIndex]} locale={locale} playing={playing} reducedMotion={reducedMotion} onPhaseChange={onPhaseChange} />;
 }
